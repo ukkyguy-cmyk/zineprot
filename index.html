@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAYERED PARK (Sound Sync) - 違和感と余白</title>
+  <title>Pandemic Logic - 違和感と余白</title>
   <style>
     body {
       margin: 0;
@@ -14,46 +14,13 @@
       line-height: 2.3;
       letter-spacing: 0.08em;
       -webkit-font-smoothing: antialiased;
-      transition: background-color 1.5s ease, color 1.5s ease;
+      /* 背景は変えず、文字の空気感だけを変化させるためのスムーズな遷移 */
+      transition: color 2.0s ease;
     }
 
-    body.dark-phase {
-      background-color: #232221;
-      color: #edebe6;
-    }
-
-    /* 音楽コントロールの浮遊UI（最小限のノイズに抑える） */
-    .audio-player-wrapper {
-      position: fixed;
-      top: 30px;
-      right: 30px;
-      z-index: 100;
-      font-family: sans-serif;
-    }
-
-    .audio-trigger-btn {
-      background: none;
-      border: 1px solid #c4c2be;
-      color: #706e6b;
-      padding: 6px 14px;
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      cursor: pointer;
-      border-radius: 20px;
-      transition: all 0.3s ease;
-      background-color: rgba(252, 251, 249, 0.8);
-    }
-
-    body.dark-phase .audio-trigger-btn {
-      border-color: #706e6b;
-      color: #edebe6;
-      background-color: rgba(35, 34, 33, 0.8);
-    }
-
-    /* 再生中の微微な呼吸（アニメーション） */
-    .audio-trigger-btn.is-playing {
-      border-color: #a09e9a;
-      box-shadow: 0 0 8px rgba(160, 158, 154, 0.3);
+    /* 浸透モード（Pandemic Phase）：文字がじわっと深く、重くなる */
+    body.pandemic-phase {
+      color: #111111;
     }
 
     .zine-container {
@@ -61,7 +28,6 @@
       margin: 0 auto;
       padding: 120px 24px;
       box-sizing: border-box;
-      position: relative;
     }
 
     .chapter-title {
@@ -75,28 +41,49 @@
       margin-bottom: 3.5rem;
       font-size: 0.95rem;
       text-align: justify;
+      transition: all 2.5s ease;
     }
 
-    .sticky-layer-container {
-      position: relative;
-      margin: 12rem 0;
-      height: 250px;
+    /* じわじわと変質（感染）していくキーワードの初期状態 */
+    .infect-word {
+      font-weight: inherit;
+      letter-spacing: inherit;
+      color: inherit;
+      transition: all 3.0s ease;
+      display: inline-block;
     }
 
-    .sticky-phrase {
-      position: -webkit-sticky;
-      position: sticky;
-      top: 45%;
-      font-size: 1.25rem;
-      font-weight: 600;
-      line-height: 2;
-      text-align: center;
-      z-index: 1;
-      letter-spacing: 0.12em;
+    /* 浸透が極まった時のキーワードの変質状態：文字が太くなり、間隔がじわっと広がる */
+    body.pandemic-phase .infect-word {
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #000000;
+      text-shadow: 0 0 4px rgba(0,0,0,0.1);
     }
 
+    /* 音響コントロールUI */
+    .audio-player-wrapper {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 100;
+    }
+
+    .audio-trigger-btn {
+      background: none;
+      border: 1px solid #c4c2be;
+      color: #706e6b;
+      padding: 6px 14px;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      border-radius: 20px;
+      background-color: rgba(252, 251, 249, 0.8);
+    }
+
+    /* 沈黙ページ：Pandemic版は「侵食された空白」 */
     .silence-space {
-      height: 180vh;
+      height: 150vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -104,124 +91,83 @@
 
     .silence-prompt {
       font-size: 0.75rem;
-      color: #8a8884;
-      letter-spacing: 0.2em;
+      color: #a09e9a;
+      letter-spacing: 0.3em;
       opacity: 0;
-      transition: opacity 2.0s ease;
+      transition: opacity 3.0s ease;
     }
 
-    body.dark-phase .silence-prompt {
-      opacity: 0.4;
+    body.pandemic-phase .silence-prompt {
+      opacity: 0.6;
     }
   </style>
 </head>
 <body>
 
   <div class="audio-player-wrapper">
-    <button class="audio-trigger-btn" id="audio-btn">［ 🎧 PLAY AMBIENT ］</button>
-    <audio id="bgm" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+    <button class="audio-trigger-btn" id="audio-btn">［ 🎧 PLAY LOGIC ］</button>
+    <audio id="bgm" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" loop></audio>
   </div>
 
   <div class="zine-container">
     
-    <div class="chapter-title">第8章<br>LAYERED PARK</div>
+    <div class="chapter-title">第1章<br>Pandemic Logic</div>
 
-    <p>都市の公園をひとつの平らな地面として捉える時代は終わった。私たちの目の前にある芝生は、物理的な土や草であると同時に、スマートフォンの画面越しに編み上げられるデジタルな情報層、そこで繰り広げられる認知の集積層でもある。</p>
+    <p>組織を変えるために、正面から正論を振りかざす必要はない。それは強固な免疫システムを起動させ、不必要な摩擦を生むだけだ。本当に必要なのは、劇薬の投入ではなく、気づいたときには拒絶できなくなっているような、静かな変質のプロセスである。</p>
     
-    <p>行政が管理すべきは、もはや「施設」そのものではなく、その場所に重なり合う「レイヤーの調停」そのものなのではないか。物理的な境界線を引くことではなく、見えないレイヤーが互いを侵食し、あるいは包摂し合う状態をいかに許容するか。</p>
+    <p>正論による論破ではなく、違和感の共有。私たちはこのアプローチを、親愛なる不穏さを込めて<span class="infect-word">「パンデミック・ロジック」</span>と呼ぶ。それは、境界線を越えてジワジワと伝染していく、新しい実践のOSだ。</p>
 
-    <div class="sticky-layer-container" id="trigger-dark">
-      <div class="sticky-phrase">
-        合意形成の前に、<br>認知共有がある。
-      </div>
-    </div>
+    <div id="pandemic-trigger"></div>
 
-    <p>この視点に立ったとき、公園の設計図は単なる平面図から、解像度の異なる複数のレイヤーが重ね合わされた積層図へと変化する。一見、衝突しているように見える住民たちの意見も、彼らが「どのレイヤーに立って世界を観測しているか」がズレているだけであることが多い。</p>
+    <p>現場の片隅で、マニュアルにない小さな試みを始める。その「心地よいズレ」を目撃した同僚の脳内に、小さな違和感が植え付けられる。その違和感は、次の日には別の誰かへと<span class="infect-word">伝染</span>していく。大きな予算も、派手なプレゼンもいらない。</p>
 
-    <p>だからこそ、私たちは議論を急いではいけない。まずは、その場所にどのようなレイヤーが存在しているのかを、ただただ静かに、共に眺める時間が必要なのだ。</p>
+    <p>必要なのは、ただシステムを<span class="infect-word">内側から変質させていく</span>ための、微細な「問い」の配置だけなのだ。</p>
 
     <div class="silence-space">
-      <div class="silence-prompt">（耳を澄ます、あるいは通り過ぎる）</div>
+      <div class="silence-prompt">（すでに、混ざり合っている）</div>
     </div>
 
-    <p id="trigger-light">レイヤード・パーク。それは完成された都市のビジョンではない。絶えず上書きされ、剥がされ、また新しい層が付け足されていく、未完のキャンバスそのものである。私たちはその「余白」を、行政という名のマニュアルで埋め尽くしてはならない。</p>
+    <p>世界が一瞬で変わることを期待してはいけない。ウイルスが宿主の細胞を少しずつ書き換えていくように、私たちの言葉もまた、行政という巨大な機構の隙間に、静かに、深く、浸透し続けていく。</p>
 
   </div>
 
   <script>
     const bgm = document.getElementById('bgm');
     const audioBtn = document.getElementById('audio-btn');
-    const triggerDark = document.getElementById('trigger-dark');
-    const triggerLight = document.getElementById('trigger-light');
+    const trigger = document.getElementById('pandemic-trigger');
 
-    // 初期音量は控えめに（0.2）
-    bgm.volume = 0.2;
+    bgm.volume = 0.4;
 
-    // 音声再生のトグルスイッチ
     audioBtn.addEventListener('click', () => {
       if (bgm.paused) {
         bgm.play();
-        audioBtn.innerText = "［ 🎧 STOP AMBIENT ］";
-        audioBtn.classList.add('is-playing');
+        audioBtn.innerText = "［ 🎧 STOP LOGIC ］";
       } else {
         bgm.pause();
-        audioBtn.innerText = "［ 🎧 PLAY AMBIENT ］";
-        audioBtn.classList.remove('is-playing');
+        audioBtn.innerText = "［ 🎧 PLAY LOGIC ］";
       }
     });
 
-    // 音量を滑らかに変える関数（フェードイン・アウト）
-    function fadeVolume(targetVolume, duration = 1500) {
-      const startVolume = bgm.volume;
-      const diff = targetVolume - startVolume;
-      const startTime = performance.now();
+    // スクロール監視：文字の変質と音の変調
+    const options = { rootMargin: "-10% 0px -40% 0px" };
 
-      function updateVolume(now) {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        bgm.volume = startVolume + (diff * progress);
-
-        if (progress < 1) {
-          requestAnimationFrame(updateVolume);
-        }
-      }
-      requestAnimationFrame(updateVolume);
-    }
-
-    // スクロール監視の設定
-    const options = { rootMargin: "-30% 0px -30% 0px" };
-
-    // 1. 暗転 ＋ 音量アップ（0.2 → 0.8）
-    const darkObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !triggerLight.getBoundingClientRect().top < window.innerHeight) {
-          document.body.classList.add('dark-phase');
-          fadeVolume(0.8); // 沈黙に向けて音量を上げる
-        }
-        if (!entry.isIntersecting && window.scrollY < triggerDark.offsetTop) {
-          document.body.classList.remove('dark-phase');
-          fadeVolume(0.2); // 上に戻ったら音量を絞る
-        }
-      });
-    }, options);
-
-    // 2. 明転 ＋ 音量ダウン（0.8 → 0.2）
-    const lightObserver = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          document.body.classList.remove('dark-phase');
-          fadeVolume(0.2); // 日常に戻るために音量を絞る
-        } else if (!entry.isIntersecting && window.scrollY < triggerLight.offsetTop) {
-          if (window.scrollY > triggerDark.offsetTop) {
-            document.body.classList.add('dark-phase');
-            fadeVolume(0.8); // 沈黙へ逆戻りしたら音量を上げる
+          // トリガー以降：文字が変質（太く、広く）し、音がくぐもる（テストとして音量を少し落として変化を演出）
+          document.body.classList.add('pandemic-phase');
+          bgm.volume = 0.2; 
+        } else {
+          // 上に戻ったら元に戻る
+          if (window.scrollY < trigger.offsetTop) {
+            document.body.classList.remove('pandemic-phase');
+            bgm.volume = 0.4;
           }
         }
       });
     }, options);
 
-    darkObserver.observe(triggerDark);
-    lightObserver.observe(triggerLight);
+    observer.observe(trigger);
   </script>
 
 </body>
