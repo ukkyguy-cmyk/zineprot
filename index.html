@@ -3,26 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAYERED PARK (Step Change) - 違和感と余白</title>
+  <title>LAYERED PARK (Phase 2) - 違和感と余白</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background-color: #fcfbf9; /* 初期状態：静かな生成り色 */
+      background-color: #fcfbf9; /* 初期状態：明（静かな生成り色） */
       color: #2c2a29;
       font-family: "YuMincho", "游明朝", serif;
       line-height: 2.3;
       letter-spacing: 0.08em;
       -webkit-font-smoothing: antialiased;
-      
-      /* 背景色と文字色の変化を、1秒かけて滑らかに遷移させる設定 */
-      transition: background-color 1.0s ease, color 1.0s ease;
+      transition: background-color 1.2s ease, color 1.2s ease; /* 変化の余韻を少しだけ滑らかに */
     }
 
-    /* 【新設定】沈潜モード（夜のフェーズ）になった時のスタイル */
+    /* 沈潜モード（夜のフェーズ） */
     body.dark-phase {
-      background-color: #232221; /* 深い影色（夜の公園の空気圧） */
-      color: #edebe6; /* 文字を生成り色に反転 */
+      background-color: #232221; /* 暗（深い影色） */
+      color: #edebe6;
     }
 
     .zine-container {
@@ -65,9 +63,9 @@
       letter-spacing: 0.12em;
     }
 
-    /* A. 沈黙ページ（余白の物質化） */
+    /* A. 沈黙ページ（倍の長さに拡張） */
     .silence-space {
-      height: 85vh; /* 画面の大部分を占める沈黙 */
+      height: 180vh; /* 画面2つ分に相当する圧倒的な余白 */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -78,11 +76,11 @@
       color: #8a8884;
       letter-spacing: 0.2em;
       opacity: 0;
-      transition: opacity 1.5s ease;
+      transition: opacity 2.0s ease;
     }
-    /* 夜のフェーズの時だけ、うっすらとガイドを浮かび上がらせる */
+
     body.dark-phase .silence-prompt {
-      opacity: 0.5;
+      opacity: 0.4;
     }
 
     /* エントリータグ */
@@ -116,9 +114,9 @@
 
     <p>都市の公園をひとつの平らな地面として捉える時代は終わった。私たちの目の前にある芝生は、物理的な土や草であると同時に、スマートフォンの画面越しに編み上げられるデジタルな情報層、そこで繰り広げられる認知の集積層でもある。</p>
     
-    <p>行政が管理すべきは、もはや「施設」そのものではなく、その場所に重なり合う「レイヤーの調停」そのものなのではないか。物理的な境界線を引くことではなく、見えないレイヤーが互いを侵食し、あるいは包摂し合う状態をいかに許容するか。</p>
+    <p>行政が管理すべきは、もはや「施設」そのものではなく、その場所に重なり合う「レイヤーの調停」そのものなどではないか。物理的な境界線を引くことではなく、見えないレイヤーが互いを侵食し、あるいは包摂し合う状態をいかに許容するか。</p>
 
-    <div class="sticky-layer-container" id="dark-trigger">
+    <div class="sticky-layer-container" id="trigger-dark">
       <div class="sticky-phrase">
         合意形成の前に、<br>認知共有がある。
       </div>
@@ -132,31 +130,51 @@
       <div class="silence-prompt">（耳を澄ます、あるいは通り過ぎる）</div>
     </div>
 
-    <p>レイヤード・パーク。それは完成された都市のビジョンではない。絶えず上書きされ、剥がされ、また新しい層が付け足されていく、未完のキャンバスそのものである。私たちはその「余白」を、行政という名のマニュアルで埋め尽くしてはならない。</p>
+    <p id="trigger-light">レイヤード・パーク。それは完成された都市のビジョンではない。絶えず上書きされ、剥がされ、また新しい層が付け足されていく、未完のキャンバスそのものである。私たちはその「余白」を、行政という名のマニュアルで埋め尽くしてはならない。</p>
 
   </div>
 
   <script>
-    const trigger = document.getElementById('dark-trigger');
-    
-    const observer = new IntersectionObserver((entries) => {
+    const triggerDark = document.getElementById('trigger-dark');
+    const triggerLight = document.getElementById('trigger-light');
+
+    // 共通の監視設定（画面中央付近で交差したか判定）
+    const options = { rootMargin: "-30% 0px -30% 0px" };
+
+    // 1. 暗転の監視
+    const darkObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // トリガー1が画面内、かつトリガー2（最後の段落）がまだ見えていない時だけ暗転
+        if (entry.isIntersecting && !triggerLight.getBoundingClientRect().top < window.innerHeight) {
+          document.body.classList.add('dark-phase');
+        }
+        // 上に戻ったときの判定
+        if (!entry.isIntersecting && window.scrollY < triggerDark.offsetTop) {
+          document.body.classList.remove('dark-phase');
+        }
+      });
+    }, options);
+
+    // 2. 明転（復帰）の監視
+    const lightObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // 強調句が画面内に入ったら、背景を夜（暗）にする
-          document.body.classList.add('dark-phase');
-        } else {
-          // 画面外（通り過ぎる、または上に戻る）に出たら、昼（明）に戻す
-          // ※もし沈黙ページを抜けた後に昼に戻したい場合は、トリガーの位置を調整可能です
-          if (window.scrollY < trigger.offsetTop) {
-            document.body.classList.remove('dark-phase');
+          // 最後の段落に突入したら、日常の「明」に戻す
+          document.body.classList.remove('dark-phase');
+        } else if (!entry.isIntersecting && window.scrollY > triggerLight.offsetTop) {
+          // さらに下に通り過ぎた場合（次の章への導線など）も明を維持
+          document.body.classList.remove('dark-phase');
+        } else if (!entry.isIntersecting && window.scrollY < triggerLight.offsetTop) {
+          // スクロールで「沈黙」へ逆戻りした場合は、再度「暗」にする
+          if (window.scrollY > triggerDark.offsetTop) {
+            document.body.classList.add('dark-phase');
           }
         }
       });
-    }, {
-      rootMargin: "-20% 0px -20% 0px" /* 画面の中央20%の領域に入った瞬間に判定 */
-    });
+    }, options);
 
-    observer.observe(trigger);
+    darkObserver.observe(triggerDark);
+    lightObserver.observe(triggerLight);
   </script>
 
 </body>
