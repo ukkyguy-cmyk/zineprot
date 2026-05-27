@@ -3,24 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAYERED PARK (Phase 2) - 違和感と余白</title>
+  <title>LAYERED PARK (Sound Sync) - 違和感と余白</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background-color: #fcfbf9; /* 初期状態：明（静かな生成り色） */
+      background-color: #fcfbf9;
       color: #2c2a29;
       font-family: "YuMincho", "游明朝", serif;
       line-height: 2.3;
       letter-spacing: 0.08em;
       -webkit-font-smoothing: antialiased;
-      transition: background-color 1.2s ease, color 1.2s ease; /* 変化の余韻を少しだけ滑らかに */
+      transition: background-color 1.5s ease, color 1.5s ease;
     }
 
-    /* 沈潜モード（夜のフェーズ） */
     body.dark-phase {
-      background-color: #232221; /* 暗（深い影色） */
+      background-color: #232221;
       color: #edebe6;
+    }
+
+    /* 音楽コントロールの浮遊UI（最小限のノイズに抑える） */
+    .audio-player-wrapper {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 100;
+      font-family: sans-serif;
+    }
+
+    .audio-trigger-btn {
+      background: none;
+      border: 1px solid #c4c2be;
+      color: #706e6b;
+      padding: 6px 14px;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      background-color: rgba(252, 251, 249, 0.8);
+    }
+
+    body.dark-phase .audio-trigger-btn {
+      border-color: #706e6b;
+      color: #edebe6;
+      background-color: rgba(35, 34, 33, 0.8);
+    }
+
+    /* 再生中の微微な呼吸（アニメーション） */
+    .audio-trigger-btn.is-playing {
+      border-color: #a09e9a;
+      box-shadow: 0 0 8px rgba(160, 158, 154, 0.3);
     }
 
     .zine-container {
@@ -44,7 +77,6 @@
       text-align: justify;
     }
 
-    /* B. 積層（Sticky Layer） */
     .sticky-layer-container {
       position: relative;
       margin: 12rem 0;
@@ -63,9 +95,8 @@
       letter-spacing: 0.12em;
     }
 
-    /* A. 沈黙ページ（倍の長さに拡張） */
     .silence-space {
-      height: 180vh; /* 画面2つ分に相当する圧倒的な余白 */
+      height: 180vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -82,39 +113,22 @@
     body.dark-phase .silence-prompt {
       opacity: 0.4;
     }
-
-    /* エントリータグ */
-    .state-tags {
-      margin-bottom: 80px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .tag {
-      font-size: 0.75rem;
-      color: #706e6b;
-      border: 1px solid #e0deda;
-      padding: 4px 12px;
-      border-radius: 20px;
-      background-color: rgba(255, 255, 255, 0.7);
-    }
   </style>
 </head>
 <body>
 
+  <div class="audio-player-wrapper">
+    <button class="audio-trigger-btn" id="audio-btn">［ 🎧 PLAY AMBIENT ］</button>
+    <audio id="bgm" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+  </div>
+
   <div class="zine-container">
     
-    <div class="state-tags">
-      <span class="tag">#境界線が曖昧な場所に惹かれる</span>
-      <span class="tag">#デジタルと土の匂いを同時に嗅ぎたい</span>
-    </div>
-
     <div class="chapter-title">第8章<br>LAYERED PARK</div>
 
     <p>都市の公園をひとつの平らな地面として捉える時代は終わった。私たちの目の前にある芝生は、物理的な土や草であると同時に、スマートフォンの画面越しに編み上げられるデジタルな情報層、そこで繰り広げられる認知の集積層でもある。</p>
     
-    <p>行政が管理すべきは、もはや「施設」そのものではなく、その場所に重なり合う「レイヤーの調停」そのものなどではないか。物理的な境界線を引くことではなく、見えないレイヤーが互いを侵食し、あるいは包摂し合う状態をいかに許容するか。</p>
+    <p>行政が管理すべきは、もはや「施設」そのものではなく、その場所に重なり合う「レイヤーの調停」そのものなのではないか。物理的な境界線を引くことではなく、見えないレイヤーが互いを侵食し、あるいは包摂し合う状態をいかに許容するか。</p>
 
     <div class="sticky-layer-container" id="trigger-dark">
       <div class="sticky-phrase">
@@ -135,39 +149,72 @@
   </div>
 
   <script>
+    const bgm = document.getElementById('bgm');
+    const audioBtn = document.getElementById('audio-btn');
     const triggerDark = document.getElementById('trigger-dark');
     const triggerLight = document.getElementById('trigger-light');
 
-    // 共通の監視設定（画面中央付近で交差したか判定）
+    // 初期音量は控えめに（0.2）
+    bgm.volume = 0.2;
+
+    // 音声再生のトグルスイッチ
+    audioBtn.addEventListener('click', () => {
+      if (bgm.paused) {
+        bgm.play();
+        audioBtn.innerText = "［ 🎧 STOP AMBIENT ］";
+        audioBtn.classList.add('is-playing');
+      } else {
+        bgm.pause();
+        audioBtn.innerText = "［ 🎧 PLAY AMBIENT ］";
+        audioBtn.classList.remove('is-playing');
+      }
+    });
+
+    // 音量を滑らかに変える関数（フェードイン・アウト）
+    function fadeVolume(targetVolume, duration = 1500) {
+      const startVolume = bgm.volume;
+      const diff = targetVolume - startVolume;
+      const startTime = performance.now();
+
+      function updateVolume(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        bgm.volume = startVolume + (diff * progress);
+
+        if (progress < 1) {
+          requestAnimationFrame(updateVolume);
+        }
+      }
+      requestAnimationFrame(updateVolume);
+    }
+
+    // スクロール監視の設定
     const options = { rootMargin: "-30% 0px -30% 0px" };
 
-    // 1. 暗転の監視
+    // 1. 暗転 ＋ 音量アップ（0.2 → 0.8）
     const darkObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        // トリガー1が画面内、かつトリガー2（最後の段落）がまだ見えていない時だけ暗転
         if (entry.isIntersecting && !triggerLight.getBoundingClientRect().top < window.innerHeight) {
           document.body.classList.add('dark-phase');
+          fadeVolume(0.8); // 沈黙に向けて音量を上げる
         }
-        // 上に戻ったときの判定
         if (!entry.isIntersecting && window.scrollY < triggerDark.offsetTop) {
           document.body.classList.remove('dark-phase');
+          fadeVolume(0.2); // 上に戻ったら音量を絞る
         }
       });
     }, options);
 
-    // 2. 明転（復帰）の監視
+    // 2. 明転 ＋ 音量ダウン（0.8 → 0.2）
     const lightObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // 最後の段落に突入したら、日常の「明」に戻す
           document.body.classList.remove('dark-phase');
-        } else if (!entry.isIntersecting && window.scrollY > triggerLight.offsetTop) {
-          // さらに下に通り過ぎた場合（次の章への導線など）も明を維持
-          document.body.classList.remove('dark-phase');
+          fadeVolume(0.2); // 日常に戻るために音量を絞る
         } else if (!entry.isIntersecting && window.scrollY < triggerLight.offsetTop) {
-          // スクロールで「沈黙」へ逆戻りした場合は、再度「暗」にする
           if (window.scrollY > triggerDark.offsetTop) {
             document.body.classList.add('dark-phase');
+            fadeVolume(0.8); // 沈黙へ逆戻りしたら音量を上げる
           }
         }
       });
