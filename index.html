@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Layered & Pandemic ——変移確認デモ——</title>
+  <title>違和感と余白 ——Web ZINE 統合プロトタイプ——</title>
   <style>
-    /* ベースは共有いただいた美しいジンの世界観 */
+    /* 游明朝の佇まい、ジンの世界観のベース */
     body {
       margin: 0;
       padding: 0;
@@ -13,50 +13,71 @@
       color: #2c2a29;
       font-family: "YuMincho", "游明朝", serif;
       -webkit-font-smoothing: antialiased;
-      /* スクロールによる変移を起こすため、縦長に確保 */
-      min-height: 250vh; 
-      position: relative;
-      /* 背景色と文字色の滑らかな「ゆらぎ変容」のためのTransition */
-      transition: background-color 0.8s ease, color 0.8s ease;
+      overflow-x: hidden;
+      transition: background-color 1.2s ease, color 1.2s ease;
     }
 
-    /* ─── 背景で泳ぐ英語のレイヤー（文章読解を阻害しない） ─── */
-    .background-word-layer {
-      position: fixed;
-      top: 0;
-      left: 0;
+    /* ─── 1. 入口設計（ハッシュタグ目次） ─── */
+    .index-layer {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 24px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .canvas-title {
+      font-size: 1.3rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .tags-container {
+      position: relative;
       width: 100%;
-      height: 100vh;
-      pointer-events: none; /* 文章の選択やスクロールを邪魔しない */
-      z-index: 1;
+      max-width: 500px;
+      height: 350px; /* ここが感覚タグの漂う宇宙 */
     }
 
-    .bg-floating-word {
+    .floating-tag {
       position: absolute;
-      font-family: monospace;
-      font-size: 0.9rem;
-      /* 初期状態は極めて薄く（存在しない手前）、余白の変化で浮かび上がる */
-      color: #2c2a29;
-      opacity: 0;
-      letter-spacing: 0.1em;
+      font-size: 0.75rem;
+      color: #504e4b;
+      border: 1px solid #e0deda;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      background-color: rgba(255, 255, 255, 0.8);
       white-space: nowrap;
-      will-change: transform, opacity;
-      transition: opacity 1.2s ease;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: border-color 0.4s, background-color 0.4s, color 0.4s;
+      will-change: transform;
     }
 
-    /* ─── メインテキスト領域（主役の文章） ─── */
-    .zine-container {
-      position: relative;
-      z-index: 2; /* 浮遊ワードの手前に配置 */
+    .floating-tag:hover {
+      border-color: #2c2a29;
+      background-color: #2c2a29;
+      color: #fcfbf9;
+    }
+
+    /* ─── 2. 記事本文レイヤー（主役の文章・通常は非表示でルート分岐により出現） ─── */
+    .article-layer {
+      display: none; /* 初期状態 */
       max-width: 480px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 100px 24px;
       box-sizing: border-box;
     }
 
-    .section-block {
-      margin-bottom: 120px;
-      line-height: 2.2;
+    .zine-section {
+      margin-bottom: 180px;
+      line-height: 2.4;
       letter-spacing: 0.08em;
       font-size: 0.95rem;
     }
@@ -66,112 +87,106 @@
       font-weight: 500;
       letter-spacing: 0.15em;
       margin-bottom: 30px;
-      border-left: 2px solid #2c2a29;
+      border-left: 2px solid currentColor;
       padding-left: 12px;
-      transition: border-color 0.8s ease;
     }
 
-    /* ─── 出口設計（ハッシュタグリンク） ─── */
-    .footer-tags {
-      margin-top: 100px;
-      padding-top: 40px;
-      border-top: 1px solid rgba(0,0,0,0.05);
+    /* ─── 3. Background Layered（文章読解を邪魔しない英語浮遊ワード） ─── */
+    .bg-word-matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .swimming-word {
+      position: absolute;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: currentColor;
+      opacity: 0;
+      letter-spacing: 0.15em;
+      white-space: nowrap;
+      transition: opacity 1s ease;
+      will-change: transform, opacity;
+    }
+
+    /* ─── 4. 出口設計（ハッシュタグリンク） ─── */
+    .footer-nav {
+      margin-top: 120px;
       display: flex;
       gap: 15px;
       justify-content: center;
     }
 
-    .exit-tag {
-      font-size: 0.75rem;
-      color: inherit;
-      border: 1px solid rgba(0,0,0,0.1);
-      padding: 6px 14px;
-      border-radius: 20px;
-      text-decoration: none;
-      background-color: rgba(255, 255, 255, 0.5);
-      letter-spacing: 0.05em;
-      transition: all 0.4s;
-    }
-
-    .exit-tag:hover {
-      background-color: currentColor;
-      opacity: 0.1; /* 反転演出用 */
-    }
-
-    /* ─── Pandemic：エンドステート（最下部）完了時の完全変容スタイル ─── */
-    body.is-pandemic {
-      background-color: #1a1918; /* 完全に侵食された暗転 */
-      color: #dedcd8; /* 文字が浮かび上がる */
-    }
-    body.is-pandemic .chapter-title {
-      border-left-color: #dedcd8;
-    }
-    body.is-pandemic .exit-tag {
-      border-color: rgba(255,255,255,0.2);
-      background-color: rgba(0,0,0,0.3);
+    /* ─── 5. Pandemic：エンドステート（最下部）突入時の完全変容色 ─── */
+    body.is-pandemic-state {
+      background-color: #121110; /* 完全に色が変わりきった状態 */
+      color: #cfcdc9;
     }
   </style>
 </head>
 <body>
 
-  <!-- 背景で漂う英語キーワードのレイヤー -->
-  <div class="background-word-layer" id="wordLayer">
-    <div class="bg-floating-word" style="top: 20%; left: 10%;" data-trigger="layered">layered park</div>
-    <div class="bg-floating-word" style="top: 45%; left: 65%;" data-trigger="layered">cognition</div>
-    <div class="bg-floating-word" style="top: 70%; left: 15%;" data-trigger="layered">blind spot</div>
-    <div class="bg-floating-word" style="top: 30%; left: 75%;" data-trigger="pandemic">pandemic logic</div>
-    <div class="bg-floating-word" style="top: 60%; left: 40%;" data-trigger="pandemic">os rewrite</div>
+  <div class="index-layer" id="indexLayer">
+    <h1 class="canvas-title">違和感と余白</h1>
+    <div class="tags-container" id="canvas">
+      <a onclick="startRoute('simple')" class="floating-tag" style="top: 15%; left: 10%;">#目次通りの順番（simple）</a>
+      <a onclick="startRoute('息苦しさ')" class="floating-tag" style="top: 40%; left: 25%;">#組織の息苦しさ</a>
+      <a onclick="startRoute('ひっかかり')" class="floating-tag" style="top: 65%; left: 5%;">#個人のひっかかり</a>
+      <a onclick="startRoute('迷い')" class="floating-tag" style="top: 80%; left: 35%;">#迷い</a>
+    </div>
   </div>
 
-  <!-- 読むための最小限のテキスト領域 -->
-  <div class="zine-container">
+  <div class="bg-word-matrix" id="matrix">
+    <div class="swimming-word" style="top: 25%; left: 15%;" data-type="layered">layered park</div>
+    <div class="swimming-word" style="top: 50%; left: 70%;" data-type="layered">cognition gap</div>
+    <div class="swimming-word" style="top: 75%; left: 20%;" data-type="layered">blank space</div>
+    <div class="swimming-word" style="top: 35%; left: 60%;" data-type="pandemic">pandemic logic</div>
+    <div class="swimming-word" style="top: 60%; left: 30%;" data-type="pandemic">os rewrite</div>
+  </div>
+
+  <div class="article-layer" id="articleLayer">
     
-    <!-- 第8章（Layered）区間 -->
-    <div class="section-block" id="layeredSection">
+    <div class="zine-section" id="sectionLayered">
       <h2 class="chapter-title">第8章　layered park</h2>
       <p>
         空間はひとつ。しかし体験は一人ひとり異なる。<br>
         物理空間は共有したまま、一人ひとりに最適化された体験を立ち上げる。<br>
-        そこに活かせるテクノロジー、音声MR。
-      </p>
-      <p style="color: #8a8885; font-size: 0.85rem;">
-        （※ここをスクロール通過するとき、背景に英語のパワーワードが浮遊し、過ぎ去ると静かに消えます）
+        既存の空間に、軽やかなデジタルレイヤーを重ねる。
       </p>
     </div>
 
-    <!-- 第4章（Pandemic）区間 -->
-    <div class="section-block" id="pandemicSection">
+    <div class="zine-section" id="sectionPandemic">
       <h2 class="chapter-title">第4章　ストリートから始まる話</h2>
       <p>
         ウイルスは宣言しない。ただ、静かに広がる。<br>
         組織の変革も同じだ。「やります」と叫んだ瞬間、免疫が働く。<br>
-        だから、日常の隙間に仕込む。気づいたら、もう元には戻れない。
-      </p>
-      <p>
-        あなたがいなくても回り続ける仕組みを、現場に埋め込め。<br>
-        それが本当のインストールだ。
+        日常の隙間に仕込み、気づいたら、もう元には戻れない。
       </p>
     </div>
 
-    <!-- 出口設計（読み終わるタイミングで出現するハッシュタグ） -->
-    <div class="footer-tags">
-      <a href="#" class="exit-tag">#next</a>
-      <a href="#" class="exit-tag">#another</a>
+    <div class="footer-nav">
+      <a onclick="resetToIndex()" class="floating-tag" style="position:static;">#next</a>
+      <a onclick="resetToIndex()" class="floating-tag" style="position:static;">#another</a>
     </div>
 
   </div>
 
   <script>
-    /* ──────────────────────────────────────────────────────────────
-       1. 共有いただいたベースコードの「正弦波の微細な浮遊ロジック」を継承
-       ────────────────────────────────────────────────────────────── */
-    const bgWords = document.querySelectorAll('.bg-floating-word');
+    /* ==========================================================================
+       1. 共有いただいたベースの「正弦波（Math.sin）によるなめらかな浮遊」を完全継承
+       ========================================================================== */
+    const allTags = document.querySelectorAll('.floating-tag, .swimming-word');
     
-    bgWords.forEach((word) => {
-      const randomX = Math.random() * 20 + 10;
-      const randomY = Math.random() * 20 + 10;
-      const speedX = 0.0008 + (Math.random() * 0.0006);
-      const speedY = 0.0008 + (Math.random() * 0.0006);
+    allTags.forEach((tag) => {
+      const randomX = Math.random() * 15 + 5;
+      const randomY = Math.random() * 15 + 5;
+      const speedX = 0.001 + (Math.random() * 0.001);
+      const speedY = 0.001 + (Math.random() * 0.001);
       const phaseX = Math.random() * Math.PI * 2;
       const phaseY = Math.random() * Math.PI * 2;
 
@@ -179,51 +194,73 @@
         const time = performance.now();
         const x = Math.sin(time * speedX + phaseX) * randomX;
         const y = Math.cos(time * speedY + phaseY) * randomY;
-        word.style.transform = `translate(${x}px, ${y}px)`;
+        // ホバー時などの挙動を邪魔しないよう、translateのみを制御
+        if (tag.classList.contains('swimming-word') || !tag.matches(':hover')) {
+          tag.style.transform = `translate(${x}px, ${y}px)`;
+        }
         requestAnimationFrame(animate);
       }
       animate();
     });
 
-    /* ──────────────────────────────────────────────────────────────
-       2. スクロール連動：Layeredの出現・消滅 ＆ Pandemicの完全変容判定
-       ────────────────────────────────────────────────────────────── */
-    const layeredSection = document.getElementById('layeredSection');
-    const body = document.body;
+    /* ==========================================================================
+       2. ハッシュタグによるルート分岐（入り口設計）
+       ========================================================================== */
+    function startRoute(routeType) {
+      document.getElementById('indexLayer').style.display = 'none';
+      const articleLayer = document.getElementById('articleLayer');
+      articleLayer.style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+
+    function resetToIndex() {
+      document.body.classList.remove('is-pandemic-state');
+      document.getElementById('articleLayer').style.display = 'none';
+      document.getElementById('indexLayer').style.display = 'flex';
+      // 背景英語ワードを一斉に隠す
+      document.querySelectorAll('.swimming-word').forEach(w => w.style.opacity = '0');
+      window.scrollTo(0, 0);
+    }
+
+    /* ==========================================================================
+       3. スクロール連動：Layered（出現・消滅） ＆ Pandemic（エンドステート完全変容）
+       ========================================================================== */
+    const sectionLayered = document.getElementById('sectionLayered');
+    const swimmingWords = document.querySelectorAll('.swimming-word');
 
     window.addEventListener('scroll', () => {
+      if (document.getElementById('articleLayer').style.display === 'none') return;
+
       const scrollTop = window.scrollY;
       const windowHeight = window.innerHeight;
       const docHeight = document.documentElement.scrollHeight;
 
-      // 【Layered判定】第8章が画面内（余白変化のタイミング）にあるか
-      const rect = layeredSection.getBoundingClientRect();
-      const isLayeredActive = (rect.top < windowHeight && rect.bottom > 0);
+      // 【Layeredの変移】第8章のエリア（余白）が画面内に入ったか判定
+      const rect = sectionLayered.getBoundingClientRect();
+      // 画面内に第8章があるとき（＝画面色が変化するタイミングを模倣）
+      const isLayeredZone = (rect.top < windowHeight * 0.7 && rect.bottom > windowHeight * 0.2);
 
-      bgWords.forEach(word => {
-        const triggerType = word.getAttribute('data-trigger');
+      swimmingWords.forEach(word => {
+        const type = word.getAttribute('data-type');
         
-        if (triggerType === 'layered') {
-          // 第8章の区間にいるときだけ不透明度を上げ、通り過ぎると静かに消える
-          word.style.opacity = isLayeredActive ? '0.25' : '0';
+        if (type === 'layered') {
+          // 画面変化のタイミングで浮遊ワードが背景に出現、過ぎ去ると（あるいは戻ると）消える
+          word.style.opacity = isLayeredZone ? '0.3' : '0';
         } 
-        else if (triggerType === 'pandemic') {
-          // Pandemicワードは、スクロールが進むにつれてじわじわと濃くなる
+        else if (type === 'pandemic') {
+          // 下に進むにつれて、潜伏していたワードがじわじわと濃くなる
           const scrollPercent = scrollTop / (docHeight - windowHeight);
           word.style.opacity = (scrollPercent * 0.4).toString();
         }
       });
 
-      // 【Pandemic判定】スクロールが一番下（最下部）まで到達したか
-      // 猶予を持たせるため「残り5ピクセル」で完全にロック（OS書き換え）
-      if ((scrollTop + windowHeight) >= (docHeight - 5)) {
-        body.classList.add('is-pandemic');
+      // 【Pandemicの変移】スクロールが最下部（エンドステート）に到達したか
+      if ((scrollTop + windowHeight) >= (docHeight - 10)) {
+        document.body.classList.add('is-pandemic-state'); // 完全に色が変わるイメージ
       } else {
-        // 上にスクロールで戻したら元の色へ（変移の確認をしやすくするため）
-        body.classList.remove('is-pandemic');
+        document.body.classList.remove('is-pandemic-state');
       }
     });
   </script>
-
 </body>
 </html>
