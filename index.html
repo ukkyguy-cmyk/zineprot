@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LAYERED PARK (Step Change) - 違和感と余白</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #fcfbf9; /* 初期状態：静かな生成り色 */
+      color: #2c2a29;
+      font-family: "YuMincho", "游明朝", serif;
+      line-height: 2.3;
+      letter-spacing: 0.08em;
+      -webkit-font-smoothing: antialiased;
+      
+      /* 背景色と文字色の変化を、1秒かけて滑らかに遷移させる設定 */
+      transition: background-color 1.0s ease, color 1.0s ease;
+    }
+
+    /* 【新設定】沈潜モード（夜のフェーズ）になった時のスタイル */
+    body.dark-phase {
+      background-color: #232221; /* 深い影色（夜の公園の空気圧） */
+      color: #edebe6; /* 文字を生成り色に反転 */
+    }
+
+    .zine-container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 120px 24px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .chapter-title {
+      font-size: 1.4rem;
+      font-weight: 500;
+      margin-bottom: 80px;
+      letter-spacing: 0.15em;
+    }
+
+    p {
+      margin-bottom: 3.5rem;
+      font-size: 0.95rem;
+      text-align: justify;
+    }
+
+    /* B. 積層（Sticky Layer） */
+    .sticky-layer-container {
+      position: relative;
+      margin: 12rem 0;
+      height: 250px;
+    }
+
+    .sticky-phrase {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 45%;
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 2;
+      text-align: center;
+      z-index: 1;
+      letter-spacing: 0.12em;
+    }
+
+    /* A. 沈黙ページ（余白の物質化） */
+    .silence-space {
+      height: 85vh; /* 画面の大部分を占める沈黙 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .silence-prompt {
+      font-size: 0.75rem;
+      color: #8a8884;
+      letter-spacing: 0.2em;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+    /* 夜のフェーズの時だけ、うっすらとガイドを浮かび上がらせる */
+    body.dark-phase .silence-prompt {
+      opacity: 0.5;
+    }
+
+    /* エントリータグ */
+    .state-tags {
+      margin-bottom: 80px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      color: #706e6b;
+      border: 1px solid #e0deda;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="zine-container">
+    
+    <div class="state-tags">
+      <span class="tag">#境界線が曖昧な場所に惹かれる</span>
+      <span class="tag">#デジタルと土の匂いを同時に嗅ぎたい</span>
+    </div>
+
+    <div class="chapter-title">第8章<br>LAYERED PARK</div>
+
+    <p>都市の公園をひとつの平らな地面として捉える時代は終わった。私たちの目の前にある芝生は、物理的な土や草であると同時に、スマートフォンの画面越しに編み上げられるデジタルな情報層、そこで繰り広げられる認知の集積層でもある。</p>
+    
+    <p>行政が管理すべきは、もはや「施設」そのものではなく、その場所に重なり合う「レイヤーの調停」そのものなのではないか。物理的な境界線を引くことではなく、見えないレイヤーが互いを侵食し、あるいは包摂し合う状態をいかに許容するか。</p>
+
+    <div class="sticky-layer-container" id="dark-trigger">
+      <div class="sticky-phrase">
+        合意形成の前に、<br>認知共有がある。
+      </div>
+    </div>
+
+    <p>この視点に立ったとき、公園の設計図は単なる平面図から、解像度の異なる複数のレイヤーが重ね合わされた積層図へと変化する。一見、衝突しているように見える住民たちの意見も、彼らが「どのレイヤーに立って世界を観測しているか」がズレているだけであることが多い。</p>
+
+    <p>だからこそ、私たちは議論を急いではいけない。まずは、その場所にどのようなレイヤーが存在しているのかを、ただただ静かに、共に眺める時間が必要なのだ。</p>
+
+    <div class="silence-space">
+      <div class="silence-prompt">（耳を澄ます、あるいは通り過ぎる）</div>
+    </div>
+
+    <p>レイヤード・パーク。それは完成された都市のビジョンではない。絶えず上書きされ、剥がされ、また新しい層が付け足されていく、未完のキャンバスそのものである。私たちはその「余白」を、行政という名のマニュアルで埋め尽くしてはならない。</p>
+
+  </div>
+
+  <script>
+    const trigger = document.getElementById('dark-trigger');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // 強調句が画面内に入ったら、背景を夜（暗）にする
+          document.body.classList.add('dark-phase');
+        } else {
+          // 画面外（通り過ぎる、または上に戻る）に出たら、昼（明）に戻す
+          // ※もし沈黙ページを抜けた後に昼に戻したい場合は、トリガーの位置を調整可能です
+          if (window.scrollY < trigger.offsetTop) {
+            document.body.classList.remove('dark-phase');
+          }
+        }
+      });
+    }, {
+      rootMargin: "-20% 0px -20% 0px" /* 画面の中央20%の領域に入った瞬間に判定 */
+    });
+
+    observer.observe(trigger);
+  </script>
+
+</body>
+</html>
