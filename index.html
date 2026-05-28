@@ -25,11 +25,11 @@
             background-color: var(--bg-cream);
             color: var(--text-main);
             overflow-x: hidden;
-            transition: background-color 0.5s ease, color 0.5s ease;
+            transition: background-color 1.2s cubic-bezier(0.25, 1, 0.5, 1), color 1.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* ----------------------------------
-           1. アクセスコード画面 (Gate)
+           1. メンバー限定アクセス画面 (Gate)
         ------------------------------------- */
         #gate-screen {
             position: fixed;
@@ -44,7 +44,7 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), transform 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .gate-container {
@@ -55,84 +55,92 @@
         }
 
         .gate-title {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 300;
-            letter-spacing: 0.2em;
-            margin-bottom: 2rem;
+            letter-spacing: 0.3em;
+            margin-bottom: 3rem;
+            color: #fff;
         }
 
         .code-input {
-            width: 100%;
+            width: 80%;
             padding: 12px;
             background: transparent;
             border: none;
-            border-bottom: 1px solid rgba(207, 205, 201, 0.4);
+            border-bottom: 1px solid rgba(207, 205, 201, 0.3);
             color: #fff;
             text-align: center;
-            font-size: 1.2rem;
-            letter-spacing: 0.1em;
+            font-size: 1.1rem;
+            letter-spacing: 0.2em;
             outline: none;
-            margin-bottom: 1rem;
-            transition: border-color 0.3s;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.4s;
         }
 
         .code-input:focus {
-            border-bottom-color: var(--text-light);
+            border-bottom-color: rgba(207, 205, 201, 0.9);
         }
 
         .error-msg {
-            color: #ff6b6b;
-            font-size: 0.85rem;
+            color: #cc6666;
+            font-size: 0.8rem;
             min-height: 20px;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             opacity: 0;
             transition: opacity 0.3s;
+            letter-spacing: 0.1em;
         }
 
         .submit-btn {
             background: transparent;
-            border: 1px solid var(--text-light);
+            border: 1px solid rgba(207, 205, 201, 0.5);
             color: var(--text-light);
-            padding: 10px 30px;
+            padding: 8px 32px;
+            font-size: 0.8rem;
             cursor: pointer;
-            letter-spacing: 0.1em;
-            transition: all 0.3s;
+            letter-spacing: 0.15em;
+            transition: all 0.4s;
         }
 
         .submit-btn:hover {
             background: var(--text-light);
             color: var(--bg-dark);
+            border-color: var(--text-light);
         }
 
         /* ----------------------------------
-           2. メインコンテンツ構造
+           2. メインレイアウト
         ------------------------------------- */
         #main-content {
-            display: none; /* 初期は非表示 */
+            display: none;
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 1.5s ease;
         }
 
-        /* プレイリストナビゲーション */
+        /* 浮遊するルートナビゲーション */
         .hashtag-nav {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 30px;
+            right: 30px;
             z-index: 100;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             align-items: flex-end;
         }
 
         .tag-btn {
-            background: rgba(244, 241, 234, 0.8);
-            border: 1px solid rgba(0,0,0,0.1);
-            padding: 6px 12px;
+            background: rgba(244, 241, 234, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 5px 14px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            color: var(--text-main);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .tag-btn.active {
@@ -141,112 +149,138 @@
             border-color: var(--accent-green);
         }
 
-        /* 各章のコンテナ */
+        /* ----------------------------------
+           3. 章（テキスト空間）の設計
+        ------------------------------------- */
         .chapter-section {
-            min-height: 120vh;
-            padding: 10vh 10vw;
-            max-width: 800px;
+            min-height: 140vh; /* 余白を十分に持たせる */
+            padding: 15vh 12vw;
+            max-width: 750px;
             margin: 0 auto;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
             position: relative;
+            transition: opacity 0.6s ease;
+        }
+
+        .chapter-header {
+            margin-bottom: 4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
         }
 
         .chapter-title {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 700;
-            margin-bottom: 3rem;
             letter-spacing: 0.05em;
+            line-height: 1.4;
+        }
+
+        /* 削ぎ落とされた楽曲タップボタン */
+        .music-tap-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            text-decoration: none;
+            border: 1px solid rgba(90, 125, 101, 0.3);
+            padding: 6px 16px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .music-tap-link:hover {
+            background: var(--accent-green);
+            color: #fff;
         }
 
         .chapter-body {
-            font-size: 1.05rem;
-            line-height: 2.2;
-            letter-spacing: 0.03em;
-            white-space: pre-wrap; /* 改行をそのまま活かす */
-        }
-
-        /* 音声プレイヤーの埋め込みコンテナ */
-        .audio-container {
-            margin-top: 2rem;
-            padding: 15px;
-            background: rgba(0,0,0,0.03);
-            border-radius: 8px;
-        }
-
-        .audio-container iframe {
-            width: 100%;
-            height: 80px;
-            border: none;
+            font-size: 1rem;
+            line-height: 2.4; /* 改行の呼吸を美しく見せる広めの行間 */
+            letter-spacing: 0.04em;
+            white-space: pre-wrap;
+            color: inherit;
         }
 
         /* ----------------------------------
-           3. UX演出レイヤー（余白・キーセンテンス）
+           4. 余白・キーセンテンスのフェードUX
         ------------------------------------- */
         .margin-overlay {
             position: absolute;
-            top: 30%;
+            top: 35%;
             left: 0;
             width: 100%;
-            height: 40%; /* 30% - 70% の区間 */
+            height: 30%; /* 35% - 65% の深い区間 */
             pointer-events: none;
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transform: translateY(10px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
         .key-sentence {
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             font-weight: 700;
             text-align: center;
-            padding: 0 20px;
+            padding: 0 30px;
             color: var(--accent-green);
-            transform: translateY(20px);
-            transition: transform 0.4s ease;
+            letter-spacing: 0.1em;
+            line-height: 1.8;
         }
 
+        /* スクロール位置が余白に入った時のトリガー */
         .chapter-section.in-margin .margin-overlay {
             opacity: 1;
-        }
-
-        .chapter-section.in-margin .key-sentence {
             transform: translateY(0);
         }
 
         /* ----------------------------------
-           4. 特別章用スタイル
+           5. 特別章（PANDEMIC / LAYERED）の環境変容
         ------------------------------------- */
-        /* PANDEMIC（第4章）発症状態 */
-        body.pandemic-mode {
+        /* 第4章 PANDEMIC：引き返せない深黒への変容 */
+        body.pandemic-active {
             background-color: var(--bg-dark) !important;
             color: var(--text-light) !important;
         }
-        body.pandemic-mode .tag-btn {
-            background: rgba(18, 17, 16, 0.8);
+        body.pandemic-active .tag-btn {
+            background: rgba(18, 17, 16, 0.7);
             color: var(--text-light);
             border-color: rgba(255,255,255,0.1);
         }
+        body.pandemic-active .music-tap-link {
+            color: var(--text-light);
+            border-color: rgba(207, 205, 201, 0.4);
+        }
+        body.pandemic-active .key-sentence {
+            color: #fff;
+        }
 
-        /* LAYERED（第7・8章）重なり状態 */
-        body.layered-mode {
+        /* 第7・8章 LAYERED：思考が重なる淡い灰緑 */
+        body.layered-active {
             background-color: var(--bg-layered);
         }
-        
-        .layered-bg-text {
+
+        /* 背景に漂う認知インターフェースの文字ノイズ */
+        .uci-bg-noise {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 5rem;
+            font-size: 6rem;
             font-weight: 900;
-            color: rgba(90, 125, 101, 0.05);
+            letter-spacing: 0.1em;
+            color: rgba(90, 125, 101, 0.03);
             z-index: -1;
             pointer-events: none;
-            display: none;
+            opacity: 0;
+            transition: opacity 1s ease;
         }
-        body.layered-mode .layered-bg-text {
-            display: block;
+        body.layered-active .uci-bg-noise {
+            opacity: 1;
         }
     </style>
 </head>
@@ -255,29 +289,32 @@
     <div id="gate-screen">
         <div class="gate-container">
             <h1 class="gate-title">違和感と余白</h1>
-            <input type="password" id="code-input" class="code-input" placeholder="ACCESS CODE" autocomplete="off">
-            <div id="error-msg" class="error-msg">コードが正しくありません</div>
+            <input type="password" id="code-input" class="code-input" placeholder="CODE" autocomplete="off">
+            <div id="error-msg" class="error-msg">違和感を、もう一度巡らせる。</div>
             <button onclick="checkCode()" class="submit-btn">ENTER</button>
         </div>
     </div>
 
     <div id="main-content">
+        
         <nav class="hashtag-nav">
             <button class="tag-btn active" onclick="filterRoute('all')">#01_目次通りの順番</button>
-            <button class="tag-btn" onclick="filterRoute('management')">#02_組織の息苦しさ</button>
-            <button class="tag-btn" onclick="filterRoute('iwakan')">#03_個人のひっかかり</button>
-            <button class="tag-btn" onclick="filterRoute('streetos')">#04_デジタルと土の匂い</button>
-            <button class="tag-btn" onclick="filterRoute('gradient')">#05_正論のぶつかり合い</button>
-            <button class="tag-btn" onclick="filterRoute('tillage')">#06_背中にマニュアルはない</button>
-            <button class="tag-btn" onclick="filterRoute('margin')">#07_境界線の曖昧な場所</button>
+            <button class="tag-btn" onclick="filterRoute('route-02')">#02_組織の息苦しさ</button>
+            <button class="tag-btn" onclick="filterRoute('route-03')">#03_個人のひっかかり</button>
+            <button class="tag-btn" onclick="filterRoute('route-04')">#04_デジタルと土の匂い</button>
+            <button class="tag-btn" onclick="filterRoute('route-05')">#05_正論のぶつかり合い</button>
+            <button class="tag-btn" onclick="filterRoute('route-06')">#06_背中にマニュアルはない</button>
+            <button class="tag-btn" onclick="filterRoute('route-07')">#07_境界線の曖昧な場所</button>
         </nav>
 
-        <div id="layered-text" class="layered-bg-text">URBAN COGNITION</div>
+        <div id="bg-noise" class="uci-bg-noise">UCI / LAYERED</div>
 
-        <section class="chapter-section" id="ch-0" data-routes="all margin">
-            <h2 class="chapter-title">序章　問いの種-iwakan-</h2>
-            <div class="audio-container">
-                <iframe src="https://suno.com/embed/h44d2OrvKzHAmJs7" allow="autoplay"></iframe>
+        <section class="chapter-section" id="ch-0" data-routes="all route-07">
+            <div class="chapter-header">
+                <h2 class="chapter-title">序章　問いの種-iwakan-</h2>
+                <a href="https://suno.com/s/h44d2OrvKzHAmJs7" target="_blank" class="music-tap-link">
+                    <span>♫ PLAY SOUND</span>
+                </a>
             </div>
             <div class="chapter-body">
 言葉にならないまま、残るものがある。
@@ -295,67 +332,156 @@
 忙しさに紛れて。取るに足らないことだと決めつけて。
 それが、言語化される手前で。
 
-...（以下、スクロール体験のために本文が続きます）...
+でも、その何かをあえて留めていると、あることに気づく。
+
+その「なんか違う」が、問いの始まりだと。
+
+
+問いは、育つ。
+
+すぐには言葉にならない。
+形にもならない。
+でも、心の中で静かに醸成し、発酵し続ける。
+
+その違和感に引っかかり続けていると、
+ある瞬間、
+ふと言葉が舞い降りてくることがある。
+そこから、見えていなかったものに、急に輪郭が見えはじめる。
+
+発見というより、気づき。
+外から得るものではなく、内側から滲み出てくるもの。ご褒美みたいな感覚。
+
+誰にでも、きっとある。
+
+言葉にならない、でも確かにある、その感覚。
+
+急がなくていい。
+答えを出さなくていい。
+
+ただ流さないで、ひっかかりを認知して、留めておいて欲しい。
+
+その種が、やがて問いになる。
+その問いが、やがて言葉になる。
+その言葉が、やがて世界をほんの少し、動かす。
             </div>
             <div class="margin-overlay">
                 <div class="key-sentence">「なんか違う」が、問いの始まりだと。</div>
             </div>
         </section>
 
-        <section class="chapter-section" id="ch-1" data-routes="all iwakan tillage">
-            <h2 class="chapter-title">1 思考 in the park</h2>
-            <div class="audio-container">
-                <iframe src="https://suno.com/embed/UUK47O2sYngngXJQ"></iframe>
+        <section class="chapter-section" id="ch-1" data-routes="all route-03 route-06">
+            <div class="chapter-header">
+                <h2 class="chapter-title">1 思考 in the park</h2>
+                <a href="https://suno.com/s/UUK47O2sYngngXJQ" target="_blank" class="music-tap-link">
+                    <span>♫ PLAY SOUND</span>
+                </a>
             </div>
             <div class="chapter-body">
 公園に行ってみる。
 気がつくとぼんやりと考えはじめる。
 
 何を考えるのかを決めてるわけじゃない。
-...
+この間からの続き、みたいにタスク感があるわけでもない。
+ただ漠難となんとなく考えるモードになる。
+
+壁がないから、何かにぶつかることもない。
+天井がないから、思考に上限がない。
+
+空が広い。
+風が吹く。
+鳥がさえずる。
+木々が揺れる。
+誰かの話し声。
+足音。
+
+（中略）
+
+目的地がなくても方向づけだけすればいい。
+スカラーをベクトルに。
+ただ在るものを問い直して、在った方がいいものくらいにしていく。
+
+今日もまた公園で。
+
+今度はどんな違和感を連れてきてくれるだろうか。
+
+思考コンパスが静かに動きはじめた。
             </div>
             <div class="margin-overlay">
                 <div class="key-sentence">ただ在るものを問い直して、在った方がいいものくらいにしていく。</div>
             </div>
         </section>
 
-        <section class="chapter-section" id="ch-4" data-routes="all management tillage" data-ux="pandemic">
-            <h2 class="chapter-title">4 shall we dance?</h2>
-            <div class="audio-container">
-                <iframe id="suno-ch4" src="https://suno.com/embed/LLQI1pFIX8dQ9m7H"></iframe>
+        <section class="chapter-section" id="ch-4" data-routes="all route-02 route-06" data-ux="pandemic">
+            <div class="chapter-header">
+                <h2 class="chapter-title">4 shall we dance?</h2>
+                <a href="https://suno.com/s/LLQI1pFIX8dQ9m7H" target="_blank" class="music-tap-link">
+                    <span>♫ PLAY SOUND</span>
+                </a>
             </div>
             <div class="chapter-body">
 ストリートから始まる話
 
 「改革」と言った瞬間、敵が生まれる。
 だから、言わない。
-...
+
+公務員という仕事を続けていると、ある確信が育ってくる。
+現場で泥をこね、愚痴を拾い、手を動かし続けた者だけが、本当の地図を持っている、という確信だ。
+
+（中略）
+
+臨界点を超えたら、動かせ。成果を可視化して、既成事実にする。
+「起きてしまったこと」を前に、反対意見は力を失う。
+
+あなたがいなくても回り続ける仕組みを、現場に埋め込め。
+それが本当のインストールだ。仕組みが呼吸し始めた瞬間、改革は完成する。
             </div>
             <div class="margin-overlay">
                 <div class="key-sentence">日常の隙間に仕込み、気づいたら、もう元には戻れない──</div>
             </div>
         </section>
 
-        <section class="chapter-section" id="ch-7" data-routes="all streetos gradient margin" data-ux="layered">
-            <h2 class="chapter-title">7 UCI</h2>
-            <div class="audio-container">
-                <iframe src="https://suno.com/embed/F0peTNtJdCevf2HE"></iframe>
+        <section class="chapter-section" id="ch-7" data-routes="all route-04 route-05 route-07" data-ux="layered">
+            <div class="chapter-header">
+                <h2 class="chapter-title">7 UCI</h2>
+                <a href="https://suno.com/s/F0peTNtJdCevf2HE" target="_blank" class="music-tap-link">
+                    <span>♫ PLAY SOUND</span>
+                </a>
             </div>
             <div class="chapter-body">
 都市を変える前に、
 都市の見え方を共有することから始めよう。
-...
+
+合意形成の前に、
+認知共有がある。
+
+⸻
+
+最近、「都市認知インターフェース（Urban Cognition Interface）」というものを考えている。
+（中略）
+着想は、妄想へ泳ぎ、
+妄想は、徐々に思想になる。
+
+思想はレイヤーをまとい、
+仮想は、やがて実装へ向かう。
+
+認知獲得のための可視化装置。
+
+“Urban Cognition Interface”
+
+都市を変える前に、
+都市の見え方を共有する。
+
+今を認めるところから。
             </div>
             <div class="margin-overlay">
                 <div class="key-sentence">合意形成の前に、認知共有がある。</div>
             </div>
         </section>
 
-        </div>
+    </div>
 
     <script>
-        // アクセスコード認証
-        const CORRECT_CODE = "ukkyukai";
+        const ACCESS_CODE = "ukkyukai";
 
         function checkCode() {
             const input = document.getElementById("code-input").value;
@@ -363,44 +489,36 @@
             const gate = document.getElementById("gate-screen");
             const main = document.getElementById("main-content");
 
-            if (input === CORRECT_CODE) {
+            if (input === ACCESS_CODE) {
                 gate.style.opacity = "0";
-                gate.style.transform = "scale(0.95)";
+                gate.style.transform = "scale(0.98)";
                 setTimeout(() => {
                     gate.style.display = "none";
                     main.style.display = "block";
                     setTimeout(() => main.style.opacity = "1", 50);
-                }, 800);
+                }, 1000);
             } else {
                 errorMsg.style.opacity = "1";
                 document.getElementById("code-input").value = "";
             }
         }
 
-        // Enterキーでも決定できるように
         document.getElementById("code-input").addEventListener("keypress", function(e) {
             if (e.key === "Enter") checkCode();
         });
 
-        // ハッシュタグルートによるフィルタリング
         function filterRoute(routeName) {
-            // ナビボタンのハイライト切り替え
             document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
 
-            const chapters = document.querySelectorAll('.chapter-section');
-            chapters.forEach(ch => {
+            document.querySelectorAll('.chapter-section').forEach(ch => {
                 const routes = ch.getAttribute('data-routes').split(' ');
-                if (routeName === 'all' || routes.includes(routeName)) {
-                    ch.style.display = 'block';
-                } else {
-                    ch.style.display = 'none';
-                }
+                ch.style.display = (routeName === 'all' || routes.includes(routeName)) ? 'block' : 'none';
             });
         }
 
-        // スクロールに応じた動的UX制御（余白区間の判定と特殊演出）
-        let pandemicTriggered = false; // 不可逆ロック用フラグ
+        // スクロール時の「余白区間」および環境変容のミリ単位の監視
+        let pandemicFired = false;
 
         window.addEventListener('scroll', () => {
             const chapters = document.querySelectorAll('.chapter-section');
@@ -411,36 +529,33 @@
 
                 const rect = ch.getBoundingClientRect();
                 const chHeight = rect.height;
-                // 各章の中での読者のスクロール進捗（0.0 〜 1.0）
+                // 章の中でのスクロール進捗（0.0 〜 1.0）
                 const progress = (-rect.top) / (chHeight - window.innerHeight);
 
-                // 30% 〜 70% の「余白区間」の判定
-                if (progress >= 0.3 && progress <= 0.7) {
+                // 35% 〜 65% の深い余白区間の判定
+                if (progress >= 0.35 && progress <= 0.65) {
                     ch.classList.add('in-margin');
                 } else {
                     ch.classList.remove('in-margin');
                 }
 
-                // 特殊演出1: PANDEMIC (第4章) のスクロール量同期
+                // 第4章：50%を超えたら世界を深黒に不可逆ロック
                 if (ch.getAttribute('data-ux') === 'pandemic') {
-                    if (progress >= 0.5) {
-                        pandemicTriggered = true; // 50%を超えたらロック起動
+                    if (progress >= 0.50) {
+                        pandemicFired = true;
                     }
-                    if (pandemicTriggered) {
-                        body.classList.add('pandemic-mode');
-                        // iframeの音量やフィルター（擬似制御またはポストメッセージ等）をここに仕込む
+                    if (pandemicFired) {
+                        body.classList.add('pandemic-active');
                     }
                 }
 
-                // 特殊演出2: LAYERED (第7・8章) のスクロール量同期
+                // 第7章：レイヤード環境のモーフィング
                 if (ch.getAttribute('data-ux') === 'layered') {
-                    if (progress >= 0.2 && progress <= 0.75) {
-                        body.classList.add('layered-mode');
-                        // スクロール量に応じて背景英語の透明度を動かす
-                        const opacity = (progress - 0.2) / 0.55;
-                        document.getElementById('layered-text').style.opacity = Math.min(opacity, 0.15);
-                    } else {
-                        body.classList.remove('layered-mode');
+                    if (progress >= 0.20 && progress <= 0.75) {
+                        body.classList.add('layered-active');
+                    } else if (progress < 0.15 || progress > 0.80) {
+                        // 4章のロックがかかっていない場合のみ背景をクリームに戻す
+                        if (!pandemicFired) body.classList.remove('layered-active');
                     }
                 }
             });
