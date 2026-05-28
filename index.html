@@ -20,7 +20,7 @@ html, body {
 
 * { box-sizing: border-box; }
 
-/* ─── 🌊 背景浮遊ワード（画面外への飛び出しによる右ズレを徹底防御） ─── */
+/* ─── 🌊 背景浮遊ワード（最背面） ─── */
 .bg-words {
   position: fixed; inset: 0; pointer-events: none; z-index: 1;
   width: 100vw; height: 100vh; overflow: hidden;
@@ -32,12 +32,12 @@ html, body {
   color: currentColor;
 }
 
-/* ─── 📖 ZINE 全体構造（横幅を100%以下に固定） ─── */
+/* ─── 📖 ZINE 全体構造 ─── */
 #zine-content { display: none; width: 100%; overflow-x: hidden; }
 #zine-content.visible { display: block; }
 
 .chapter-scroll {
-  min-height: 280vh;
+  min-height: 250vh; /* スマホでのスクロール量を適正化 */
   position: relative;
   width: 100%;
 }
@@ -49,9 +49,8 @@ html, body {
   width: 100%;
   max-width: 520px; /* スマホの最大横幅 */
   margin: 0 auto;
-  padding: 0 24px; /* 左右の余白をスマホ最適化 */
+  padding: 0 24px;
   z-index: 10;
-  overflow: hidden; /* この中でのハミ出しもカット */
 }
 
 /* ─── 🚪 中扉（インサイド・カバー） ─── */
@@ -61,7 +60,8 @@ html, body {
   padding: 0 24px;
   display: flex; flex-direction: column;
   justify-content: center; align-items: center;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 15;
   pointer-events: auto;
 }
 .door-label {
@@ -84,18 +84,23 @@ html, body {
 .qr-box:hover { opacity: 0.8; }
 .qr-box img, .qr-box canvas { width: 42px !important; height: 42px !important; }
 
-/* ─── 🖋️ 本文組版（絶対行間・文頭字下げ） ─── */
+/* ─── 🖋️ 本文組版（前面に配置し、テキスト消失を防止） ─── */
 .body-container {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   padding: 0 24px;
   display: flex; flex-direction: column;
   justify-content: center; align-items: center;
-  opacity: 0; transform: translateY(16px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: 20; /* 中扉より前面に引き上げる */
   pointer-events: none;
 }
-.body-container.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.body-container.active { 
+  opacity: 1; 
+  transform: translateY(0); 
+  pointer-events: auto; 
+}
 
 .chap-body {
   font-size: 14px; font-weight: 300; width: 100%;
@@ -108,7 +113,7 @@ html, body {
 .key-line {
   font-size: 15px; font-weight: 500; color: #1a1814;
   opacity: 0; transform: translateY(12px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition: opacity 0.6s ease, transform 0.6s ease;
   margin: 0 0 36px 0; display: block; text-indent: 0;
   letter-spacing: 0.08em; line-height: 1.8; width: 100%;
 }
@@ -117,7 +122,7 @@ html, body {
 /* ナビゲーション */
 .chap-nav {
   opacity: 0; transform: translateY(8px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
   display: flex; gap: 12px; margin-top: 24px;
   width: 100%; justify-content: flex-end; pointer-events: none;
 }
@@ -130,7 +135,7 @@ html, body {
 }
 .nav-btn:hover { border-color: #1a1814; color: #1a1814; }
 
-.chapter-divider { height: 40vh; width: 100%; }
+.chapter-divider { height: 30vh; width: 100%; }
 
 /* ─── 🔒 ロック画面 & 目次（横ブレ完全ガード） ─── */
 #lock-screen, #index-screen {
@@ -160,7 +165,7 @@ html, body {
 .index-title { font-size: 22px; font-weight: 700; letter-spacing: 0.1em; text-align: center; }
 .index-subtitle { font-size: 11px; color: #9a9590; letter-spacing: 0.2em; margin-top: -24px; text-align: center; }
 
-/* 目次タグのレスポンシブ配置（スマホ画面内に必ず収める） */
+/* 目次タグのレスポンシブ配置 */
 .tags-wrap { position: relative; width: 100%; max-width: 340px; height: 380px; margin: 0 auto; }
 .route-tag {
   position: absolute; font-size: 11px; color: #5a5550; border: 1px solid #e4dfd8;
@@ -212,7 +217,6 @@ body.pandemic-locked .chap-body { color: #cfcdc9 !important; }
   <div class="index-title">違和感と余白</div>
   <div class="index-subtitle">——公園行政の覚書——</div>
   <div class="tags-wrap">
-    <!-- スマホ縦画面用に配置の％を内側に調整 -->
     <div class="route-tag" style="top:5%;left:2%" onclick="startRoute('simple')">#01 目次通りの順番</div>
     <div class="route-tag" style="top:25%;left:20%" onclick="startRoute('息苦しさ')">#02 組織の息苦しさ</div>
     <div class="route-tag" style="top:45%;left:2%" onclick="startRoute('ひっかかり')">#03 個人のひっかかり</div>
@@ -694,6 +698,7 @@ function onScroll() {
     const rect = chap.getBoundingClientRect();
     const chapH = chap.offsetHeight;
     
+    // 現在の章のスクロール進捗（0〜1）
     const progress = Math.max(0, Math.min(1, -rect.top / (chapH - winH)));
     const chapNum = parseInt(chap.getAttribute('data-chap'));
     const type = chap.getAttribute('data-type');
@@ -705,9 +710,9 @@ function onScroll() {
 
     if (rect.top < winH && rect.bottom > 0) {
       
-      // 中扉フェードアウト
-      if (progress <= 0.25) {
-        const doorFade = 1 - (progress / 0.25);
+      // 🚪 中扉のコントロール（スクロール前半で静かに消える）
+      if (progress <= 0.3) {
+        const doorFade = 1 - (progress / 0.3);
         door.style.opacity = doorFade;
         door.style.transform = `translateY(${-progress * 40}px)`;
         door.style.pointerEvents = 'auto';
@@ -716,32 +721,34 @@ function onScroll() {
         door.style.pointerEvents = 'none';
       }
 
-      // 本文フェードイン
-      if (progress >= 0.45) {
+      // 🖋️ 本文のコントロール（中扉が消え始めたら確実に表示）
+      if (progress > 0.25 && progress < 0.9) {
         bodyCont.classList.add('active');
-        if (progress >= 0.50 && progress <= 0.80) {
+        
+        // 字幕演出（中盤でクローズアップ）
+        if (progress >= 0.4 && progress <= 0.85) {
           if (key) key.classList.add('active');
         } else {
-          if (key && progress < 0.50) key.classList.remove('active');
+          if (key) key.classList.remove('active');
         }
       } else {
         bodyCont.classList.remove('active');
         if (key) key.classList.remove('active');
       }
 
-      // ナビボタン
+      // 🧭 ナビボタンの出現タイミング
       if (nav) {
-        if (progress >= 0.78) {
+        if (progress >= 0.7) {
           nav.classList.add('visible');
         } else {
           nav.classList.remove('visible');
         }
       }
 
-      // PANDEMIC演出
+      // 🎬 PANDEMIC モード演出
       if (type === 'pandemic' && !pandemicLocked) {
-        if (progress >= 0.40) {
-          const pf = Math.min(1, (progress - 0.40) / 0.35);
+        if (progress >= 0.3) {
+          const pf = Math.min(1, (progress - 0.3) / 0.45);
           const bgR = Math.round(252 - 234 * pf); const bgG = Math.round(251 - 234 * pf); const bgB = Math.round(250 - 234 * pf);
           const tR = Math.round(43 + 164 * pf); const tG = Math.round(41 + 164 * pf); const tB = Math.round(37 + 164 * pf);
           document.body.style.backgroundColor = `rgb(${bgR},${bgG},${bgB})`;
@@ -751,7 +758,7 @@ function onScroll() {
             w.style.opacity = (0.05 + pf * 0.35).toString();
           });
 
-          if (progress >= 0.80) {
+          if (progress >= 0.75) {
             pandemicLocked = true;
             document.body.classList.add('pandemic-locked');
             document.body.style.backgroundColor = ''; document.body.style.color = '';
@@ -762,10 +769,10 @@ function onScroll() {
         }
       }
 
-      // LAYERED演出
+      // 🌊 LAYERED モード演出
       if (type === 'layered') {
-        if (progress >= 0.40 && progress <= 0.85) {
-          const factor = Math.sin(((progress - 0.40) / 0.45) * Math.PI);
+        if (progress >= 0.3 && progress <= 0.85) {
+          const factor = Math.sin(((progress - 0.3) / 0.55) * Math.PI);
           const r = Math.round(252 - 10 * factor); const g = Math.round(251 - 8 * factor); const b = Math.round(250 - 10 * factor);
           if (!pandemicLocked) document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
           document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => {
