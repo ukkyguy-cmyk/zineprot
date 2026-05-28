@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>違和感と余白 ——Web ZINE 統合完成版——</title>
+  <title>違和感と余白 ——Web ZINE 統合完成版 v2——</title>
   <style>
     /* ─── 游明朝の静かな佇まい ─── */
     body {
@@ -15,7 +15,8 @@
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
       min-height: 500vh; /* スクロールによる「余白の行為」を担保する高さ */
-      transition: background-color 1.2s ease, color 1.2s ease;
+      /* 滑らかな色戻りのためのベース（Pandemicのロック時などにも適用） */
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     /* ─── 1. 入口：感覚タグが漂う宇宙（目次） ─── */
@@ -83,7 +84,7 @@
     .zine-section {
       position: absolute;
       top: 50%;
-      left: 50%; /* ←【バグ修正】「50+%」になっていた記述ミスを正確に修正 */
+      left: 50%;
       transform: translate(-50%, -50%);
       width: 100%;
       max-width: 480px;
@@ -138,7 +139,7 @@
       opacity: 0;
       letter-spacing: 0.15em;
       white-space: nowrap;
-      transition: opacity 0.8s ease;
+      transition: opacity 0.6s ease;
       will-change: transform, opacity;
     }
 
@@ -160,13 +161,10 @@
       pointer-events: auto;
     }
 
-    /* ─── 5. 特別UX：Pandemicの不可逆変容暗転 ─── */
-    body.is-pandemic-state {
-      background-color: #121110;
-      color: #cfcdc9;
-    }
-    body.is-pandemic-state .key-sentence {
-      border-bottom-color: rgba(255,255,255,0.2);
+    /* ─── 5. 特別UX：Pandemicの完全変容スタイル（JSで動的制御するが、ロック時のスタイルとして保持） ─── */
+    body.is-pandemic-locked {
+      background-color: #121110 !important;
+      color: #cfcdc9 !important;
     }
   </style>
 </head>
@@ -190,7 +188,7 @@
     <div class="swimming-word" style="top: 45%; left: 75%;" data-type="layered">cognition gap</div>
     <div class="swimming-word" style="top: 75%; left: 15%;" data-type="layered">blank space</div>
     <div class="swimming-word" style="top: 30%; left: 65%;" data-type="pandemic">pandemic logic</div>
-    <div class="swimming-word" style="top: 65%; left: 40%;" data-type="pandemic">os overwrite</div>
+    <div class="swimming-word" style="top: 65%; left: 40%;" data-type="pandemic">os rewrite</div>
   </div>
 
   <div class="fixed-article-layer" id="articleLayer">
@@ -202,7 +200,7 @@
 
     <div class="zine-section" id="chap_1">
       <div class="chapter-title">第1章 / iwakan</div>
-      <p>公園のベンチの配置が変わったとき、誰も理由を語らなかった。<br><span class="key-sentence">「その違和感は、まだ名付けられていない。」</span><br>正論で片付けられる前の、胸のつかえを耕すこと。</p>
+      <p>公園 achievements のベンチの配置が変わったとき、誰も理由を語らなかった。<br><span class="key-sentence">「その違和感は、まだ名付けられていない。」</span><br>正論で片付けられる前の、胸のつかえを耕すこと。</p>
     </div>
 
     <div class="zine-section" id="chap_2">
@@ -283,7 +281,7 @@
     });
 
     /* ==========================================================================
-       2. 7ルートのデータ構造（全章を網羅・重複あり）
+       2. 7ルートのデータ構造
        ========================================================================== */
     const routes = {
       'simple':     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 
@@ -311,7 +309,9 @@
       setTimeout(() => {
         document.getElementById('indexLayer').style.display = 'none';
         document.getElementById('articleLayer').style.display = 'block';
-        document.body.classList.remove('is-pandemic-state');
+        document.body.className = ''; // クラスリセット
+        document.body.style.backgroundColor = '#fcfbf9';
+        document.body.style.color = '#2c2a29';
         renderCurrentSection();
       }, 400);
     }
@@ -338,7 +338,9 @@
 
     function resetToIndex() {
       isPandemicLocked = false;
-      document.body.classList.remove('is-pandemic-state');
+      document.body.className = '';
+      document.body.style.backgroundColor = '#fcfbf9';
+      document.body.style.color = '#2c2a29';
       document.getElementById('articleLayer').style.display = 'none';
       document.getElementById('indexLayer').style.display = 'flex';
       setTimeout(() => {
@@ -349,7 +351,7 @@
     }
 
     /* ==========================================================================
-       4. スクロール連動：言葉の固定 ↔ 余白の変移ロジック
+       4. 【核心】スクロール連動：余白の変化と色変化の完全線形同期
        ========================================================================== */
     window.addEventListener('scroll', updateZineByScroll);
 
@@ -366,43 +368,85 @@
       const swimmingWords = document.querySelectorAll('.swimming-word');
       const footerNav = document.getElementById('footerNav');
 
-      // ─── A. 全章共通UX：スクロールの中間領域で「キーセンテンスによる余白」が起動 ───
-      const isWordActiveZone = (scrollPercent > 0.15 && scrollPercent < 0.75);
-
-      swimmingWords.forEach(word => {
-        const type = word.getAttribute('data-type');
+      // 不可逆ロックがかかっていない場合のみ、スクロール量に応じた動的背景色制御を行う
+      if (!isPandemicLocked) {
         
-        // ─── B. 第7章・第8章：Layered 特別UX ───
-        if (type === 'layered') {
-          if ((activeChapId === 7 || activeChapId === 8) && isWordActiveZone) {
-            word.style.opacity = '0.35'; 
+        // ─── 💡 【Layered：7章・8章】余白の中で徐々に色を変え、抜けると戻る ───
+        if (activeChapId === 7 || activeChapId === 8) {
+          // 余白スクロール区間を 20%〜75% と定義
+          if (scrollPercent >= 0.2 && scrollPercent <= 0.75) {
+            // 区間内での進行度（0.0 〜 1.0）
+            const factor = (scrollPercent - 0.2) / 0.55;
+            // サインカーブを用いて、中央（50%付近）で最も変化が深くなるゆらぎ
+            const waveFactor = Math.sin(factor * Math.PI); 
+
+            // クリーム色(#fcfbf9) から 淡い灰緑色(#eff1ed) へなめらかにモーフィング
+            const r = Math.round(252 - (13 * waveFactor));
+            const g = Math.round(251 - (10 * waveFactor));
+            const b = Math.round(249 - (12 * waveFactor));
+            
+            document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            // 背景ワードの不透明度も色の深度と完全同期
+            swimmingWords.forEach(w => {
+              if (w.getAttribute('data-type') === 'layered') w.style.opacity = (waveFactor * 0.4).toString();
+            });
           } else {
-            word.style.opacity = '0'; 
+            // 余白区間の手前、あるいは終了後は元の色に完全に戻る
+            document.body.style.backgroundColor = '#fcfbf9';
+            swimmingWords.forEach(w => {
+              if (w.getAttribute('data-type') === 'layered') w.style.opacity = '0';
+            });
+          }
+        }
+
+        // ─── 💡 【Pandemic：4章】早めの暗転（50%から侵食開始、最下部手前で完了） ───
+        else if (activeChapId === 4) {
+          if (scrollPercent >= 0.4) {
+            // 40%からスタートし、85%に達した時点で1.0（完全暗転）になるように前倒し計算
+            const pFactor = Math.min(1, (scrollPercent - 0.4) / 0.45);
+
+            // クリーム色(#fcfbf9) から 深黒(#121110) への線形補間
+            const bgR = Math.round(252 - (234 * pFactor));
+            const bgG = Math.round(251 - (234 * pFactor));
+            const bgB = Math.round(249 - (233 * pFactor));
+            
+            // 文字色も反転：#2c2a29 から #cfcdc9 への線形補間
+            const textR = Math.round(44 + (163 * pFactor));
+            const textG = Math.round(42 + (163 * pFactor));
+            const textB = Math.round(41 + (160 * pFactor));
+
+            document.body.style.backgroundColor = `rgb(${bgR}, ${bgG}, ${bgB})`;
+            document.body.style.color = `rgb(${textR}, ${textG}, ${textB})`;
+
+            // 潜伏ワードの可視化
+            swimmingWords.forEach(w => {
+              if (w.getAttribute('data-type') === 'pandemic') w.style.opacity = (pFactor * 0.5).toString();
+            });
+
+            // 85%を超えたら不可逆ロックを起動（これ以降スクロールを戻しても黒いまま）
+            if (scrollPercent >= 0.85) {
+              isPandemicLocked = true;
+              document.body.classList.add('is-pandemic-locked');
+            }
+          } else {
+            // 40%未満はクリーン状態
+            document.body.style.backgroundColor = '#fcfbf9';
+            document.body.style.color = '#2c2a29';
+            swimmingWords.forEach(w => {
+              if (w.getAttribute('data-type') === 'pandemic') w.style.opacity = '0';
+            });
           }
         }
         
-        // ─── C. 第4章：Pandemic 特別UX（潜伏） ───
-        if (type === 'pandemic') {
-          if (activeChapId === 4) {
-            word.style.opacity = (scrollPercent * 0.5).toString();
-          } else {
-            word.style.opacity = '0';
-          }
+        // 通常の章
+        else {
+          document.body.style.backgroundColor = '#fcfbf9';
+          document.body.style.color = '#2c2a29';
+          swimmingWords.forEach(w => w.style.opacity = '0');
         }
-      });
-
-      // ─── D. 第4章：Pandemic 特別UX（エンドステート不可逆暗転） ───
-      if (activeChapId === 4 && scrollPercent >= 0.95) {
-        isPandemicLocked = true; 
       }
 
-      if (isPandemicLocked || (activeChapId === 4 && scrollPercent >= 0.95)) {
-        document.body.classList.add('is-pandemic-state'); 
-      } else {
-        document.body.classList.remove('is-pandemic-state');
-      }
-
-      // ─── E. 出口の可視化 ───
+      // ─── 出口（ナビゲーションタグ）の可視化判定 ───
       if (scrollPercent >= 0.85) {
         footerNav.classList.add('is-visible');
         const nextBtn = footerNav.querySelector('a');
