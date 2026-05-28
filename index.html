@@ -3,41 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>違和感と余白</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;500;700&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<title>UXモーション・テスター</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;500&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: #fcfbfa; /* より紙に近い、柔らかな白 */
+  background: #fcfbfa;
   color: #1a1814;
   font-family: 'Noto Serif JP', serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
-/* ─── 🌊 背景浮遊ワード（文字のノイズ、インクの断片） ─── */
-.bg-words {
-  position: fixed; inset: 0; pointer-events: none; z-index: 1;
-}
+/* ─── 🌊 背景浮遊ワード（動作確認用に見やすく不透明度を少しアップ） ─── */
+.bg-words { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
 .swim-word {
   position: absolute; font-family: 'IM Fell English SC', serif;
-  font-size: 11px; letter-spacing: 0.25em; opacity: 0.05;
-  white-space: nowrap; transition: opacity 1.2s ease, color 0.8s ease;
+  font-size: 12px; letter-spacing: 0.2em; opacity: 0.15;
+  white-space: nowrap; transition: opacity 0.8s, color 0.6s;
   color: currentColor;
 }
 
-/* ─── 📖 ZINEの「紙」を再現するコンテナ ─── */
-#zine-content { display: none; }
-#zine-content.visible { display: block; }
+/* ─── 📖 ZINE レイアウト構造 ─── */
+#zine-content { display: block; }
 
 .chapter-scroll {
-  min-height: 220vh; /* 迷子にならない、心地よいめくり心地の高さ */
+  min-height: 200vh; /* スクロールの長さを検証 */
   position: relative;
 }
 
-/* 画面中央に美しく佇む「1枚の紙」 */
 .chapter-sticky {
   position: sticky;
   top: 0;
@@ -47,600 +42,159 @@ body {
   justify-content: center;
   align-items: center;
   padding: 0 32px;
-  max-width: 520px; /* 本文の1行が長くなりすぎない、文庫本に近い横幅 */
+  max-width: 500px;
   margin: 0 auto;
   z-index: 10;
 }
 
-/* 章番号：版画のように端然と配置 */
 .chap-label {
   font-family: 'IM Fell English SC', serif;
-  font-size: 10px; letter-spacing: 0.3em;
-  color: #aaa5a0; margin-bottom: 32px;
+  font-size: 11px; letter-spacing: 0.3em;
+  color: #aaa5a0; margin-bottom: 24px;
   align-self: flex-start;
-  font-weight: 300;
 }
 
-/* 音楽：存在感を消し、デザインのノイズにしない */
-.music-row {
-  display: flex; align-items: center; justify-content: space-between;
-  width: 100%; margin-bottom: 48px;
-  border-bottom: 1px solid #eee; padding-bottom: 12px;
-}
-.music-info { display: flex; flex-direction: column; gap: 4px; }
-.music-tag { font-family: 'IM Fell English SC', serif; font-size: 9px; letter-spacing: 0.2em; color: #b0aba5; }
-.music-name { font-size: 11px; color: #7a7570; font-weight: 300; }
-.qr-mini { width: 40px; height: 40px; opacity: 0.4; transition: opacity 0.3s; }
-.qr-mini:hover { opacity: 0.8; }
-.qr-mini img, .qr-mini canvas { width: 40px !important; height: 40px !important; }
-
-/* ─── 🖋️ 圧倒的な読みやすさを追求した組版（美しい定番の比率） ─── */
+/* ─── 🖋️ テキスト組版（余白と行間） ─── */
 .chap-body {
   font-size: 14px;
   font-weight: 300;
   width: 100%;
-  line-height: 2.3; /* 呼吸ができる、絶対的な行間 */
-  letter-spacing: 0.05em; /* 文字同士がぶつからない絶妙な間隔 */
+  line-height: 2.3;
+  letter-spacing: 0.05em;
   color: #2b2925;
-  text-align: justify; /* 文末を美しく揃える */
+  text-align: justify;
 }
 
-/* 段落ごとの心地よい「間」 */
 .chap-body p {
   margin-bottom: 2em;
-  text-indent: 1em; /* 文頭の1文字下げで、一気に「本」の手触りに */
-}
-.chap-body p:last-child {
-  margin-bottom: 0;
+  text-indent: 1em;
 }
 
-/* 浮遊するはずのキーセンテンス：スクロールに応じて「静かに灯る」 */
+/* 浮遊キーラインのフェードインアニメーション */
 .key-line {
   font-size: 15px;
   font-weight: 500;
   color: #1a1814;
   opacity: 0;
   transform: translateY(12px);
-  transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-  margin: 0 0 36px 0;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  margin: 0 0 32px 0;
   display: block;
-  letter-spacing: 0.08em;
-  line-height: 1.8;
-  text-indent: 0; /* ここだけは字下げしない */
+  text-indent: 0;
 }
 .key-line.active {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* ページ間の「余白という名の区切り」 */
 .chapter-divider {
-  height: 40vh; /* 次のページを開く前の、贅沢な静寂 */
+  height: 30vh;
+  background: rgba(0,0,0,0.02); /* 余白の切れ目を視覚化 */
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #aaa; font-family: monospace;
 }
 
-/* ナビゲーション：ページの下部に、そっと寄り添う */
+/* ナビゲーション */
 .chap-nav {
   opacity: 0; transform: translateY(8px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  display: flex; gap: 16px; margin-top: 48px;
-  pointer-events: none; width: 100%; justify-content: flex-end;
+  transition: opacity 0.5s, transform 0.5s;
+  display: flex; gap: 16px; margin-top: 40px;
+  width: 100%; justify-content: flex-end;
 }
-.chap-nav.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.chap-nav.visible { opacity: 1; transform: translateY(0); }
 .nav-btn {
-  font-family: 'IM Fell English SC', serif; font-size: 9px;
-  letter-spacing: 0.25em; padding: 8px 20px;
-  border: 1px solid #d4cfc8; cursor: pointer;
-  background: transparent; color: #7a7570;
-  transition: all 0.4s;
+  font-family: 'IM Fell English SC', serif; font-size: 10px;
+  letter-spacing: 0.2em; padding: 8px 20px;
+  border: 1px solid #d4cfc8; background: transparent; color: #7a7570;
 }
-.nav-btn:hover { border-color: #1a1814; color: #1a1814; }
 
-/* ロック・目次・奥付のスタイル（中略、前回の基本構造を維持しつつ調整） */
-#lock-screen, #index-screen {
-  position: fixed; inset: 0; background: #fcfbfa; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; z-index: 9999; gap: 40px;
-}
-#lock-screen.hidden { display: none; }
-.lock-top { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.lock-label { font-family: 'IM Fell English SC', serif; font-size: 10px; letter-spacing: 0.4em; color: #9a9590; }
-.lock-title { font-size: 22px; font-weight: 700; letter-spacing: 0.08em; }
-.lock-subtitle { font-size: 11px; color: #9a9590; letter-spacing: 0.2em; font-weight: 300; }
-.lock-form { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.lock-input {
-  width: 240px; padding: 12px 20px; border: 1px solid #d4cfc8; background: transparent;
-  font-family: 'Noto Serif JP', serif; font-size: 14px; text-align: center; outline: none;
-}
-.lock-btn {
-  font-family: 'IM Fell English SC', serif; font-size: 10px; letter-spacing: 0.35em;
-  color: #fcfbfa; background: #1a1814; border: none; padding: 12px 32px; cursor: pointer;
-}
-.lock-error { font-size: 11px; color: #9a9590; min-height: 16px; }
-
-#index-screen { display: none; z-index: 100; transition: opacity 0.8s ease; }
-#index-screen.visible { display: flex; }
-#index-screen.hidden { opacity: 0; pointer-events: none; }
-.index-title { font-size: 24px; font-weight: 700; letter-spacing: 0.1em; }
-.index-subtitle { font-size: 11px; color: #9a9590; letter-spacing: 0.2em; margin-top: -24px; }
-.tags-wrap { position: relative; width: 90vw; max-width: 500px; height: 360px; }
-.route-tag {
-  position: absolute; font-size: 11px; color: #5a5550; border: 1px solid #e4dfd8;
-  padding: 6px 14px; border-radius: 20px; cursor: pointer; background: rgba(252,251,250,0.9);
-  white-space: nowrap; letter-spacing: 0.05em; transition: all 0.3s;
-}
-.route-tag:hover { border-color: #1a1814; background: #1a1814; color: #fcfbfa; }
-
+/* モード反転時の強制上書き */
 body.pandemic-locked { background-color: #121110 !important; color: #cfcdc9 !important; }
 body.pandemic-locked .chap-body { color: #cfcdc9 !important; }
 body.pandemic-locked .key-line { color: #fcfbfa !important; }
-
-.colophon { max-width: 520px; margin: 0 auto; padding: 120px 32px; border-top: 1px solid #e4dfd8; }
-.colophon-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-.colophon-sub { font-size: 11px; color: #9a9590; letter-spacing: 0.2em; margin-bottom: 32px; }
-.colophon-info { font-size: 11px; color: #7a7570; line-height: 2.4; font-weight: 300; }
 </style>
 </head>
 <body>
 
+<!-- 背景の浮遊物 -->
 <div class="bg-words">
-  <div class="swim-word" style="top:15%;left:8%" data-type="layered">layered park</div>
-  <div class="swim-word" style="top:45%;left:72%" data-type="layered">cognition gap</div>
-  <div class="swim-word" style="top:78%;left:12%" data-type="layered">blank space</div>
-  <div class="swim-word" style="top:32%;left:62%" data-type="pandemic">pandemic logic</div>
-  <div class="swim-word" style="top:62%;left:38%" data-type="pandemic">os rewrite</div>
-  <div class="swim-word" style="top:88%;left:55%" data-type="pandemic">install complete</div>
-</div>
-
-<div id="lock-screen">
-  <div class="lock-top">
-    <div class="lock-label">Members Only</div>
-    <div class="lock-title">違和感と余白</div>
-    <div class="lock-subtitle">——公園行政の覚書——</div>
-  </div>
-  <div class="lock-form">
-    <input class="lock-input" id="pw-input" type="password" placeholder="パスワードを入力">
-    <button class="lock-btn" onclick="unlock()">Enter</button>
-    <div class="lock-error" id="pw-error"></div>
-  </div>
-</div>
-
-<div id="index-screen">
-  <div class="index-title">違和感と余白</div>
-  <div class="index-subtitle">——公園行政の覚書——</div>
-  <div class="tags-wrap">
-    <div class="route-tag" style="top:5%;left:2%" onclick="startRoute('simple')">#01 目次通りの順番</div>
-    <div class="route-tag" style="top:28%;left:28%" onclick="startRoute('息苦しさ')">#02 組織の息苦しさ</div>
-    <div class="route-tag" style="top:50%;left:5%" onclick="startRoute('ひっかかり')">#03 個人のひっかかり</div>
-    <div class="route-tag" style="top:72%;left:38%" onclick="startRoute('デジタル')">#04 デジタルと土の匂い</div>
-    <div class="route-tag" style="top:18%;left:52%" onclick="startRoute('正論')">#05 正論のぶつかり合い</div>
-    <div class="route-tag" style="top:42%;left:5%" onclick="startRoute('マニュアル')">#06 背中にマニュアルはない</div>
-    <div class="route-tag" style="top:82%;left:15%" onclick="startRoute('境界線')">#07 境界線の曖昧な場所</div>
-  </div>
+  <div class="swim-word" style="top:20%;left:10%" data-type="layered">[ LAYERED FLOAT ]</div>
+  <div class="swim-word" style="top:50%;left:70%" data-type="pandemic">[ PANDEMIC FLOAT ]</div>
+  <div class="swim-word" style="top:80%;left:15%" data-type="layered">[ BLANK SPACE ]</div>
 </div>
 
 <div id="zine-content">
 
-<div class="chapter-scroll" data-chap="0" data-type="normal">
-  <div class="chapter-sticky">
-    <div class="chap-label">Prologue — 違和感は、問いの種だ</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">問いの種 -iwakan-</div>
+  <!-- ブロック 0: 通常 -->
+  <div class="chapter-scroll" data-chap="0" data-type="normal">
+    <div class="chapter-sticky">
+      <div class="chap-label">BLOCK 00 — NORMAL MODE</div>
+      <div class="chap-body">
+        <span class="key-line" id="key0">※スクロールするとここに重要な一行が浮き上がります。</span>
+        <p>これは手触りと余白をテストするためのダミー文章です。指を動かして画面をゆっくりと下にスクロールしてみてください。文字の行間や左右の余白が、デバイスに対して心地よい「額縁」を維持できているか確認します。</p>
+        <p>スクロールがある一定の深さに達すると、上のキーセンテンスが静かに出現し、さらに最下部付近までいくと右下に次のページへのナビゲーションボタンがフェードインします。</p>
       </div>
-      <a href="https://suno.com/s/h44d2OrvKzHAmJs7" target="_blank"><div class="qr-mini" id="qr0"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key0">「なんか違う」が、問いの始まりだと。</span>
-      <p>言葉にならないまま、残るものがある。</p>
-      <p>会議が終わった後。ふと見渡した先。現場から帰る道すがら。誰かと話して、なんとなく端切れ悪く噛み合わなかった夜。</p>
-      <p>それは不満でも、怒りでも、明確な主張でもない。もっと静かで、もっと曖昧で、でも確かに存在する、不協和音のような何かだ。</p>
-      <p>たいていの人は、そこでその何かを流してしまう。忙しさに紛れて。取るに足らないことだと決めつけて。それが、言語化される手前で消えていく。</p>
-      <p>でも、その何かをあえて留めていると、である瞬間に気づく。</p>
-      <p>その「なんか違う」が、全ての問いの始まりなのだと。</p>
-    </div>
-    <div class="chap-nav" id="nav0">
-      <button class="nav-btn" onclick="scrollToNext(0)"><span>next page →</span></button>
-      <button class="nav-btn" onclick="backToIndex()"><span>index</span></button>
+      <div class="chap-nav" id="nav0"><button class="nav-btn">NEXT PAGE</button></div>
     </div>
   </div>
-</div>
-<div class="chapter-divider"></div>
+  <div class="chapter-divider">【 PAGE GAP（次のページへの余白マージン） 】</div>
 
-<div class="chapter-scroll" data-chap="1" data-type="normal">
-  <div class="chapter-sticky">
-    <div class="chap-label">Chapter 01 — 公園で思考する</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">思考 in the park</div>
+  <!-- ブロック 1: 通常 -->
+  <div class="chapter-scroll" data-chap="1" data-type="normal">
+    <div class="chapter-sticky">
+      <div class="chap-label">BLOCK 01 — NORMAL MODE</div>
+      <div class="chap-body">
+        <span class="key-line" id="key1">※二つ目のブロック。同じくスクロールで点灯します。</span>
+        <p>一文字下げのインデント、および各段落のあとに挟まれる空行のバランスはいかがでしょうか。プログラムに文字サイズを無理やり変えさせないことで、本来のブックデザインが持つ静寂さを再現しています。</p>
+        <p>このページを通り過ぎると、次は背景色がスクロールに応じて「黒」へと侵食されていく変革演出（PANDEMIC）の実験ブロックに移行します。</p>
       </div>
-      <a href="https://suno.com/s/UUK47O2sYngngXJQ" target="_blank"><div class="qr-mini" id="qr1"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key1">ただ在るものを問い直して、在った方がいいものくらいにしていく。</span>
-      <p>公園に行ってみる。気がつくとぼんやりと考えはじめる。</p>
-      <p>何を考えるのかを決めてるわけじゃない。タスク感があるわけでもない。ただ漠然となんとなく考えるモードになる。壁がないからぶつからない。天井がないから上限がない。</p>
-      <p>空が広い。風が吹く。木々が揺れる。あらゆる存在が、等しい時間をシェアしている感覚。固有の在り方をしていて、なんの調整もなく、統制もとれてない。</p>
-      <p>そして、そんな無秩序や曖昧が点在する公園という場所で、管理という枠をはめる仕事をしている自分。その更なるカオスが、思考バイアスがかからない浮遊性を創出するという妙味。</p>
-      <p>目的地がなくても方向づけだけすればいい。スカラーをベクトルに。</p>
-    </div>
-    <div class="chap-nav" id="nav1">
-      <button class="nav-btn" onclick="scrollToNext(1)"><span>next page →</span></button>
-      <button class="nav-btn" onclick="backToIndex()"><span>index</span></button>
+      <div class="chap-nav" id="nav1"><button class="nav-btn">NEXT PAGE</button></div>
     </div>
   </div>
-</div>
-<div class="chapter-divider"></div>
+  <div class="chapter-divider">【 PAGE GAP 】</div>
 
-<div class="chapter-scroll" data-chap="2" data-type="normal">
-  <div class="chapter-sticky">
-    <div class="chap-label">Chapter 02 — co-en｜公園の再定義</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">co-en</div>
+  <!-- ブロック 2: PANDEMIC（反転） -->
+  <div class="chapter-scroll" data-chap="2" data-type="pandemic">
+    <div class="chapter-sticky">
+      <div class="chap-label">BLOCK 02 — PANDEMIC MODE</div>
+      <div class="chap-body">
+        <span class="key-line" id="key2">※このエリアをスクロール中、背景色が滑らかに黒く染まります。</span>
+        <p>ここからは「色の深度」のテストです。スクロールの進捗（30%〜75%）をトリガーにして、ブラウザの背景色と文字色がじわじわとすり替わっていきます。動きがガタついたり、急激に変わりすぎていないか確認してください。</p>
+        <p>完全に染まりきると、JavaScriptによってクラスが固定され、それ以降はダークモードのような世界観が維持されます。</p>
       </div>
-      <a href="https://suno.com/s/X5bzKrFyqCNsKRsk" target="_blank"><div class="qr-mini" id="qr2"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key2">「公」を音で分解した先にある言葉の広がりと厚み。</span>
-      <p>「公園」という言葉、もう耳慣れすぎている。おおやけの、囲われた場所。行政が管理し、市民が利用する。その非対称な関係が、言葉の構造にすでに埋め込まれている。</p>
-      <p>だからこの言葉を一度、音に戻してみる。「こうえん」。</p>
-      <p>co（共に）という音の束：好（好ましい）、幸（しあわせ）、光（照らす）、耕（土を起こす）、恋う（引き寄せられる）。</p>
-      <p>enという音の可能性：縁（つながり）、円（循環）、宴（祝いの場）、援（支える）、俺（ここにいる自分）。</p>
-      <p>co-enという再解釈は、公園を管理と利用の関係から、出会いと変換の磁場へと移し替える試みだ。「名詞」から「動詞」へ。使うのではなく、耕す。</p>
-    </div>
-    <div class="chap-nav" id="nav2">
-      <button class="nav-btn" onclick="scrollToNext(2)"><span>next page →</span></button>
-      <button class="nav-btn" onclick="backToIndex()"><span>index</span></button>
+      <div class="chap-nav" id="nav2"><button class="nav-btn">NEXT PAGE</button></div>
     </div>
   </div>
-</div>
-<div class="chapter-divider"></div>
+  <div class="chapter-divider">【 PAGE GAP 】</div>
 
-<div class="chapter-scroll" data-chap="3" data-type="normal">
-  <div class="chapter-sticky">
-    <div class="chap-label">Chapter 03 — 公園との関わり方</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">公園が呼吸する</div>
+  <!-- ブロック 3: LAYERED（融解） -->
+  <div class="chapter-scroll" data-chap="3" data-type="layered">
+    <div class="chapter-sticky">
+      <div class="chap-label">BLOCK 03 — LAYERED MODE</div>
+      <div class="chap-body">
+        <span class="key-line" id="key3">※スクロールしている間だけ、背景の浮遊ワードの影が濃くなります。</span>
+        <p>最後のテストは「レイヤーの重なり」です。スクロールしている間だけ、背景に配置されたダミーのワード達が浮かび上がり、指を止めたりページを抜けるとまた元のうっすらとした空気へと溶けていきます。</p>
+        <p>過剰なエフェクトを削ぎ落とし、読書のノイズにならない程度の「有機的な揺らぎ」として機能しているかを検証します。</p>
       </div>
-      <a href="https://suno.com/s/7MviImi1eU3AOsTK" target="_blank"><div class="qr-mini" id="qr3"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key3">多様な愛着は、多様な関わりを生む。その出発点は、自分自身の幸福追求でいい。</span>
-      <p>公園は、行政が管理する単なる施設ではない。そこに関わる人々、朝の犬の散歩、放課後の子どもたちの声、その積み重ねが公園の空気をつくる。</p>
-      <p>担い手の高齢化や固定化が進む今、問い直すべきはボランティアの「やり方」ではなく、「定義」そのものではないか。関わりに資格はいらない。通りすがりでいい。「なんとなく居心地がいい」という愛着が始まりでいい。</p>
-      <p>目指すべき姿は、管理者ではなく伴走者。個性ある公園が生まれることを成果として喜べる組織でありたい。今は夜明け前、革命前夜的な気配だ。</p>
-    </div>
-    <div class="chap-nav" id="nav3">
-      <button class="nav-btn" onclick="scrollToNext(3)"><span>next page →</span></button>
-      <button class="nav-btn" onclick="backToIndex()"><span>index</span></button>
+      <div class="chap-nav" id="nav3"><button class="nav-btn">END TEST</button></div>
     </div>
   </div>
-</div>
-<div class="chapter-divider"></div>
 
-<div class="chapter-scroll" data-chap="4" data-type="pandemic">
-  <div class="chapter-sticky">
-    <div class="chap-label">Chapter 04 — Pandemic Logic</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">shall we dance?</div>
-      </div>
-      <a href="https://suno.com/s/LLQI1pFIX8dQ9m7H" target="_blank"><div class="qr-mini" id="qr4"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key4">日常の隙間に仕込み、気づいたら、もう元には戻れない。</span>
-      <p>「改革」と言った瞬間、敵が生まれる。だから、言わない。現場で泥をこね、手を動かし続けた者だけが本当の地図を持っている。これはブルーワーカーの矜持から生まれた、現場哲学の覚書だ。</p>
-      <p>ウイルスは宣言しない。ただ静かに広がる。組織の変革も同じだ。「やります」と叫んだ瞬間、免疫が働く。だから、日常の隙間に仕込む。</p>
-      <p>【THE CODE】内側の炎は絶やすな、外側は冷徹な実務家であれ。細部は譲っても根幹は死守しろ。100%完成させるな、余白が次を呼ぶ。</p>
-      <p>社交ダンスじゃない。ストリートで生まれたやつを、一緒に踊ろう。Shall we dance?</p>
-    </div>
-    <div class="chap-nav" id="nav4">
-      <button class="nav-btn" onclick="scrollToNext(4)"><span>next page →</span></button>
-      <button class="nav-btn" onclick="backToIndex()"><span>index</span></button>
-    </div>
-  </div>
-</div>
-<div class="chapter-divider"></div>
-
-<div class="chapter-scroll" data-chap="5" data-type="normal">
-  <div class="chapter-sticky">
-    <div class="chap-label">Chapter 05 — 背中にマニュアルはない</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">背中にマニュアルはない</div>
-      </div>
-      <a href="https://suno.com/s/i4gWUcovxoSoxmeJ" target="_blank"><div class="qr-mini" id="qr5"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key5">自律を促すつもりが、依存を育てていた。</span>
-      <p>一緒に動き動きたい、と思った。同じ温度で、同じ方向へ。場が動き、人の目が変わる。自分が触媒になっている感覚。しかし、あるとき気づいた。輝いている相手の目が、次第にこちらへ向き続けていることに。</p>
-      <p>「次、どうすればいいですか？」、「これ、どう思いますか？」</p>
-      <p>自律を促すつもりが、依存を育てていた。背中にマニュアルがあるかのように。やってみせ、言って聞かせて、させてみたら、「あの人がやってくれる」という構造を作っていた。</p>
-      <p>背中にマニュアルはない。あるのは、一緒に考え続ける意志だけだ。答えを渡すのではなく、考える余白を残すこと。</p>
-    </div>
-    <div class="chap-nav" id="nav5">
-      <button class="nav-btn" onclick="scrollToNext(5)"><span>next page →</span></button>
-      <button class="nav-btn" onclick="backToIndex()"><span>index</span></button>
-    </div>
-  </div>
-</div>
-<div class="chapter-divider"></div>
-
-<div class="chapter-scroll" data-chap="6" data-type="normal">
-  <div class="chapter-sticky">
-    <div class="chap-label">Chapter 06 — 頷きの深度</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">頷きの深度 — spoken word —</div>
-      </div>
-      <a href="https://suno.com/s/qPMMu9xbsYNDtZXK" target="_blank"><div class="qr-mini" id="qr6"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key6">肩書きを脱いだ人間同士が同じ問いの前に立つとき、往々にして制度の壁は思ったより低くなる。</span>
-      <p>官民連携、公民連携。そういう言葉自体が目的かのように扱われるのがなんとも気持ち悪い。自分の経験の裏打ちは、「気づいたら繋がっていた」という漂流の手触りの方が圧倒的に多い。</p>
-      <p>椅子の配置、対話のデザイン、誰も気にしないような細部を整えると空気が澄んでくる。会話のなかで生じる「頷き」の深度が変わる。浅いものは情報処理、深いものは心が動いた瞬間のハイライト。</p>
-      <p>繋ごうとしなくていい。场を整えていれば、自然と立場を超えたジャムセッションが始まり、頷きが深くなっていく。</p>
-    </div>
-    <div class="chap-nav" id="nav6">
-      <button class="nav-btn" onclick="scrollToNext(6)"><span>next page →</span></button>
-      <button class="nav-btn" onclick="backToIndex()"><span>index</span></button>
-    </div>
-  </div>
-</div>
-<div class="chapter-divider"></div>
-
-<div class="chapter-scroll" data-chap="7" data-type="layered">
-  <div class="chapter-sticky">
-    <div class="chap-label">Chapter 07 — Urban Cognition Interface</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">UCI</div>
-      </div>
-      <a href="https://suno.com/s/F0peTNtJdCevf2HE" target="_blank"><div class="qr-mini" id="qr7"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key7">合意形成の前に、認知共有がある。</span>
-      <p>都市を変える前に、都市の見え方を共有することから始めよう。合意形成の前に、認知共有がある。</p>
-      <p>なぜ話が噛み合わないのか。行政は制度を見、市民は経験を見、技術者は構造を見、アーティストは文脈を見る。みんな「公園」の話をしているのに、見えている風景が違う。これは単なる意見対立ではなく、認知の差だ。</p>
-      <p>「安全」の意味すら立場によって違う。本当に必要なのは正解を決めることではなく、「どう見えているか」を共有し、異なる認知の間を翻訳・接続することだ。主観が重なり、都市になる。</p>
-    </div>
-    <div class="chap-nav" id="nav7">
-      <button class="nav-btn" onclick="scrollToNext(7)"><span>next page →</span></button>
-      <button class="nav-btn" onclick="backToIndex()"><span>index</span></button>
-    </div>
-  </div>
-</div>
-<div class="chapter-divider"></div>
-
-<div class="chapter-scroll" data-chap="8" data-type="layered">
-  <div class="chapter-sticky">
-    <div class="chap-label">Chapter 08 — LAYERED PARK</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">LAYERED PARK</div>
-      </div>
-      <a href="https://suno.com/s/Gfd7AMHkGtmRgQjr" target="_blank"><div class="qr-mini" id="qr8"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key8">物理空間は共有したまま、一人ひとりに最適化された体験を立ち上げる。</span>
-      <p>都市は目に見えない「認知の段差」で溢れている。だとすれば、空間を変えるのではなく、空間に認知の「レイヤー」を重ねるという発想はどうか。</p>
-      <p>物理空間は共有したまま、一人ひとりに最適化された体験を立ち上げる。ある人には安全な音声ナビ、ある子には物語が立ち上がり、ある人には地域の記憶が語りかける。空間はひとつ、体験は複数。これを「LAYERED PARK」と呼ぶ。</p>
-      <p>小さい頃遊んだベンチに座ると、かつてのお母さんの声がする。そんな、人間の違いを分断ではなく接続資源に変え、やさしく接続し直す公園があってもいい。</p>
-    </div>
-    <div class="chap-nav" id="nav8">
-      <button class="nav-btn" onclick="scrollToNext(8)"><span>next page →</span></button>
-      <button class="nav-btn" onclick="backToIndex()"><span>index</span></button>
-    </div>
-  </div>
-</div>
-<div class="chapter-divider"></div>
-
-<div class="chapter-scroll" data-chap="9" data-type="normal">
-  <div class="chapter-sticky">
-    <div class="chap-label">Chapter 09 — PUBLIC MENTOR LAB</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">PUBLIC MENTOR</div>
-      </div>
-      <a href="https://suno.com/s/693ynudwJwnAXs85" target="_blank"><div class="qr-mini" id="qr9"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key9">相手が欲しいものを与えるのではなく、相手が言語化できていない思いを引き出す。</span>
-      <p>制度や専門性、既存の関係性だけでは支えきれずにこぼれ落ちるものがある。誰かが「相談」というアクションを起こす手前で関わりたい。特別な肩書きがなくても、何気ない対話で人を救っている「パブリックメンター」のような存在。</p>
-      <p>自分が公務員として現場にいるから見える違和感、制度の外に出るから聞こえる声。内側にも外側にも属さないから、両方の風景が見える。</p>
-      <p>相手が欲しいものを与えるのではなく、相手が言語化できていない思いを引き出す。気づいていないかもしれないけれど、さあ、もうあなたの言葉で考え始めているはずだ。</p>
-    </div>
-    <div class="chap-nav" id="nav9">
-      <button class="nav-btn" onclick="scrollToNext(9)"><span>next page →</span></button>
-      <button class="nav-btn" onclick="backToIndex()"><span>index</span></button>
-    </div>
-  </div>
-</div>
-<div class="chapter-divider"></div>
-
-<div class="chapter-scroll" data-chap="10" data-type="normal">
-  <div class="chapter-sticky">
-    <div class="chap-label">Epilogue — 恵み</div>
-    <div class="music-row">
-      <div class="music-info">
-        <div class="music-tag">Music</div>
-        <div class="music-name">恵み</div>
-      </div>
-      <a href="https://suno.com/s/dPttxp9YVe7rLDE3" target="_blank"><div class="qr-mini" id="qr10"></div></a>
-    </div>
-    <div class="chap-body">
-      <span class="key-line" id="key10">違和感は、問いの種だ。その種は、きっと恵み。</span>
-      <p>特別なことは何もない。ただ今感じている違和感を受け止める。うまく言葉にならなくても、自分だけが気にしすぎていると思っても、その感覚をかき消さないでほしい。</p>
-      <p>「なんか違う」それをもう少しだけ手元に置いておく。それだけで何かが始まっている。気づいたときにはもう動いていて、繋がっていて、変わり始めている。宣言は要らない。Pandemic Logicでいい。</p>
-      <p>違和感は問いの種だ。その種は、きっと恵み。豊かな日常は、思考することから。思いが馳せられることに感謝と敬意を。</p>
-    </div>
-    <div class="chap-nav" id="nav10">
-      <button class="nav-btn" onclick="backToIndex()"><span>return to index</span></button>
-    </div>
-  </div>
 </div>
 
-<div class="colophon">
-  <div style="width:30px;height:1px;background:#d4cfc8;margin-bottom:48px;"></div>
-  <div class="colophon-title">違和感と余白</div>
-  <div class="colophon-sub">——公園行政の覚書——</div>
-  <div class="colophon-info">
-    著者　ukky<br>
-    発行　PUBLIC MENTOR LAB<br>
-    形態　Digital ZINE No.01<br>
-    発行　2026年5月
-  </div>
-</div>
-
-</div><script>
-const PASSWORD = 'pml2024';
+<script>
 let pandemicLocked = false;
 
-const routes = {
-  'simple':     [0,1,2,3,4,5,6,7,8,9,10],
-  '息苦しさ':   [2,4,5,6],
-  'ひっかかり': [1,3,8,10],
-  'デジタル':   [3,7,8,9],
-  '正論':       [2,5,6,7],
-  'マニュアル': [1,4,9,10],
-  '境界線':     [0,3,7,10]
-};
-let currentRoute = [];
-
-const qrData = [
-  {id:'qr0', url:'https://suno.com/s/h44d2OrvKzHAmJs7'},
-  {id:'qr1', url:'https://suno.com/s/UUK47O2sYngngXJQ'},
-  {id:'qr2', url:'https://suno.com/s/X5bzKrFyqCNsKRsk'},
-  {id:'qr3', url:'https://suno.com/s/7MviImi1eU3AOsTK'},
-  {id:'qr4', url:'https://suno.com/s/LLQI1pFIX8dQ9m7H'},
-  {id:'qr5', url:'https://suno.com/s/i4gWUcovxoSoxmeJ'},
-  {id:'qr6', url:'https://suno.com/s/qPMMu9xbsYNDtZXK'},
-  {id:'qr7', url:'https://suno.com/s/F0peTNtJdCevf2HE'},
-  {id:'qr8', url:'https://suno.com/s/Gfd7AMHkGtmRgQjr'},
-  {id:'qr9', url:'https://suno.com/s/693ynudwJwnAXs85'},
-  {id:'qr10',url:'https://suno.com/s/dPttxp9YVe7rLDE3'},
-];
-
-function generateQR() {
-  qrData.forEach(item => {
-    const el = document.getElementById(item.id);
-    if (el && el.childElementCount === 0) {
-      new QRCode(el, {
-        text: item.url, width: 40, height: 40,
-        colorDark: '#1a1814', colorLight: '#fcfbfa',
-        correctLevel: QRCode.CorrectLevel.M
-      });
-    }
-  });
-}
-
-function unlock() {
-  const v = document.getElementById('pw-input').value;
-  const e = document.getElementById('pw-error');
-  if (v === PASSWORD) {
-    document.getElementById('lock-screen').classList.add('hidden');
-    showIndex();
-    generateQR();
-  } else {
-    e.textContent = 'パスワードが違います';
-    document.getElementById('pw-input').value = '';
-    document.getElementById('pw-input').focus();
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('pw-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') unlock();
-  });
-  initSwimWords();
-});
-
-function showIndex() {
-  const idx = document.getElementById('index-screen');
-  idx.classList.add('visible');
-  idx.classList.remove('hidden');
-  document.getElementById('zine-content').classList.remove('visible');
-  document.getElementById('zine-content').style.display = 'none';
-  pandemicLocked = false;
-  document.body.classList.remove('pandemic-locked');
-  document.body.style.backgroundColor = '';
-  document.body.style.color = '';
-  document.querySelectorAll('.swim-word').forEach(w => w.style.opacity = '0.05');
-  window.scrollTo(0, 0);
-}
-
-function backToIndex() {
-  showIndex();
-}
-
-function startRoute(name) {
-  currentRoute = routes[name];
-  const idx = document.getElementById('index-screen');
-  idx.classList.add('hidden');
-  setTimeout(() => {
-    idx.classList.remove('visible');
-    setupRoute();
-  }, 400);
-}
-
-function setupRoute() {
-  const allChaps = document.querySelectorAll('.chapter-scroll');
-  allChaps.forEach(c => {
-    const chapNum = parseInt(c.getAttribute('data-chap'));
-    if (currentRoute.includes(chapNum)) {
-      c.style.display = 'block';
-    } else {
-      c.style.display = 'none';
-    }
-  });
-  document.getElementById('zine-content').style.display = 'block';
-  document.getElementById('zine-content').classList.add('visible');
-  pandemicLocked = false;
-  document.body.classList.remove('pandemic-locked');
-  document.body.style.backgroundColor = '';
-  document.body.style.color = '';
-  
-  // 開始時にすべてのキーラインを初期状態に戻す
-  document.querySelectorAll('.key-line').forEach(k => k.classList.remove('active'));
-  window.scrollTo(0, 0);
-}
-
-function scrollToNext(chapNum) {
-  const idx = currentRoute.indexOf(chapNum);
-  if (idx < currentRoute.length - 1) {
-    const nextChap = currentRoute[idx + 1];
-    const el = document.querySelector(`[data-chap="${nextChap}"]`);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  } else {
-    backToIndex();
-  }
-}
-
-// ─── 🖋️ スクロール制御：文字サイズ変化を廃止、純粋なフェードイン・フェードアウト ───
 window.addEventListener('scroll', onScroll, { passive: true });
 
 function onScroll() {
-  if (!document.getElementById('zine-content').classList.contains('visible')) return;
-
   const winH = window.innerHeight;
 
   document.querySelectorAll('.chapter-scroll').forEach(chap => {
-    if (chap.style.display === 'none') return;
-
     const rect = chap.getBoundingClientRect();
     const chapH = chap.offsetHeight;
     
-    // 章ごとの純粋な進捗
+    // 現在のブロックのスクロール進捗（0.0 〜 1.0）
     const progress = Math.max(0, Math.min(1, -rect.top / (chapH - winH)));
 
     const chapNum = parseInt(chap.getAttribute('data-chap'));
@@ -649,14 +203,15 @@ function onScroll() {
     const nav = document.getElementById(`nav${chapNum}`);
 
     if (rect.top < winH && rect.bottom > 0) {
-      // 章の中央付近を通過するときに、キーラインを「ふわっと点灯」させるだけにする
+      
+      // 1. キーラインの点灯タイミング調整（25%〜75%の間だけアクティブ）
       if (progress >= 0.25 && progress <= 0.75) {
         if (key) key.classList.add('active');
       } else {
         if (key && progress < 0.25) key.classList.remove('active');
       }
 
-      // ナビゲーションの出現
+      // 2. ナビボタンの出現タイミング（75%を超えたら出現）
       if (nav) {
         if (progress >= 0.75) {
           nav.classList.add('visible');
@@ -665,10 +220,10 @@ function onScroll() {
         }
       }
 
-      // PANDEMIC演出（背景色をゆっくりフェードするだけ、文字はイジらない）
+      // 3. PANDEMIC（背景反転）モーション
       if (type === 'pandemic' && !pandemicLocked) {
         if (progress >= 0.3) {
-          const pf = Math.min(1, (progress - 0.3) / 0.4);
+          const pf = Math.min(1, (progress - 0.3) / 0.4); // 30%から始まって40%の猶予で1.0になる
           const bgR = Math.round(252 - 234 * pf);
           const bgG = Math.round(251 - 234 * pf);
           const bgB = Math.round(250 - 234 * pf);
@@ -679,7 +234,7 @@ function onScroll() {
           document.body.style.color = `rgb(${tR},${tG},${tB})`;
           
           document.querySelectorAll('.swim-word[data-type="pandemic"]').forEach(w => {
-            w.style.opacity = (0.05 + pf * 0.35).toString();
+            w.style.opacity = (0.15 + pf * 0.4).toString();
           });
 
           if (progress >= 0.75) {
@@ -691,14 +246,14 @@ function onScroll() {
         } else {
           document.body.style.backgroundColor = '#fcfbfa';
           document.body.style.color = '#1a1814';
-          document.querySelectorAll('.swim-word[data-type="pandemic"]').forEach(w => w.style.opacity = '0.05');
+          document.querySelectorAll('.swim-word[data-type="pandemic"]').forEach(w => w.style.opacity = '0.15');
         }
       }
 
-      // LAYERED演出（背景がうっすら融解するのみ）
+      // 4. LAYERED（背景融解）モーション
       if (type === 'layered') {
         if (progress >= 0.2 && progress <= 0.75) {
-          const factor = Math.sin(((progress - 0.2) / 0.55) * Math.PI);
+          const factor = Math.sin(((progress - 0.2) / 0.55) * Math.PI); // 中央でピークになるサインカーブ
           const r = Math.round(252 - 10 * factor);
           const g = Math.round(251 - 8 * factor);
           const b = Math.round(250 - 10 * factor);
@@ -706,28 +261,28 @@ function onScroll() {
             document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
           }
           document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => {
-            w.style.opacity = (0.05 + factor * 0.3).toString();
+            w.style.opacity = (0.15 + factor * 0.4).toString();
           });
         } else {
           if (!pandemicLocked) {
             document.body.style.backgroundColor = '#fcfbfa';
           }
-          document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => w.style.opacity = '0.05');
+          document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => w.style.opacity = '0.15');
         }
       }
     }
   });
 }
 
-// 浮遊ワード（微細な揺らぎ、文字の影）
+// 浮遊ワードの自動微細振動（常に駆動）
 function initSwimWords() {
-  document.querySelectorAll('.swim-word, .route-tag').forEach(el => {
-    const rx = Math.random() * 8 + 4;
-    const ry = Math.random() * 8 + 4;
-    const sx = 0.0004 + Math.random() * 0.0004;
-    const sy = 0.0004 + Math.random() * 0.0004;
-    const px = Math.random() * Math.PI * 2;
-    const py = Math.random() * Math.PI * 2;
+  document.querySelectorAll('.swim-word').forEach(el => {
+    const rx = Math.random() * 6 + 3;
+    const ry = Math.random() * 6 + 3;
+    const sx = 0.0005;
+    const sy = 0.0005;
+    const px = Math.random() * 5;
+    const py = Math.random() * 5;
     function anim() {
       const t = performance.now();
       const x = Math.sin(t * sx + px) * rx;
@@ -738,6 +293,7 @@ function initSwimWords() {
     anim();
   });
 }
+document.addEventListener('DOMContentLoaded', initSwimWords);
 </script>
 </body>
 </html>
