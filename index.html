@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UXモーション・テスター</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;500&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<title>ZINE モーションテスター（中扉版）</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;500;700&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -16,12 +17,12 @@ body {
   overflow-x: hidden;
 }
 
-/* ─── 🌊 背景浮遊ワード（動作確認用に見やすく不透明度を少しアップ） ─── */
+/* ─── 🌊 背景浮遊ワード ─── */
 .bg-words { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
 .swim-word {
   position: absolute; font-family: 'IM Fell English SC', serif;
-  font-size: 12px; letter-spacing: 0.2em; opacity: 0.15;
-  white-space: nowrap; transition: opacity 0.8s, color 0.6s;
+  font-size: 11px; letter-spacing: 0.25em; opacity: 0.05;
+  white-space: nowrap; transition: opacity 1.2s ease, color 0.8s ease;
   color: currentColor;
 }
 
@@ -29,7 +30,7 @@ body {
 #zine-content { display: block; }
 
 .chapter-scroll {
-  min-height: 200vh; /* スクロールの長さを検証 */
+  min-height: 280vh; /* 「ゆったり」を実現する贅沢な高さ */
   position: relative;
 }
 
@@ -37,146 +38,193 @@ body {
   position: sticky;
   top: 0;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 0 32px;
-  max-width: 500px;
+  max-width: 520px;
   margin: 0 auto;
+  padding: 0 32px;
   z-index: 10;
 }
 
-.chap-label {
+/* ─── 🚪 【新設】中扉（インサイド・カバー）スタイル ─── */
+.door-container {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: auto;
+}
+.door-label {
   font-family: 'IM Fell English SC', serif;
-  font-size: 11px; letter-spacing: 0.3em;
-  color: #aaa5a0; margin-bottom: 24px;
-  align-self: flex-start;
+  font-size: 11px; letter-spacing: 0.4em; color: #b2aca6;
+  margin-bottom: 16px;
+}
+.door-title {
+  font-size: 20px; font-weight: 500; letter-spacing: 0.1em;
+  color: #1a1814; margin-bottom: 48px; text-align: center;
+}
+/* 中扉の音楽エリア（レコードのジャケットのように中央に佇む） */
+.door-music {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.door-music-tag {
+  font-family: 'IM Fell English SC', serif; font-size: 9px; letter-spacing: 0.2em; color: #b0aba5;
+}
+.door-music-name { font-size: 12px; color: #7a7570; font-weight: 300; }
+.qr-box {
+  width: 50px; height: 50px; opacity: 0.5; transition: opacity 0.3s;
+  background: #fff; padding: 2px; border: 1px solid #e4dfd8;
+}
+.qr-box:hover { opacity: 0.9; }
+.qr-box img, .qr-box canvas { width: 44px !important; height: 44px !important; }
+
+/* ─── 🖋️ 本文スタイル（初期状態は透明・下配置） ─── */
+.body-container {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+.body-container.active {
+  opacity: 1; transform: translateY(0);
+  pointer-events: auto;
 }
 
-/* ─── 🖋️ テキスト組版（余白と行間） ─── */
 .chap-body {
-  font-size: 14px;
-  font-weight: 300;
-  width: 100%;
-  line-height: 2.3;
-  letter-spacing: 0.05em;
-  color: #2b2925;
+  font-size: 14px; font-weight: 300; width: 100%;
+  line-height: 2.3; letter-spacing: 0.05em; color: #2b2925;
   text-align: justify;
 }
+.chap-body p { margin-bottom: 2em; text-indent: 1em; }
 
-.chap-body p {
-  margin-bottom: 2em;
-  text-indent: 1em;
-}
-
-/* 浮遊キーラインのフェードインアニメーション */
+/* キーライン */
 .key-line {
-  font-size: 15px;
-  font-weight: 500;
-  color: #1a1814;
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  margin: 0 0 32px 0;
-  display: block;
-  text-indent: 0;
+  font-size: 15px; font-weight: 500; color: #1a1814;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  margin: 0 0 36px 0; display: block; text-indent: 0;
 }
-.key-line.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.chapter-divider {
-  height: 30vh;
-  background: rgba(0,0,0,0.02); /* 余白の切れ目を視覚化 */
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; color: #aaa; font-family: monospace;
-}
+.key-line.active { opacity: 1; transform: translateY(0); }
 
 /* ナビゲーション */
 .chap-nav {
   opacity: 0; transform: translateY(8px);
-  transition: opacity 0.5s, transform 0.5s;
+  transition: opacity 0.6s ease, transform 0.6s ease;
   display: flex; gap: 16px; margin-top: 40px;
-  width: 100%; justify-content: flex-end;
+  width: 100%; justify-content: flex-end; pointer-events: none;
 }
-.chap-nav.visible { opacity: 1; transform: translateY(0); }
+.chap-nav.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 .nav-btn {
-  font-family: 'IM Fell English SC', serif; font-size: 10px;
-  letter-spacing: 0.2em; padding: 8px 20px;
-  border: 1px solid #d4cfc8; background: transparent; color: #7a7570;
+  font-family: 'IM Fell English SC', serif; font-size: 9px;
+  letter-spacing: 0.25em; padding: 8px 20px;
+  border: 1px solid #d4cfc8; background: transparent; color: #7a7570; cursor: pointer;
 }
 
-/* モード反転時の強制上書き */
+.chapter-divider {
+  height: 40vh; display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #d4cfc8; font-family: monospace; letter-spacing: 0.2em;
+}
+
+/* PANDEMIC時の黒反転用 */
 body.pandemic-locked { background-color: #121110 !important; color: #cfcdc9 !important; }
+body.pandemic-locked .door-title, body.pandemic-locked .key-line { color: #fcfbfa !important; }
 body.pandemic-locked .chap-body { color: #cfcdc9 !important; }
-body.pandemic-locked .key-line { color: #fcfbfa !important; }
 </style>
 </head>
 <body>
 
-<!-- 背景の浮遊物 -->
 <div class="bg-words">
-  <div class="swim-word" style="top:20%;left:10%" data-type="layered">[ LAYERED FLOAT ]</div>
-  <div class="swim-word" style="top:50%;left:70%" data-type="pandemic">[ PANDEMIC FLOAT ]</div>
-  <div class="swim-word" style="top:80%;left:15%" data-type="layered">[ BLANK SPACE ]</div>
+  <div class="swim-word" style="top:15%;left:8%" data-type="layered">layered park</div>
+  <div class="swim-word" style="top:45%;left:72%" data-type="pandemic">pandemic logic</div>
+  <div class="swim-word" style="top:78%;left:12%" data-type="layered">blank space</div>
 </div>
 
 <div id="zine-content">
 
-  <!-- ブロック 0: 通常 -->
+  <!-- ─── BLOCK 00 (通常章のゆったり中扉モデル) ─── -->
   <div class="chapter-scroll" data-chap="0" data-type="normal">
     <div class="chapter-sticky">
-      <div class="chap-label">BLOCK 00 — NORMAL MODE</div>
-      <div class="chap-body">
-        <span class="key-line" id="key0">※スクロールするとここに重要な一行が浮き上がります。</span>
-        <p>これは手触りと余白をテストするためのダミー文章です。指を動かして画面をゆっくりと下にスクロールしてみてください。文字の行間や左右の余白が、デバイスに対して心地よい「額縁」を維持できているか確認します。</p>
-        <p>スクロールがある一定の深さに達すると、上のキーセンテンスが静かに出現し、さらに最下部付近までいくと右下に次のページへのナビゲーションボタンがフェードインします。</p>
+      
+      <!-- 中扉エリア -->
+      <div class="door-container" id="door0">
+        <div class="door-label">Prologue</div>
+        <div class="door-title">違和感は、問いの種だ</div>
+        <div class="door-music">
+          <div class="door-music-tag">Track 00</div>
+          <div class="door-music-name">問いの種 -iwakan-</div>
+          <a href="https://suno.com/s/h44d2OrvKzHAmJs7" target="_blank"><div class="qr-box" id="qr0"></div></a>
+        </div>
       </div>
-      <div class="chap-nav" id="nav0"><button class="nav-btn">NEXT PAGE</button></div>
+
+      <!-- 本文エリア -->
+      <div class="body-container" id="body-cont0">
+        <div class="chap-body">
+          <span class="key-line" id="key0">「なんか違う」が、問いの始まりだと。</span>
+          <p>これは中扉の実験ページです。スクロールし始めると、まず中扉（タイトルとQRコード）が静かに消え去ります。</p>
+          <p>その後、ゆったりとした空白の時間を経て、この本文テキストと、上部の重要な一行（キーライン）が下から滑らかに出現します。</p>
+        </div>
+        <div class="chap-nav" id="nav0"><button class="nav-btn" onclick="scrollToNext(0)">NEXT PAGE →</button></div>
+      </div>
+
     </div>
   </div>
-  <div class="chapter-divider">【 PAGE GAP（次のページへの余白マージン） 】</div>
+  <div class="chapter-divider">—— BLANK SPACE ——</div>
 
-  <!-- ブロック 1: 通常 -->
-  <div class="chapter-scroll" data-chap="1" data-type="normal">
+
+  <!-- ─── BLOCK 01 (PANDEMIC章の中扉モデル) ─── -->
+  <div class="chapter-scroll" data-chap="1" data-type="pandemic">
     <div class="chapter-sticky">
-      <div class="chap-label">BLOCK 01 — NORMAL MODE</div>
-      <div class="chap-body">
-        <span class="key-line" id="key1">※二つ目のブロック。同じくスクロールで点灯します。</span>
-        <p>一文字下げのインデント、および各段落のあとに挟まれる空行のバランスはいかがでしょうか。プログラムに文字サイズを無理やり変えさせないことで、本来のブックデザインが持つ静寂さを再現しています。</p>
-        <p>このページを通り過ぎると、次は背景色がスクロールに応じて「黒」へと侵食されていく変革演出（PANDEMIC）の実験ブロックに移行します。</p>
+      
+      <!-- 中扉エリア -->
+      <div class="door-container" id="door1">
+        <div class="door-label">Chapter 04</div>
+        <div class="door-title">Pandemic Logic</div>
+        <div class="door-music">
+          <div class="door-music-tag">Track 04</div>
+          <div class="door-music-name">shall we dance?</div>
+          <a href="https://suno.com/s/LLQI1pFIX8dQ9m7H" target="_blank"><div class="qr-box" id="qr1"></div></a>
+        </div>
       </div>
-      <div class="chap-nav" id="nav1"><button class="nav-btn">NEXT PAGE</button></div>
+
+      <!-- 本文エリア -->
+      <div class="body-container" id="body-cont1">
+        <div class="chap-body">
+          <span class="key-line" id="key1">日常の隙間に仕込み、気づいたら、もう元には戻れない。</span>
+          <p>このブロックでは、中扉が消えて本文が出現するプロセスと同時に、背景が「黒」へとゆっくり侵食されていく演出が混ざり合います。</p>
+          <p>中扉が完全に読者の視界から隠れたあと、本文が立ち上がるタイミングで世界が静かに反転する手触りを確認してください。</p>
+        </div>
+        <div class="chap-nav" id="nav1"><button class="nav-btn" onclick="scrollToNext(1)">NEXT PAGE →</button></div>
+      </div>
+
     </div>
   </div>
-  <div class="chapter-divider">【 PAGE GAP 】</div>
+  <div class="chapter-divider">—— BLANK SPACE ——</div>
 
-  <!-- ブロック 2: PANDEMIC（反転） -->
-  <div class="chapter-scroll" data-chap="2" data-type="pandemic">
-    <div class="chapter-sticky">
-      <div class="chap-label">BLOCK 02 — PANDEMIC MODE</div>
-      <div class="chap-body">
-        <span class="key-line" id="key2">※このエリアをスクロール中、背景色が滑らかに黒く染まります。</span>
-        <p>ここからは「色の深度」のテストです。スクロールの進捗（30%〜75%）をトリガーにして、ブラウザの背景色と文字色がじわじわとすり替わっていきます。動きがガタついたり、急激に変わりすぎていないか確認してください。</p>
-        <p>完全に染まりきると、JavaScriptによってクラスが固定され、それ以降はダークモードのような世界観が維持されます。</p>
-      </div>
-      <div class="chap-nav" id="nav2"><button class="nav-btn">NEXT PAGE</button></div>
-    </div>
-  </div>
-  <div class="chapter-divider">【 PAGE GAP 】</div>
 
-  <!-- ブロック 3: LAYERED（融解） -->
-  <div class="chapter-scroll" data-chap="3" data-type="layered">
+  <!-- ─── BLOCK 02 (LAYERED章の中扉モデル) ─── -->
+  <div class="chapter-scroll" data-chap="2" data-type="layered">
     <div class="chapter-sticky">
-      <div class="chap-label">BLOCK 03 — LAYERED MODE</div>
-      <div class="chap-body">
-        <span class="key-line" id="key3">※スクロールしている間だけ、背景の浮遊ワードの影が濃くなります。</span>
-        <p>最後のテストは「レイヤーの重なり」です。スクロールしている間だけ、背景に配置されたダミーのワード達が浮かび上がり、指を止めたりページを抜けるとまた元のうっすらとした空気へと溶けていきます。</p>
-        <p>過剰なエフェクトを削ぎ落とし、読書のノイズにならない程度の「有機的な揺らぎ」として機能しているかを検証します。</p>
+      
+      <!-- 中扉エリア -->
+      <div class="door-container" id="door2">
+        <div class="door-label">Chapter 08</div>
+        <div class="door-title">LAYERED PARK</div>
+        <div class="door-music">
+          <div class="door-music-tag">Track 08</div>
+          <div class="door-music-name">LAYERED PARK</div>
+          <a href="https://suno.com/s/Gfd7AMHkGtmRgQjr" target="_blank"><div class="qr-box" id="qr2"></div></a>
+        </div>
       </div>
-      <div class="chap-nav" id="nav3"><button class="nav-btn">END TEST</button></div>
+
+      <!-- 本文エリア -->
+      <div class="body-container" id="body-cont2">
+        <div class="chap-body">
+          <span class="key-line" id="key2">物理空間は共有したまま、一人ひとりに体験を立ち上げる。</span>
+          <p>最後はレイヤー融解モデルの中扉です。ゆったりとしたスクロール幅があるからこそ、中扉から本文への移行が唐突にならず、グラデーションのように美しく繋がります。</p>
+        </div>
+        <div class="chap-nav" id="nav2"><button class="nav-btn">END TEST</button></div>
+      </div>
+
     </div>
   </div>
 
@@ -184,6 +232,26 @@ body.pandemic-locked .key-line { color: #fcfbfa !important; }
 
 <script>
 let pandemicLocked = false;
+
+// QRコードの登録データ
+const qrData = [
+  {id:'qr0', url:'https://suno.com/s/h44d2OrvKzHAmJs7'},
+  {id:'qr1', url:'https://suno.com/s/LLQI1pFIX8dQ9m7H'},
+  {id:'qr2', url:'https://suno.com/s/Gfd7AMHkGtmRgQjr'}
+];
+
+function generateQR() {
+  qrData.forEach(item => {
+    const el = document.getElementById(item.id);
+    if (el && el.childElementCount === 0) {
+      new QRCode(el, {
+        text: item.url, width: 44, height: 44,
+        colorDark: '#1a1814', colorLight: '#fcfbfa',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+  });
+}
 
 window.addEventListener('scroll', onScroll, { passive: true });
 
@@ -194,106 +262,113 @@ function onScroll() {
     const rect = chap.getBoundingClientRect();
     const chapH = chap.offsetHeight;
     
-    // 現在のブロックのスクロール進捗（0.0 〜 1.0）
+    // 280vhのスクロール全体進捗（0.0 〜 1.0）
     const progress = Math.max(0, Math.min(1, -rect.top / (chapH - winH)));
 
     const chapNum = parseInt(chap.getAttribute('data-chap'));
     const type = chap.getAttribute('data-type');
+    
+    const door = document.getElementById(`door${chapNum}`);
+    const bodyCont = document.getElementById(`body-cont${chapNum}`);
     const key = document.getElementById(`key${chapNum}`);
     const nav = document.getElementById(`nav${chapNum}`);
 
     if (rect.top < winH && rect.bottom > 0) {
       
-      // 1. キーラインの点灯タイミング調整（25%〜75%の間だけアクティブ）
-      if (progress >= 0.25 && progress <= 0.75) {
-        if (key) key.classList.add('active');
+      // ─── 🚪 中扉のフェードアウト（0%からスクロールすると消え始め、25%で完全に消える） ───
+      if (progress <= 0.25) {
+        const doorFade = 1 - (progress / 0.25);
+        door.style.opacity = doorFade;
+        door.style.transform = `translateY(${-progress * 40}px)`;
+        door.style.pointerEvents = 'auto';
       } else {
-        if (key && progress < 0.25) key.classList.remove('active');
+        door.style.opacity = 0;
+        door.style.pointerEvents = 'none';
       }
 
-      // 2. ナビボタンの出現タイミング（75%を超えたら出現）
+      // ─── 🖋️ 本文エリアのフェードイン（45%から出始め、65%で完全に定着） ───
+      if (progress >= 0.45) {
+        bodyCont.classList.add('active');
+        // キーラインの点灯（50%〜80%の間だけアクティブ）
+        if (progress >= 0.50 && progress <= 0.80) {
+          if (key) key.classList.add('active');
+        } else {
+          if (key && progress < 0.50) key.classList.remove('active');
+        }
+      } else {
+        bodyCont.classList.remove('active');
+        if (key) key.classList.remove('active');
+      }
+
+      // ─── 🧭 ナびボタンの出現（78%を超えたら出現） ───
       if (nav) {
-        if (progress >= 0.75) {
+        if (progress >= 0.78) {
           nav.classList.add('visible');
         } else {
           nav.classList.remove('visible');
         }
       }
 
-      // 3. PANDEMIC（背景反転）モーション
+      // ─── 🎬 特殊演出：PANDEMIC ───
       if (type === 'pandemic' && !pandemicLocked) {
-        if (progress >= 0.3) {
-          const pf = Math.min(1, (progress - 0.3) / 0.4); // 30%から始まって40%の猶予で1.0になる
-          const bgR = Math.round(252 - 234 * pf);
-          const bgG = Math.round(251 - 234 * pf);
-          const bgB = Math.round(250 - 234 * pf);
-          const tR = Math.round(43 + 164 * pf);
-          const tG = Math.round(41 + 164 * pf);
-          const tB = Math.round(37 + 164 * pf);
+        if (progress >= 0.40) { // 本文が出る直前から黒への侵食が始まる
+          const pf = Math.min(1, (progress - 0.40) / 0.35);
+          const bgR = Math.round(252 - 234 * pf); const bgG = Math.round(251 - 234 * pf); const bgB = Math.round(250 - 234 * pf);
+          const tR = Math.round(43 + 164 * pf); const tG = Math.round(41 + 164 * pf); const tB = Math.round(37 + 164 * pf);
           document.body.style.backgroundColor = `rgb(${bgR},${bgG},${bgB})`;
           document.body.style.color = `rgb(${tR},${tG},${tB})`;
           
-          document.querySelectorAll('.swim-word[data-type="pandemic"]').forEach(w => {
-            w.style.opacity = (0.15 + pf * 0.4).toString();
-          });
-
-          if (progress >= 0.75) {
+          if (progress >= 0.80) {
             pandemicLocked = true;
             document.body.classList.add('pandemic-locked');
-            document.body.style.backgroundColor = '';
-            document.body.style.color = '';
+            document.body.style.backgroundColor = ''; document.body.style.color = '';
           }
         } else {
-          document.body.style.backgroundColor = '#fcfbfa';
-          document.body.style.color = '#1a1814';
-          document.querySelectorAll('.swim-word[data-type="pandemic"]').forEach(w => w.style.opacity = '0.15');
+          document.body.style.backgroundColor = '#fcfbfa'; document.body.style.color = '#1a1814';
         }
       }
 
-      // 4. LAYERED（背景融解）モーション
+      // ─── 🎬 特殊演出：LAYERED ───
       if (type === 'layered') {
-        if (progress >= 0.2 && progress <= 0.75) {
-          const factor = Math.sin(((progress - 0.2) / 0.55) * Math.PI); // 中央でピークになるサインカーブ
-          const r = Math.round(252 - 10 * factor);
-          const g = Math.round(251 - 8 * factor);
-          const b = Math.round(250 - 10 * factor);
-          if (!pandemicLocked) {
-            document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
-          }
-          document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => {
-            w.style.opacity = (0.15 + factor * 0.4).toString();
-          });
+        if (progress >= 0.40 && progress <= 0.85) {
+          const factor = Math.sin(((progress - 0.40) / 0.45) * Math.PI);
+          const r = Math.round(252 - 10 * factor); const g = Math.round(251 - 8 * factor); const b = Math.round(250 - 10 * factor);
+          if (!pandemicLocked) document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
+          document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => w.style.opacity = (0.05 + factor * 0.3).toString());
         } else {
-          if (!pandemicLocked) {
-            document.body.style.backgroundColor = '#fcfbfa';
-          }
-          document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => w.style.opacity = '0.15');
+          if (!pandemicLocked) document.body.style.backgroundColor = '#fcfbfa';
+          document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => w.style.opacity = '0.05');
         }
       }
+
     }
   });
 }
 
-// 浮遊ワードの自動微細振動（常に駆動）
+function scrollToNext(chapNum) {
+  const el = document.querySelector(`[data-chap="${chapNum + 1}"]`);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+// 浮遊ワードの自動微細振動
 function initSwimWords() {
   document.querySelectorAll('.swim-word').forEach(el => {
-    const rx = Math.random() * 6 + 3;
-    const ry = Math.random() * 6 + 3;
-    const sx = 0.0005;
-    const sy = 0.0005;
-    const px = Math.random() * 5;
-    const py = Math.random() * 5;
+    const rx = Math.random() * 6 + 3; const ry = Math.random() * 6 + 3;
+    const sx = 0.0005; const sy = 0.0005;
+    const px = Math.random() * 5; const py = Math.random() * 5;
     function anim() {
       const t = performance.now();
-      const x = Math.sin(t * sx + px) * rx;
-      const y = Math.cos(t * sy + py) * ry;
-      el.style.transform = `translate(${x}px, ${y}px)`;
+      el.style.transform = `translate(${Math.sin(t * sx + px) * rx}px, ${Math.cos(t * sy + py) * ry}px)`;
       requestAnimationFrame(anim);
     }
     anim();
   });
 }
-document.addEventListener('DOMContentLoaded', initSwimWords);
+
+document.addEventListener('DOMContentLoaded', () => {
+  generateQR();
+  initSwimWords();
+});
 </script>
 </body>
 </html>
