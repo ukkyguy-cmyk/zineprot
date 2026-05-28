@@ -2,659 +2,1341 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>違和感と余白 ——公園行政の覚書——</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;500;700&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>違和感と余白</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-/* ─── 🛡️ 基本の防壁（横ズレを防ぎ、縦スクロールに集中） ─── */
-html, body {
-  margin: 0; padding: 0;
-  width: 100%;
-  overflow-x: hidden;
-  background: #fcfbfa;
-  color: #1a1814;
-  font-family: 'Noto Serif JP', serif;
-  -webkit-font-smoothing: antialiased;
-  transition: background-color 0.8s ease, color 0.8s ease;
-}
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-dark: #ede6d6;
+    --accent: #8b4513;
+    --accent-light: #c4792a;
+    --gold: #b8960c;
+    --muted: #7a6f5e;
+    --chapter-bg: #1a1612;
+    --chapter-fg: #f5f0e8;
+  }
 
-* { box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ─── 🌊 背景浮遊ワード（ハミ出しによる右ズレを徹底カット） ─── */
-.bg-words {
-  position: fixed; inset: 0; pointer-events: none; z-index: 1;
-  width: 100vw; height: 100vh; overflow: hidden;
-}
-.swim-word {
-  position: absolute; font-family: 'IM Fell English SC', serif;
-  font-size: 11px; letter-spacing: 0.25em; opacity: 0.05;
-  white-space: nowrap; transition: opacity 1.2s ease, color 0.8s ease;
-  color: currentColor;
-}
+  html { scroll-behavior: smooth; }
 
-/* ─── 📖 ZINE コンテナ（中央配置とゆったりした余白） ─── */
-#zine-content { 
-  display: none; 
-  width: 100%; 
-  max-width: 520px; 
-  margin: 0 auto;
-  padding: 0 24px;
-}
-#zine-content.visible { display: block; }
+  body {
+    background: #111009;
+    color: #e8e0d0;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 17px;
+    line-height: 2.2;
+    letter-spacing: 0.04em;
+    -webkit-font-smoothing: antialiased;
+  }
 
-/* 各章のまとまり */
-.chapter-wrapper {
-  width: 100%;
-  margin-bottom: 25vh; /* 章と章の間の心地よい余白 */
-}
+  /* ─── LOCK SCREEN ─── */
+  #lock-screen {
+    position: fixed;
+    inset: 0;
+    background: #111009;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
 
-/* 🚪 中扉：1画面を贅沢に使って佇む */
-.door-container {
-  height: 90vh;
-  display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  text-align: center;
-}
-.door-label {
-  font-family: 'IM Fell English SC', serif;
-  font-size: 10px; letter-spacing: 0.4em; color: #b2aca6;
-  margin-bottom: 24px;
-}
-.door-title {
-  font-size: 19px; font-weight: 500; letter-spacing: 0.1em;
-  color: #1a1814; margin-bottom: 64px; line-height: 1.8;
-}
-.door-music { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.door-music-tag { font-family: 'IM Fell English SC', serif; font-size: 9px; letter-spacing: 0.2em; color: #b0aba5; }
-.door-music-name { font-size: 11px; color: #7a7570; font-weight: 300; }
-.qr-box {
-  width: 48px; height: 48px; opacity: 0.4; transition: opacity 0.3s;
-  background: #fff; padding: 2px; border: 1px solid #e4dfd8;
-}
-.qr-box img, .qr-box canvas { width: 42px !important; height: 42px !important; }
+  .lock-title {
+    font-family: 'Shippori Mincho', serif;
+    color: #e8e0d0;
+    font-size: clamp(1.4rem, 5vw, 2.2rem);
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.4rem;
+    text-align: center;
+  }
 
-/* 🖋️ 本文組版（絶対に重ならないよう、中扉の下に自然に配置） ─── */
-.body-container {
-  width: 100%;
-  margin-top: 5vh;
-  margin-bottom: 10vh;
-}
-.chap-body {
-  font-size: 14px; font-weight: 300; width: 100%;
-  line-height: 2.4; letter-spacing: 0.05em; color: #2b2925;
-  text-align: justify;
-}
-.chap-body p { margin-bottom: 2em; text-indent: 1em; }
+  .lock-sub {
+    font-family: 'Space Mono', monospace;
+    color: #c4792a;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
 
-/* 映画の字幕のようなキーライン */
-.key-line {
-  font-size: 15px; font-weight: 500; color: #1a1814;
-  margin: 0 0 48px 0; display: block; text-indent: 0;
-  letter-spacing: 0.08em; line-height: 1.8;
-  border-left: 1px solid #d4cfc8; padding-left: 16px; /* 佇まいを美しく */
-}
+  .lock-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    color: #7a6f5e;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.8rem;
+  }
 
-/* ナビゲーション */
-.chap-nav {
-  display: flex; gap: 12px; margin-top: 48px;
-  width: 100%; justify-content: flex-end;
-}
-.nav-btn {
-  font-family: 'IM Fell English SC', serif; font-size: 9px;
-  letter-spacing: 0.25em; padding: 8px 16px;
-  border: 1px solid #d4cfc8; background: transparent; color: #7a7570; cursor: pointer;
-  transition: all 0.4s; white-space: nowrap;
-}
-.nav-btn:hover { border-color: #1a1814; color: #1a1814; }
+  .lock-input-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 1rem;
+  }
 
-/* 🔒 ロック画面 & 目次（横ブレガード） ─── */
-#lock-screen, #index-screen {
-  position: fixed; inset: 0; background: #fcfbfa; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; z-index: 9999; gap: 40px;
-  width: 100vw; height: 100vh; overflow: hidden; padding: 0 24px;
-}
-#lock-screen.hidden { display: none; }
-.lock-top { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
-.lock-label { font-family: 'IM Fell English SC', serif; font-size: 10px; letter-spacing: 0.4em; color: #9a9590; }
-.lock-title { font-size: 22px; font-weight: 700; letter-spacing: 0.08em; }
-.lock-subtitle { font-size: 11px; color: #9a9590; letter-spacing: 0.2em; font-weight: 300; }
-.lock-form { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; }
-.lock-input {
-  width: 100%; max-width: 240px; padding: 12px 20px; border: 1px solid #d4cfc8; background: transparent;
-  font-family: 'Noto Serif JP', serif; font-size: 14px; text-align: center; outline: none; -webkit-appearance: none; border-radius: 0;
-}
-.lock-btn {
-  font-family: 'IM Fell English SC', serif; font-size: 10px; letter-spacing: 0.35em;
-  color: #fcfbfa; background: #1a1814; border: none; padding: 12px 32px; cursor: pointer; border-radius: 0;
-}
-.lock-error { font-size: 11px; color: #9a9590; min-height: 16px; }
+  .lock-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #5a4e3c;
+    padding: 0.6rem 0;
+    color: #e8e0d0;
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    letter-spacing: 0.25em;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s;
+  }
 
-#index-screen { display: none; z-index: 100; transition: opacity 0.8s ease; }
-#index-screen.visible { display: flex; }
-#index-screen.hidden { opacity: 0; pointer-events: none; }
-.index-title { font-size: 22px; font-weight: 700; letter-spacing: 0.1em; text-align: center; }
-.index-subtitle { font-size: 11px; color: #9a9590; letter-spacing: 0.2em; margin-top: -24px; text-align: center; }
+  .lock-input:focus { border-color: #c4792a; }
+  .lock-input::placeholder { color: #3a3028; letter-spacing: 0.15em; }
 
-.tags-wrap { position: relative; width: 100%; max-width: 340px; height: 380px; margin: 0 auto; }
-.route-tag {
-  position: absolute; font-size: 11px; color: #5a5550; border: 1px solid #e4dfd8;
-  padding: 6px 12px; border-radius: 20px; cursor: pointer; background: rgba(252,251,250,0.95);
-  white-space: nowrap; letter-spacing: 0.05em; transition: all 0.3s;
-}
-.route-tag:hover { border-color: #1a1814; background: #1a1814; color: #fcfbfa; }
+  .lock-btn {
+    background: transparent;
+    border: 1px solid #8b4513;
+    color: #c4792a;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 0.6rem 2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 0.5rem;
+  }
 
-/* ─── 🎬 モード演出用の強制反転スタイル ─── */
-body.pandemic-mode { background-color: #121110 !important; color: #cfcdc9 !important; }
-body.pandemic-mode .door-title, body.pandemic-mode .key-line { color: #fcfbfa !important; }
-body.pandemic-mode .chap-body { color: #cfcdc9 !important; }
+  .lock-btn:hover {
+    background: #8b4513;
+    color: #e8e0d0;
+  }
 
-/* 奥付 */
-.colophon { width: 100%; padding: 120px 0; border-top: 1px solid #e4dfd8; margin-top: 10vh; }
-.colophon-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-.colophon-sub { font-size: 11px; color: #9a9590; letter-spacing: 0.2em; margin-bottom: 32px; }
-.colophon-info { font-size: 11px; color: #7a7570; line-height: 2.4; font-weight: 300; }
+  .lock-error {
+    color: #c0392b;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    margin-top: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .lock-error.show { opacity: 1; }
+
+  .lock-deco {
+    position: absolute;
+    top: 2rem; left: 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: #2a241e;
+    letter-spacing: 0.2em;
+  }
+
+  /* ─── COVER ─── */
+  #cover {
+    min-height: 100vh;
+    background: #111009;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 60%, #1e1508 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, #181408 0%, transparent 50%);
+  }
+
+  .cover-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    color: #c4792a;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+
+  .cover-main-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(2.8rem, 10vw, 6rem);
+    font-weight: 700;
+    color: #e8e0d0;
+    letter-spacing: 0.15em;
+    line-height: 1.1;
+    text-align: center;
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .cover-sub-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    font-weight: 400;
+    color: #7a6f5e;
+    letter-spacing: 0.3em;
+    margin-bottom: 4rem;
+    position: relative;
+  }
+
+  .cover-rule {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, #8b4513, transparent);
+    margin: 0 auto 3rem;
+    position: relative;
+  }
+
+  .cover-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: #4a3f30;
+    letter-spacing: 0.25em;
+    text-align: center;
+    position: relative;
+  }
+
+  .cover-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* ─── CHAPTER COVER ─── */
+  .chapter-cover {
+    min-height: 60vh;
+    background: #111009;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 4rem 2.5rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chapter-cover::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #8b4513, transparent);
+  }
+
+  .chapter-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: #c4792a;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .chapter-title-large {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(1.8rem, 7vw, 3.5rem);
+    font-weight: 700;
+    color: #e8e0d0;
+    letter-spacing: 0.08em;
+    line-height: 1.25;
+    margin-bottom: 1.5rem;
+    max-width: 600px;
+  }
+
+  .chapter-cover-deco {
+    position: absolute;
+    top: 2rem; right: 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 5rem;
+    font-weight: 700;
+    color: #ffffff08;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  /* QR section in chapter cover */
+  .qr-block {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-top: 0.5rem;
+  }
+
+  .qr-wrap {
+    width: 64px;
+    height: 64px;
+    background: white;
+    padding: 4px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .qr-wrap:hover { transform: scale(1.05); }
+  .qr-wrap canvas, .qr-wrap img { width: 100% !important; height: 100% !important; }
+
+  .qr-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: #7a6f5e;
+    letter-spacing: 0.2em;
+    line-height: 1.7;
+  }
+
+  .qr-song-title {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.75rem;
+    color: #c4792a;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.2rem;
+  }
+
+  /* ─── CONTENT SECTION ─── */
+  .content-section {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 4rem 2rem 5rem;
+  }
+
+  .content-section p {
+    margin-bottom: 1.4em;
+    text-align: justify;
+    text-justify: inter-ideograph;
+  }
+
+  .content-section p:empty { display: none; }
+
+  /* Short poetic lines */
+  .poetic {
+    text-align: left;
+    line-height: 2.6;
+    margin-bottom: 2em;
+    padding-left: 1rem;
+    border-left: 2px solid #3a3428;
+  }
+
+  .section-heading {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #c4792a;
+    margin: 3rem 0 1.2rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #2a2420;
+  }
+
+  .sub-heading {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: #9a8f7e;
+    text-transform: uppercase;
+    margin: 2.5rem 0 1rem;
+  }
+
+  .phase-block {
+    background: #1e1a14;
+    border-left: 3px solid #c4792a;
+    padding: 1.2rem 1.4rem;
+    margin: 1.5rem 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .phase-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: #c4792a;
+    letter-spacing: 0.25em;
+    margin-bottom: 0.5rem;
+  }
+
+  .code-block {
+    background: #1e1a14;
+    color: #e8e0d0;
+    border: 1px solid #2a2420;
+    padding: 1.5rem 1.5rem;
+    margin: 2rem 0;
+    border-radius: 2px;
+  }
+
+  .code-block p {
+    text-align: left;
+    margin-bottom: 1.2em;
+    font-size: 0.9rem;
+    line-height: 2;
+  }
+
+  .code-block strong {
+    color: #c4792a;
+    font-weight: 500;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: #c4792a;
+    margin: 3rem auto;
+    opacity: 0.4;
+  }
+
+  .bracket-heading {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e8e0d0;
+    margin: 2rem 0 0.8rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* Scroll hint */
+  .scroll-hint {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: #7a6f5e;
+    opacity: 0;
+    animation: fadeInOut 3s ease 2s forwards;
+    pointer-events: none;
+  }
+
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    30% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* End mark */
+  .end-mark {
+    text-align: center;
+    padding: 5rem 2rem;
+    background: #111009;
+  }
+
+  .end-mark p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: #5a5040;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .end-mark .fin {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.8rem;
+    color: #6a5f4a;
+    letter-spacing: 0.3em;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    body { font-size: 16px; line-height: 2.1; }
+    .content-section { padding: 3rem 1.4rem 4rem; }
+    .chapter-cover { padding: 3rem 1.4rem 2.5rem; }
+    .cover-main-title { letter-spacing: 0.08em; }
+  }
+
+  /* Fade in on scroll */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: none;
+  }
 </style>
 </head>
 <body>
 
-<!-- 背景浮遊ワード -->
-<div class="bg-words">
-  <div class="swim-word" style="top:15%;left:5%" data-type="layered">layered park</div>
-  <div class="swim-word" style="top:45%;left:65%" data-type="layered">cognition gap</div>
-  <div class="swim-word" style="top:78%;left:8%" data-type="blank">blank space</div>
-  <div class="swim-word" style="top:32%;left:55%" data-type="pandemic">pandemic logic</div>
-  <div class="swim-word" style="top:62%;left:25%" data-type="pandemic">os rewrite</div>
-  <div class="swim-word" style="top:88%;left:45%" data-type="pandemic">install complete</div>
-</div>
-
-<!-- ロック画面 -->
+<!-- ─── LOCK SCREEN ─── -->
 <div id="lock-screen">
-  <div class="lock-top">
-    <div class="lock-label">Members Only</div>
-    <div class="lock-title">違和感と余白</div>
-    <div class="lock-subtitle">——公園行政の覚書——</div>
+  <div class="lock-deco">公務員の愉快な働き方</div>
+  <div class="lock-title">違和感と余白</div>
+  <div class="lock-sub">Members Only</div>
+  <div class="lock-label">アクセスコードを入力</div>
+  <div class="lock-input-wrap">
+    <input type="password" class="lock-input" id="lock-input" placeholder="access code" autocomplete="off" />
   </div>
-  <div class="lock-form">
-    <input class="lock-input" id="pw-input" type="password" placeholder="パスワードを入力">
-    <button class="lock-btn" onclick="unlock()">Enter</button>
-    <div class="lock-error" id="pw-error"></div>
+  <button class="lock-btn" onclick="checkCode()">ENTER</button>
+  <div class="lock-error" id="lock-error">コードが違います</div>
+</div>
+
+<!-- ─── COVER ─── -->
+<div id="cover">
+  <div class="cover-grain"></div>
+  <div class="cover-eyebrow">公務員の愉快な働き方 — WEBZINE</div>
+  <div class="cover-main-title">違和感<br>と余白</div>
+  <div class="cover-sub-title">iwakan to yohaku</div>
+  <div class="cover-rule"></div>
+  <div class="cover-meta">浮貝 忍 / UKKY &nbsp;|&nbsp; 2026</div>
+</div>
+
+<div class="scroll-hint">scroll ↓</div>
+
+<!-- ════════════════════════════════════════════
+     序章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">序</div>
+  <div class="chapter-number">PROLOGUE</div>
+  <div class="chapter-title-large">違和感は、<br>問いの種だ。</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-0" onclick="openSuno('https://suno.com/s/h44d2OrvKzHAmJs7')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">序章 問いの種 -iwakan-</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
+    </div>
   </div>
 </div>
 
-<!-- 目次画面 -->
-<div id="index-screen">
-  <div class="index-title">違和感と余白</div>
-  <div class="index-subtitle">——公園行政の覚書——</div>
-  <div class="tags-wrap">
-    <div class="route-tag" style="top:5%;left:2%" onclick="startRoute('simple')">#01 目次通りの順番</div>
-    <div class="route-tag" style="top:25%;left:20%" onclick="startRoute('息苦しさ')">#02 組織の息苦しさ</div>
-    <div class="route-tag" style="top:45%;left:2%" onclick="startRoute('ひっかかり')">#03 個人のひっかかり</div>
-    <div class="route-tag" style="top:65%;left:25%" onclick="startRoute('デジタル')">#04 デジタルと土の匂い</div>
-    <div class="route-tag" style="top:15%;left:40%" onclick="startRoute('正論')">#05 正論のぶつかり合い</div>
-    <div class="route-tag" style="top:55%;left:5%" onclick="startRoute('マニュアル')">#06 背中にマニュアルはない</div>
-    <div class="route-tag" style="top:80%;left:15%" onclick="startRoute('境界線')">#07 境界線の曖昧な場所</div>
+<div class="content-section fade-in">
+  <p>言葉にならないまま、残るものがある。</p>
+  <div class="poetic">
+    会議が終わった後。<br>
+    ふと見渡した先。<br>
+    現場から帰る道すがら。<br>
+    誰かと話して、なんとなく噛み合わなかった夜。
+  </div>
+  <p>それは不満でも、怒りでも、主張でもない。<br>もっと静かで、もっと曖昧で、でも確かに存在する、何かだ。</p>
+  <p>たいていの人は、そこでその何かを流してしまう。忙しさに紛れて。取るに足らないことだと決めつけて。それが、言語化される手前で。</p>
+  <p>でも、その何かをあえて留めていると、あることに気づく。</p>
+  <p>その「なんか違う」が、問いの始まりだと。</p>
+  <div class="divider"></div>
+  <p>問いは、育つ。</p>
+  <p>すぐには言葉にならない。形にもならない。でも、心の中で静かに醸成し、発酵し続ける。</p>
+  <p>その違和感に引っかかり続けていると、ある瞬間、ふと言葉が舞い降りてくることがある。そこから、見えていなかったものに、急に輪郭が見えはじめる。</p>
+  <p>発見というより、気づき。外から得るものではなく、内側から滲み出てくるもの。ご褒美みたいな感覚。</p>
+  <p>誰にでも、きっとある。</p>
+  <p>言葉にならない、でも確かにある、その感覚。</p>
+  <p>急がなくていい。答えを出さなくていい。</p>
+  <p>ただ流さないで、ひっかかりを認知して、留めておいて欲しい。</p>
+  <div class="poetic">
+    その種が、やがて問いになる。<br>
+    その問いが、やがて言葉になる。<br>
+    その言葉が、やがて世界をほんの少し、動かす。
   </div>
 </div>
 
-<!-- ZINEコンテンツ -->
-<div id="zine-content">
-
-  <!-- 序章 -->
-  <div class="chapter-wrapper" id="chap0" data-type="normal">
-    <div class="door-container">
-      <div class="door-label">Prologue</div>
-      <div class="door-title">違和感は、問いの種だ</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">問いの種 -iwakan-</div>
-        <a href="https://suno.com/s/h44d2OrvKzHAmJs7" target="_blank"><div class="qr-box" id="qr0"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">「なんか違う」が、問いの始まりだと。</span>
-        <p>言葉にならないまま、残るものがある。</p>
-        <p>会議が終わった後。ふと見渡した先。現場から帰る道すがら。誰かと話して、なんとなく端切れ悪く噛み合わなかった夜。</p>
-        <p>それは不満でも、怒りでも、明確な主張でもない。もっと静かで、もっと曖昧で、でも確かに存在する、不協和音のような何かだ。</p>
-        <p>たいていの人は、そこでその何かを流してしまう。忙しさに紛れて。取るに足らないことだと決めつけて。それが、言語化される手前で消えていく。</p>
-        <p>でも、その何かをあえて留めていると、である瞬間に気づく。</p>
-        <p>その「なんか違う」が、全ての問いの始まりなのだと。</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="scrollToNext(0)">next →</button>
-        <button class="nav-btn" onclick="backToIndex()">index</button>
-      </div>
+<!-- ════════════════════════════════════════════
+     第1章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">01</div>
+  <div class="chapter-number">CHAPTER 01</div>
+  <div class="chapter-title-large">公園で<br>思考する。</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-1" onclick="openSuno('https://suno.com/s/UUK47O2sYngngXJQ')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">思考 in the park</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
     </div>
   </div>
+</div>
 
-  <!-- 第1章 -->
-  <div class="chapter-wrapper" id="chap1" data-type="normal">
-    <div class="door-container">
-      <div class="door-label">Chapter 01</div>
-      <div class="door-title">公園で思考する</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">思考 in the park</div>
-        <a href="https://suno.com/s/UUK47O2sYngngXJQ" target="_blank"><div class="qr-box" id="qr1"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">ただ在るものを問い直して、在った方がいいものくらいにしていく。</span>
-        <p>公園に行ってみる。気がつくとぼんやりと考えはじめる。</p>
-        <p>何を考えるのかを決めてるわけじゃない。タスク感があるわけじゃない。ただ漠然となんとなく考えるモードになる。壁がないからぶつからない。天井がないから上限がない。</p>
-        <p>空が広い。風が吹く。木々が揺れる。あらゆる存在が、等しい時間をシェアしている感覚。固有の在り方をしていて、なんの調整もなく、統制もとれてない。</p>
-        <p>And then, such an ambiguous space called a park, I, managing within a system, find myself there. This layer of chaos constructs an bias-free floating perception.</p>
-        <p>目的地がなくても方向づけだけすればいい。スカラーをベクトルに。</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="scrollToNext(1)">next →</button>
-        <button class="nav-btn" onclick="backToIndex()">index</button>
-      </div>
+<div class="content-section fade-in">
+  <p>公園に行ってみる。気がつくとぼんやりと考えはじめる。</p>
+  <p>何を考えるのかを決めてるわけじゃない。この間からの続き、みたいにタスク感があるわけでもない。ただ漠然となんとなく考えるモードになる。</p>
+  <p>壁がないから、何かにぶつかることもない。天井がないから、思考に上限がない。</p>
+  <div class="poetic">
+    空が広い。<br>
+    風が吹く。<br>
+    鳥がさえずる。<br>
+    木々が揺れる。<br>
+    誰かの話し声。<br>
+    足音。
+  </div>
+  <p>でもそれだけじゃない。</p>
+  <p>時間。</p>
+  <p>人だけじゃなく、そこにあるものや、出来事も含めて、あらゆる存在が、等しい時間をシェアしているような感覚。</p>
+  <p>雑多。混沌。</p>
+  <p>あらゆるものが固有の居方、在り方をしていて、なんの調整もなく、全くもって統制もとれてない。</p>
+  <p>存在するという確かさが、存在していいという確からしさを許容する。</p>
+  <p>再現性のない唯一性が存在する。でもなぜか既視感もある。</p>
+  <p>目の前で遊ぶ子どもを介して、思考の中では自分の幼少期にタイムリープするような温度。</p>
+  <p>思考に秩序がない。それがなんとも心地良い。</p>
+  <p>そして、そんな無秩序や曖昧が点在する公園という場所で、管理という枠をはめる仕事をしている自分。</p>
+  <p>更なるカオス。</p>
+  <p>それが、思考バイアスがかからない浮遊性を創出する、という妙味。</p>
+  <p>縦横無尽に駆け巡る思考に、管理という安全安心思考が、ぶれずに軸や骨格として存在することで、収まりきらない思考の中で、なんとも言えない違和感が生じることがある。</p>
+  <p>何かが生まれる。兆し。</p>
+  <p>思考深度が深まるターニングポイント。</p>
+  <p>その何かとは、異質な問い。</p>
+  <p>問いが生まれた後は、思考パズルを組み立てる作業が加速する。</p>
+  <p>そういう思考の旅。</p>
+  <p>ガイドマップもない。何の用意もしていない。</p>
+  <p>あるのは思考コンパスだけ。</p>
+  <p>目的地がなくても方向づけだけすればいい。スカラーをベクトルに。ただ在るものを問い直して、在った方がいいものくらいにしていく。</p>
+  <p>今日もまた公園で。</p>
+  <p>今度はどんな違和感を連れてきてくれるだろうか。</p>
+  <p>思考コンパスが静かに動きはじめた。</p>
+</div>
+
+<!-- ════════════════════════════════════════════
+     第2章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">02</div>
+  <div class="chapter-number">CHAPTER 02</div>
+  <div class="chapter-title-large">co-en<br>公園の再定義</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-2" onclick="openSuno('https://suno.com/s/X5bzKrFyqCNsKRsk')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">co-en</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
     </div>
   </div>
+</div>
 
-  <!-- 第2章 -->
-  <div class="chapter-wrapper" id="chap2" data-type="normal">
-    <div class="door-container">
-      <div class="door-label">Chapter 02</div>
-      <div class="door-title">co-en｜公園の再定義</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">co-en</div>
-        <a href="https://suno.com/s/X5bzKrFyqCNsKRsk" target="_blank"><div class="qr-box" id="qr2"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">「公」を音で分解した先にある言葉の広がりと厚み。</span>
-        <p>「公園」という言葉、もう耳慣れすぎている。おおやけの、囲われた場所。行政が管理し、市民が利用する。その非対称な関係が、言葉の構造にすでに埋め込まれている。</p>
-        <p>だからこの言葉を一度、音に戻してみる。「こうえん」。</p>
-        <p>co（共に）という音の束：好（好ましい）、幸（しあわせ）、光（照らす）、耕（土を起こす）、恋う（引き寄せられる）。</p>
-        <p>enという音の可能性：縁（つながり）、円（循環）、宴（祝いの場）、援（支える）、俺（ここにいる自分）。</p>
-        <p>co-enという再解釈は、公園を管理と利用の関係から、出会いと変換の磁場へと移し替える試みだ。「名詞」から「動詞」へ。使うのではない、耕す。</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="scrollToNext(2)">next →</button>
-        <button class="nav-btn" onclick="backToIndex()">index</button>
-      </div>
+<div class="content-section fade-in">
+  <p>「公園」という言葉、もう擦られすぎだし、耳慣れすぎている。おおやけの、囲われた場所。それが漢字の示す意味だ。行政が管理し、市民が利用する。管理する側と、使う側。その非対称な関係が、言葉の構造にすでに埋め込まれている。</p>
+  <p>「公園」をどうこうするのは、自分だけではなく、今までも多くの人が考えて行動も起こしてきている。</p>
+  <p>ふと「公園」という言葉そのものについて問い直してこなかったことに気づく。</p>
+  <p>だからこの言葉を一度、音に戻してみる。</p>
+  <p>「こうえん」。</p>
+  <p>その音を耳で受けとり直したとき、浮かびあがってくるのは、これまでとは違う手ざわりだった。</p>
+
+  <div class="section-heading">co という音の束</div>
+  <p>英語で「co」は「共に」を意味する接頭辞だ。cooperation、collaboration、co-creation——どれも「一緒に何かをする」という意志を宿している。</p>
+  <p>さらに、日本語の音として「こう」を受けとると、もっと豊かな世界が開けてくる。</p>
+  <div class="poetic">
+    好（こう）——好ましい、好きだという感情の動き。<br>
+    幸（こう）——しあわせ、運がいいという状態。<br>
+    光（こう）——照らすもの、あるいは照らされるもの。<br>
+    功（こう）——積み重ねてきた努力とその実り。<br>
+    耕（こう）——土を起こし、何かを育てようとする行為。<br>
+    煌（こう）——きらめく、輝く。<br>
+    恋う（こう）——焦がれる、引き寄せられる。
+  </div>
+  <p>これらは全部、「こう」と読める。つまり「co」という音は、英語の論理と日本語の情感を同時に引き連れてくる。「共に」であり、「好（よ）い」であり、「耕す」でもある。</p>
+
+  <div class="section-heading">en という音の可能性</div>
+  <p>英語で「en」は動詞を作る接頭辞だ。enable（可能にする）、enrich（豊かにする）、encourage（勇気づける）——それは状態を変換する力、何かを「〜の状態にする」という動詞的な意志だ。</p>
+  <p>日本語の音として「えん」、これも重なる。</p>
+  <div class="poetic">
+    縁（えん）——出会い、つながり、偶然がもたらす関係の糸。<br>
+    円（えん）——丸さ、循環、完結しながら開いている形。<br>
+    宴（えん）——ともに食べ、飲み、笑う祝いの場。<br>
+    援（えん）——支える、力を貸す、そっと手を添える。
+  </div>
+  <p>そしてさらに気づく。「俺」も「えん」と読める。一人称。ここにいる、この自分。縁や宴や援が生まれる場所には、「俺」がいる。誰かとつながる前に、まず個として立っていられる場所。</p>
+
+  <div class="section-heading">co-en とは何か</div>
+  <p>ここで二つの音が出会う。</p>
+  <p>co-en。</p>
+  <p>それは「共に（co）、可能にする（en）場所」だ。英語の論理で読めばそうなる。</p>
+  <p>しかし日本語の音で読めば、もっと多層的な意味が折り重なる。</p>
+  <div class="poetic">
+    好（よ）い（co）縁（en）が生まれる場所。<br>
+    光（co）が、援（たす）け（en）となる場所。<br>
+    耕す（co）ことで、円（en）になっていく場所。<br>
+    恋う（co）ほどに引き寄せられ、宴（en）が始まる場所。<br>
+    そして、俺（en）がまず、ここにいられる場所。
+  </div>
+  <p>どれも「公園」の話だ。しかし「おおやけの囲われた場所」という字の意味では、これらの世界には辿りつけない。</p>
+  <p>co-enという再解釈は、公園を管理と利用の関係から、出会いと変換の磁場へと移し替える試みだ。</p>
+
+  <div class="section-heading">「名詞」から「動詞」へ</div>
+  <p>従来の公園は名詞だった。行政が管理し、市民が訪れる、固定した「場所」。</p>
+  <p>だがco-enは動詞に近い。</p>
+  <p>co-enとはどういうことか。それは、そこに来た人が「共に何かを可能にする」プロセスに参加することだ。使うのではなく、耕す。訪れるのではなく、縁を結ぶ。管理するのではなく、援ける。</p>
+  <p>公園の価値は、施設の質や面積では測れない。そこで何が「en」されたか——何が可能になり、誰が勇気づけられ、どんな縁が生まれたか——で測られるべきではないか。</p>
+
+  <div class="section-heading">行政の役割の再定義</div>
+  <p>行政が「公園を管理する」という構図は、co-enという概念の前では揺らぐ。なぜなら、co-enにおいて行政は「可能にする側（enabler）」であって、「囲う側（encloser）」ではないからだ。</p>
+  <p>縁を生む条件を整える。宴が始まれる余白を残す。個として立てる自由を保障する。光が遮られないように配慮する。</p>
+  <div class="phase-block">
+    <div class="phase-title">この矛盾を紐解く鍵が「音」だ。</div>
+    <p>公／音＝co（訳:共に）<br>公／音＝好、耕、幸、光、恋…</p>
+    <p>「公」を音で分解した先にある言葉の広がりと厚み。「園」もまた同様に分解する。公園をこの方程式によって、徐々にco-enへと変化させていく。</p>
+  </div>
+  <p>行政職員は、co-enのそのプロセスを外から設計するのではなく、その場の中に立って、一緒に耕す存在であるべきだ。</p>
+
+  <div class="section-heading">おわりに——音が先にあった</div>
+  <p>思えば、人が最初に公園へ向かうとき、漢字の意味を考えて行く人はいない。</p>
+  <p>「こうえん、いこう」</p>
+  <p>という音が、先にあるはずだ。その音の中にはすでに、好（よ）い、幸（しあわ）せ、光（ひかり）、縁（えにし）、宴（うたげ）、そして俺（おれ）、が混ざり合っていたのかもしれない。きっとこれまでもずっとco-enへ向かっていた。ただ、その言葉を持っていなかっただけだ。</p>
+  <p>言葉を得ることは、見えていなかったものを見えるようにすることだ。</p>
+  <p>公園をco-enと呼び直すことで、そこに集う人たちの行為が、新たな意味を持ちはじめる。あるいは、眠っていた何かへの気づきを誘う。</p>
+  <p>違和感は、問いの種だ。「公園」という言葉への小さな引っかかりを、ただ流さずに巡らせる。その思考は終着しないことも多い。</p>
+  <p>考え抜いて言葉が見つかることは稀有だ。</p>
+  <p>これは「co-en」に出会えた奇跡の軌跡。感謝。</p>
+</div>
+
+<!-- ════════════════════════════════════════════
+     第3章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">03</div>
+  <div class="chapter-number">CHAPTER 03</div>
+  <div class="chapter-title-large">公園との<br>関わり方</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-3" onclick="openSuno('https://suno.com/s/7MviImi1eU3AOsTK')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">公園が呼吸する</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
     </div>
   </div>
+</div>
 
-  <!-- 第3章 -->
-  <div class="chapter-wrapper" id="chap3" data-type="normal">
-    <div class="door-container">
-      <div class="door-label">Chapter 03</div>
-      <div class="door-title">公園との関わり方</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">公園が呼吸する</div>
-        <a href="https://suno.com/s/7MviImi1eU3AOsTK" target="_blank"><div class="qr-box" id="qr3"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">多様な愛着は、多様な関わりを生む。その出発点は、自分自身の幸福追求でいい。</span>
-        <p>公園は、行政が管理する単なる施設ではない。そこに関わる人々、朝の犬の散歩、放課後の子どもたちの声、その積み重ねが公園の空気をつくる。</p>
-        <p>担い手の高齢化や固定化が進む今、問い直すべきはボランティアの「やり方」ではなく、「定義」そのものではないか。関わりに資格はいらない。通りすがりでいい。「なんとなく居心地がいい」という愛着が始まりでいい。</p>
-        <p>目指すべき姿は、管理者ではなく伴走者。個性ある公園が生まれることを成果として喜べる組織でありたい。今は夜明け前、革命前夜的な気配だ。</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="scrollToNext(3)">next →</button>
-        <button class="nav-btn" onclick="backToIndex()">index</button>
-      </div>
+<div class="content-section fade-in">
+  <div class="section-heading">■ 公園は、誰のものか</div>
+  <p>公園は、行政が管理する単なる施設ではない。</p>
+  <p>もちろん、行政は公園を整備し、安全を保ち、利用できる状態に維持する責任を持つ。しかしそれは、公園の最低限の条件を守ることであって、公園を公園たらしめることではない。</p>
+  <p>公園を公園たらしめるのは、そこに関わる人々である。朝、犬を連れて歩く人。放課後、子どもたちの声が響く時間。週末、顔見知りが自然と集まる場所。その積み重ねが、公園に固有の空気をつくる。</p>
+  <p>ボランティア的な清掃だけが管理に関わるということではない。遊ぶこと、集うこと、ただそこにいること——それ自体が、公園を育てる行為である。</p>
+  <p>この文章は、公園との関わり方をボランティアのあり方由来で問い直すために書いた。誰が、どのように、なぜ公園と関わるのか。その答えを決めるのは、それぞれ自身である。</p>
+
+  <div class="section-heading">■ これまでの関わり方と、その限界</div>
+  <p>長い間、公園を支えてきたのは地域の人々だった。</p>
+  <p>町会や自治会を中心に、ボランティア清掃活動が組織され、公園は保たれてきた。その献身は本物であり、地域への愛着と責任感に支えられたものだった。その功績を、軽んじてはならない。</p>
+  <p>しかし今、その仕組みは限界を迎えつつある。</p>
+  <p>担い手の高齢化は進み、後継者は育たない。町会・自治会そのものの加入率が下がり、組織の存続が危ぶまれる地域も増えている。ボランティアへの参加者が固定化され、同じ顔ぶれが、同じ作業を、年々重くなる負担とともに続けている。</p>
+  <p>これは、公園の問題ではない。地域コミュニティそのものが、静かに、しかし確実に、脆弱化している。その最前線に、公園がある。</p>
+  <p>だとすれば、問い直すべきは公園ボランティアの「やり方」ではなく、「定義」そのものではないか。</p>
+
+  <div class="section-heading">■ 愛着を、関わりの起点にする</div>
+  <p>関わりに、資格はいらない。</p>
+  <p>通りすがりでいい。気が向いたときだけでいい。続けなくてもいい。特定の組織に属していなくてもいい。その地域に住んでいなくても働いていなくてもいい。公園はいつでもそこにあり、誰に対しても開かれている。</p>
+  <p>「なんとなく居心地がいい」「子どもがここで育った」「毎朝ここを通る」——そういった、言葉にならない感覚が、愛着の始まりである。その「なんとなく」を、大切にしたい。</p>
+  <p>愛着は、人によって異なる。犬の散歩を通じて公園を知る人がいる。ベンチで本を読むことが日課になっている人がいる。子どもの遊び場として、何かの練習の場として、集まりの拠点として——関わりの形は、関わる人の数だけある。</p>
+  <p>その多様さを、均質な「ボランティア活動」という枠に収める必要はない。各々の愛着の形が、そのまま関わりの形になっていい。</p>
+
+  <div class="section-heading">■ 関わりの地図</div>
+  <p>愛着の形が多様であるように、関わりの形も多様でいい。ただ、まったく地図のない場所には、人は踏み出しにくい。「自分にできることがあるだろうか」という迷いを減らすために、関わりのかたちをおおまかに示しておきたい。これは分類のための地図ではなく、入口を見つけるための地図である。</p>
+  <div class="bracket-heading">【使い続ける】</div>
+  <p>日常的に公園を利用することそのものが、関わりの基本である。常連になること、顔なじみをつくること——それだけで、公園に人の気配が生まれて、公園が呼吸し始める。</p>
+  <div class="bracket-heading">【整える・管理する】</div>
+  <p>清掃、草取り、花の手入れ。従来のボランティア活動の中心にあった関わり方である。地道で、しかし確実に公園の姿を変える。</p>
+  <div class="bracket-heading">【伝える】</div>
+  <p>写真を撮る、SNSで紹介する、記録を残す。公園の魅力を外に届けることで、新たな関わりが生まれる。知られていない公園は、使われない。</p>
+  <div class="bracket-heading">【企てる】</div>
+  <p>イベントを開く、ワークショップを仕掛ける、仲間を集める。公園を舞台に「何か」を起こすことで、そこに集まる人の層が広がる。</p>
+  <div class="bracket-heading">【つなぐ】</div>
+  <p>人と人、地域と公園、公園と公園を橋渡しする。関わりの網の目を広げることで、公園はまちの中に根を張っていく。</p>
+  <p>どの関わり方が正しいということはない。複数を行き来してもいい。今日は「使う」だけでも、それは立派な関わりである。</p>
+
+  <div class="section-heading">■ 関わりの深まりと、自然な変化</div>
+  <p>多様な愛着は、多様な関わりを生む。その出発点は、自分自身の幸福追求でいい。</p>
+  <p>居心地のいい場所にいたい。好きな公園をもっと好きになりたい。仲間とここで楽しみたい——そういった、極めて個人的な動機で十分である。公園への関わりは、崇高な使命感から始まる必要はない。</p>
+  <p>ただ、関わり続けるうちに、ある問いが自然と生まれることがある。</p>
+  <p>「この公園を、もっとよくしたい」</p>
+  <p>その問いはやがて、もう少し広い場所へと向かうことがある。</p>
+  <p>「このまちを、よくしたい」</p>
+  <p>この変化は、誰かに促されて起きるものではない。関わり続けた時間の中で、気づけばそう思っている——そういう種類の変化である。</p>
+  <p>自分の幸福を追求した結果として、周囲が豊かになる。その循環に気づいたとき、関わること自体が報酬になる。公園は、そういう場になれる。</p>
+
+  <div class="section-heading">■ 行政の役割の再定義</div>
+  <p>行政は、公園の管理者である。しかし同時に、それだけであってはならない。</p>
+  <p>施設を整備し、安全を確保し、利用ルールを定める——それは行政の責務であり、引き続き果たされなければならない。しかしその役割だけに徹するとき、行政は公園から人を遠ざける側に回ることがある。「ルールを守れ」「届け出が必要だ」「前例がない」——そういった言葉が、関わりの芽を摘む。</p>
+  <p>目指すべき姿は、管理者ではなく、伴走者である。関わろうとする人の邪魔をせず、関わりが生まれる余地をつくり、生まれた関わりを育てる存在。</p>
+  <p>ボランティアの評価軸も変わる必要がある。清掃の回数や参加者数だけで成果を測ることをやめ、それぞれの公園に固有の関わりが生まれているか、多様な人が多様な形で公園と接点を持っているか——そういった問いを中心に置く。</p>
+  <p>個性ある公園が生まれることを、成果として喜べる組織でありたい。</p>
+
+  <div class="section-heading">■ 一つの仮説として</div>
+  <p>地域コミュニティの再生を、どこから始めるか。</p>
+  <p>この問いに、簡単な答えはない。しかし一つの手がかりとして、公園という場所に可能性を感じている。</p>
+  <p>公園は、特定の組織に属さない。会員でなくても、住民票がなくても、誰でも使える。世代を超えて、立場を超えて、人が同じ空気を吸える数少ない公共の場である。</p>
+  <p>町会や自治会が果たしてきた「地域のつながり」の機能が弱まるとき、その代替を会議室や制度の中に求めるのは難しい。しかし公園には、つながりが自然発生する条件が、もともと備わっているのではないか。それは、実体験由来で確信している。</p>
+  <p>愛着を起点とした関わりが積み重なるとき、公園はただの施設を超える。そこに集う人々の間に、名前のないつながりが生まれる。そのつながりが、失われかけた地域の網の目を、静かに、しかし確実に、編み直していくのではないか。</p>
+  <p>これは証明された理論ではない。一人の公務員の、個人的な仮説である。</p>
+  <p>ただ、その仮説の確からしさの解像度は高い。</p>
+  <p>今は夜明け前、革命前夜的な気配。この文章が、誰かや何かの一歩になることを願っている。</p>
+</div>
+
+<!-- ════════════════════════════════════════════
+     第4章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">04</div>
+  <div class="chapter-number">CHAPTER 04</div>
+  <div class="chapter-title-large">pandemic<br>logic</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-4" onclick="openSuno('https://suno.com/s/LLQI1pFIX8dQ9m7H')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">shall we dance?</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
     </div>
   </div>
+</div>
 
-  <!-- 第4章 PANDEMIC -->
-  <div class="chapter-wrapper" id="chap4" data-type="pandemic">
-    <div class="door-container">
-      <div class="door-label">Chapter 04</div>
-      <div class="door-title">Pandemic Logic</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">shall we dance?</div>
-        <a href="https://suno.com/s/LLQI1pFIX8dQ9m7H" target="_blank"><div class="qr-box" id="qr4"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">日常の隙間に仕込み、気づいたら、もう元には戻れない。</span>
-        <p>「改革」と言った瞬間、敵が生まれる。だから、言わない。現場で泥をこね、手を動かし続けた者だけが本当の地図を持っている。これはブルーワーカーの矜持から生まれた、現場哲学の覚書だ。</p>
-        <p>ウイルスは宣言しない。ただ静かに広がる。組織の変革も同じだ。「やります」と叫んだ瞬間、免疫が働く。だから、日常の隙間に仕込む。</p>
-        <p>【THE CODE】内側の炎は絶やすな、外側は冷徹な実務家であれ。細部は譲っても根幹は死守しろ。100%完成させるな、余白が次を呼ぶ。</p>
-        <p>社交ダンスじゃない。ストリートで生まれたやつを、一緒に踊ろう。Shall we dance?</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="scrollToNext(4)">next →</button>
-        <button class="nav-btn" onclick="backToIndex()">index</button>
-      </div>
-    </div>
+<div class="content-section fade-in">
+  <p>「改革」と言った瞬間、敵が生まれる。だから、言わない。</p>
+  <p>公務員という仕事を続けていると、ある確信が育ってくる。現場で泥をこね、愚痴を拾い、手を動かし続けた者だけが、本当の地図を持っている、という確信だ。</p>
+  <p>これは戦略書じゃない。ブルーワーカーの矜持から生まれた、現場哲学の覚書だ。そして、同じ温度で踊れる仲間への、静かな招待状でもある。</p>
+  <p>社交ダンスじゃない。ストリートで生まれたやつだ。</p>
+  <p>ヒップホップがそうであるように、本質的な変革はいつもルールのないところから生まれた。型を持ちながら、型を壊す。フリースタイルは即興じゃない——無数の反復と、数多の失敗が、あの16小節を生む。</p>
+
+  <div class="section-heading">Pandemic Logic とは</div>
+  <p>ウイルスは宣言しない。ただ、静かに広がる。組織の変革も同じだ。「やります」と叫んだ瞬間、免疫が働く。だから、日常の隙間に仕込む。気づいたら、もう元には戻れない——そういう状態を設計することを、Pandemic Logicと呼ぶことにした。</p>
+
+  <div class="phase-block">
+    <div class="phase-title">01 潜伏と浸透 / Infiltration</div>
+    <p>「改革」を叫ばず、日常の業務（相談・整理・調整）に変革のウイルスを忍び込ませる。宣言した改革には免疫がはたらく。宣言しない改革は、ただ静かに浸透していく。</p>
+  </div>
+  <div class="phase-block">
+    <div class="phase-title">02 動的平衡の磁場 / Magnetic Field</div>
+    <p>「何かが起こりそう」という予感を維持し続ける。期待感そのものをエネルギー源として利用する設計。</p>
+  </div>
+  <div class="phase-block">
+    <div class="phase-title">03 不可逆な書き換え / OS Rewrite</div>
+    <p>気づいた時には、以前のやり方には戻れないほどに「新しい仕組み」が当たり前になっている状態を作る。</p>
+  </div>
+  <div class="phase-block">
+    <div class="phase-title">04 先駆性とニッチ感覚 / Pioneer Sense</div>
+    <p>最前線にいることは、一見孤独に見える。でもそれは、思考を共有して確からしさを一緒に検証できる仲間を探しているだけだ。標（しるべ）とか、この指とまれ、とか、さぁ行こうか的に…</p>
   </div>
 
-  <!-- 第5章 -->
-  <div class="chapter-wrapper" id="chap5" data-type="normal">
-    <div class="door-container">
-      <div class="door-label">Chapter 05</div>
-      <div class="door-title">背中にマニュアルはない</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">背中にマニュアルはない</div>
-        <a href="https://suno.com/s/i4gWUcovxoSoxmeJ" target="_blank"><div class="qr-box" id="qr5"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">自律を促すつもりが、依存を育てていた。</span>
-        <p>一緒に動き動きたい、と思った。同じ温度で、同じ方向へ。场が動き、人の目が変わる。自分が触媒になっている感覚。しかし、あるとき気づいた。輝いている相手の目が、次第にこちらへ向き続けていることに。</p>
-        <p>「次、どうすればいいですか？」、「これ、どう思いますか？」</p>
-        <p>自律を促すつもりが、依存を育てていた。背中にマニュアルがあるかのように。やってみせ、言って聞かせて、させてみたら、「あの人がやってくれる」という構造を作っていた。</p>
-        <p>背中にマニュアルはない。あるのは、一緒に考え続ける意志だけだ。答えを渡すのではなく、考える余白を残すこと。</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="scrollToNext(5)">next →</button>
-        <button class="nav-btn" onclick="backToIndex()">index</button>
-      </div>
-    </div>
+  <div class="section-heading">4つのPhase</div>
+
+  <div class="sub-heading">Phase 1 — OBSERVE｜潜伏と観測</div>
+  <p>愚痴を拾え。相談を拾え。それは全部、組織の歪みから漏れ出した声だ。現場にいるから聞こえる。手を動かしているから気づける。会議室のパッと見改革者には絶対に見えない地図が、そこには描かれている。</p>
+  <p>先駆性とは、情報の量と質の差だ。全貌を知っている者が、次の一手を持っている。</p>
+
+  <div class="sub-heading">Phase 2 — TRANSLATE｜磁場の形成</div>
+  <p>拾った声を、自分の論理で再構成して返す。相手の言葉を使いながら、着地点だけを変える。これは中々高度な技術だ。現場を知らない人間には、絶対にできない。</p>
+  <p>「あの人に聞けば整理される」という引力が生まれた瞬間、磁場が形成される。周囲の思考OSが、少しずつ書き換わり始める。</p>
+
+  <div class="sub-heading">Phase 3 — SURVIVE｜抗体回避</div>
+  <p>面倒な調整も、儀礼も、通行料だと思え。熱量は内側に秘めろ。燃えているのに、燃えていないふりができるか——これが最大の抗体回避だ。</p>
+  <p>「前例の踏襲」「利害の調整」という仮面を被せることで、組織の免疫反応（拒絶）を抑える。内側の炎は絶やすな。外側は冷徹な実務家であれ。</p>
+
+  <div class="sub-heading">Phase 4 — INSTALL｜発症と定着</div>
+  <p>臨界点を超えたら、動かせ。成果を可視化して、既成事実にする。「起きてしまったこと」を前に、反対意見は力を失う。</p>
+  <p>あなたがいなくても回り続ける仕組みを、現場に埋め込め。それが本当のインストールだ。仕組みが呼吸し始めた瞬間、改革は完成する。</p>
+
+  <div class="code-block">
+    <p><strong>01</strong> 内側の炎は絶やすな。外側は冷徹な実務家であれ。<br>熱量コントロールこそ、最大の武器だ。見せすぎた瞬間、的になる。</p>
+    <p><strong>02</strong> 細部は譲っていい。根幹だけは死守しろ。<br>粘り強く、なるべく引かず。妥協の場所を間違えるな。</p>
+    <p><strong>03</strong> 100%完成させるな。余白が次を呼ぶ。<br>「次はもっと凄いことが起きる」という予兆を漂わせ続けること。完成は終わりを意味する。</p>
+    <p><strong>04</strong> 思考を共有し、確からしさを一緒に検証しろ。<br>最前線にいることは孤独に見える。でもそれは、同じ感覚で踊れる仲間を探しているだけだ。孤独を肯定するな——仲間を引き寄せろ。</p>
   </div>
 
-  <!-- 第6章 -->
-  <div class="chapter-wrapper" id="chap6" data-type="normal">
-    <div class="door-container">
-      <div class="door-label">Chapter 06</div>
-      <div class="door-title">頷きの深度</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">頷きの深度 — spoken word —</div>
-        <a href="https://suno.com/s/qPMMu9xbsYNDtZXK" target="_blank"><div class="qr-box" id="qr6"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">肩書きを脱いだ人間同士が同じ問いの前に立つとき、往々にして制度の壁は思ったより低くなる。</span>
-        <p>官民連携、公民連携。そういう言葉自体が目的かのように扱われるのがなんとも気持ち悪い。自分の経験の裏打ちは、「気づいたら繋がっていた」という漂流の手触りの方が圧倒的に多い。</p>
-        <p>椅子の配置、対話のデザイン、誰も気にしないような細部を整えると空気が澄んでくる。会話のなかで生じる「頷き」の深度が変わる。浅いものは情報処理、深いものは心が動いた瞬間のハイライト。</p>
-        <p>繋ごうとしなくていい。場を整えていれば、自然と立場を超えたジャムセッションが始まり、頷きが深くなっていく。</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="scrollToNext(6)">next →</button>
-        <button class="nav-btn" onclick="backToIndex()">index</button>
-      </div>
+  <div class="section-heading">End State</div>
+  <p>「あの公務員が何かやってるらしい」が、いつの間にか「このまちのスタンダード」に変わっていること。</p>
+  <p>あなたが去った後も、仕組みが呼吸し続け、地域を動かし続けること。</p>
+  <p>仕組みはできた。あとは実装だ。</p>
+  <p>改革、と言わなくていい。課題解決意識を持ち、世の中を良くしたいと思っている——それだけで十分だ。社交ダンスじゃない。ストリートで生まれたやつを、一緒に踊ろう。Shall we dance?</p>
+</div>
+
+<!-- ════════════════════════════════════════════
+     第5章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">05</div>
+  <div class="chapter-number">CHAPTER 05</div>
+  <div class="chapter-title-large">背中に<br>マニュアルは<br>ない。</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-5" onclick="openSuno('https://suno.com/s/i4gWUcovxoSoxmeJ')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">背中にマニュアルはない</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
     </div>
   </div>
+</div>
 
-  <!-- 第7章 LAYERED -->
-  <div class="chapter-wrapper" id="chap7" data-type="layered">
-    <div class="door-container">
-      <div class="door-label">Chapter 07</div>
-      <div class="door-title">Urban Cognition Interface</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">UCI</div>
-        <a href="https://suno.com/s/F0peTNtJdCevf2HE" target="_blank"><div class="qr-box" id="qr7"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">合意形成の前に、認知共有がある。</span>
-        <p>都市を変える前に、都市の見え方を共有することから始めよう。合意形成の前に、認知共有がある。</p>
-        <p>なぜ話が噛み合わないのか。行政は制度を見、市民は経験を見、技術者は構造を見、アーティストは文脈を見る。みんな「公園」の話をしているのに、見えている風景が違う。これは単なる意見対立ではなく、認知の差だ。</p>
-        <p>「安全」の意味すら立場によって違う。本当に必要なのは正解を決めることではなく、「どう見えているか」を共有し、異なる認知の間を翻訳・接続することだ。主観が重なり、都市になる。</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="scrollToNext(7)">next →</button>
-        <button class="nav-btn" onclick="backToIndex()">index</button>
-      </div>
+<div class="content-section fade-in">
+  <p>人を動かしたい、と思った。</p>
+  <p>正確には、一緒に動きたい、と。同じ温度で、同じ方向へ。</p>
+  <p>だから声をかけた。面白いと思ったことを話し、可能性を語り、熱量を伝えた。</p>
+  <p>相手の目が輝く瞬間は中々に美味。</p>
+  <p>その瞬間のために、言葉を磨いていた気もしている。どう伝えれば刺さるか。どう見せれば動くか。</p>
+  <p>今思えば、スピリタスな言葉に酔いしれてご陽気になっていただけかもしれない。熱量があることと、それが良い方向を向いているかってのは、別の話だ。でも、その区別がついていなかった。</p>
+  <p>ほろ酔いは、気持ちがいい。</p>
+  <p>場が動く。人の目が変わる。「面白そう」「やってみたい」という言葉が返ってくる。</p>
+  <p>自分が触媒になっている感覚。それが確かな手応えに感じていた。</p>
+  <p>でも、その熱が冷めた後に残るものを、あまり見ていなかった。</p>
+  <div class="divider"></div>
+  <p>あるとき気づいた。</p>
+  <p>輝いている相手の目が、次第にこちらへ向き続けていることに。</p>
+  <div class="poetic">
+    「次、どうすればいいですか？」<br>
+    「これ、どう思いますか？」
+  </div>
+  <p>最初は、頼られることを粋に感じていた。むしろ、必要とされている感覚が心地よくもあったし、それは未だに感じている部分でもある。</p>
+  <p>でも、少しずつ違和感が生まれた。</p>
+  <p>誰かが来る。相談かもしれない。確認かもしれない。判断を求められるかもしれない。それはきっと、返さないと止まる。</p>
+  <p>休日でも、頭の中は動き続ける。誰かや何かの温度管理をし続けているような感覚。それ自体は嫌いじゃない。</p>
+  <div class="poetic">
+    いつの頃からか<br>
+    「自分がいなくても回る状態」<br>
+    を作ろうとしていた。<br><br>
+    気がつくと、<br>
+    「自分がいないと回らない状態」<br>
+    を守っていた。
+  </div>
+  <p>自律を促すつもりが、依存を育てていた。</p>
+  <p>背中についてくるのではなく、背中にマニュアルがあるかのように。</p>
+  <div class="divider"></div>
+  <p>山本五十六の言葉がある。</p>
+  <p style="font-style:italic; color:#9a8f7e;">やってみせ、言って聞かせて、させてみて、褒めてやらねば人は動かじ。</p>
+  <p>その精神でいようとしていた。</p>
+  <p>でも間違えていたのは、「させてみる」の先に何を置くか、だった。</p>
+  <div class="phase-block">
+    <p>やってみせた → 「あの人がやってくれる」になった。</p>
+    <p>言って聞かせた → 「あの人に聞けばいい」になった。</p>
+    <p>させてみた → 「あとはよろしく」になった。</p>
+  </div>
+  <p>磁場を作ろうとして、自分がすべてを引き受ける構造を作っていた。</p>
+  <div class="divider"></div>
+  <p>気づきは、劇的には来ず、じわじわと、にじり寄ってきた。</p>
+  <p>あるとき、自分が動かなければ何も進まない場面が重なった。呼ばれる。相談される。期待される。それ自体は悪くない。</p>
+  <p>でも、ふと思った。</p>
+  <p>自分がいなくなったら、これは続くのか。</p>
+  <p>その問いが、静かに確実に刺さりはじめる。</p>
+  <p>仕組みではなく、自分が動いている。磁場ではなく、自分が引力になっている。それは持続しない。そして、持続しないものは、本当の意味で根付かない。</p>
+  <div class="divider"></div>
+  <p>本当のインストールとは何か、を考えるようになったのはそれからだ。</p>
+  <p>自分がいなくても回り続ける仕組みを埋め込むこと。仕組みが呼吸し始めたとき、はじめて手を離せる。</p>
+  <p>熱量は必須だ。でも、熱量は手段であって、目的ではない。</p>
+  <p>背中にマニュアルはない。あるのは、一緒に考え続ける意志だけだ。</p>
+  <p>そのことに気づいてから、声のかけ方が変わった。煽るのではなく、問いを置くようになった。答えを渡すのではなく、考える余白を残すようになった。</p>
+  <p>背中が語る。それは依存されるものではなく、その背中を見た人自身が、自分の言葉を語りかけたくなる背中のことを言う。</p>
+  <p>見えない自分の背中に、そう問いかける。</p>
+</div>
+
+<!-- ════════════════════════════════════════════
+     第6章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">06</div>
+  <div class="chapter-number">CHAPTER 06</div>
+  <div class="chapter-title-large">頷きの<br>深度</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-6" onclick="openSuno('https://suno.com/s/qPMMu9xbsYNDtZXK')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">頷きの深度 — spoken word / lo-fi session —</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
     </div>
   </div>
+</div>
 
-  <!-- 第8章 LAYERED -->
-  <div class="chapter-wrapper" id="chap8" data-type="layered">
-    <div class="door-container">
-      <div class="door-label">Chapter 08</div>
-      <div class="door-title">LAYERED PARK</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">LAYERED PARK</div>
-        <a href="https://suno.com/s/Gfd7AMHkGtmRgQjr" target="_blank"><div class="qr-box" id="qr8"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">物理空間は共有したまま、一人ひとりに最適化された体験を立ち上げる。</span>
-        <p>都市は目に見えない「認知の段差」で溢れている。だとすれば、空間を変えるのではなく、空間に認知の「レイヤー」を重ねるという発想はどうか。</p>
-        <p>物理空間は共有したまま、一人ひとりに最適化された体験を立ち上げる。ある人には安全な音声ナビ、ある子には物語が立ち上がり、ある人には地域の記憶が語りかける。空間はひとつ、体験は複数。これを「LAYERED PARK」と呼ぶ。</p>
-        <p>小さい頃遊んだベンチに座ると、かつてのお母さんの声がする。そんな、人間の違いを分断ではなく接続資源に変え、やさしく接続し直す公園があってもいい。</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="scrollToNext(8)">next →</button>
-        <button class="nav-btn" onclick="backToIndex()">index</button>
-      </div>
-    </div>
+<div class="content-section fade-in">
+  <p>官民連携、公民連携、産官学連携。</p>
+  <p>そういう類いの話は、しばしばそれそのものが目的かのように扱われる。そこがなんとも気持ち悪い。</p>
+  <p>繋ぐという意思ではなく、繋がるという事象を表現するだけの言葉なのに。</p>
+  <p>自分の経験の裏打ちは、気づいたら繋がっていた、という方が圧倒的に多い。</p>
+  <p>結果オーライ、とも言えるし、たまたまそうだったから、そう思えているだけかもしれない。でも、それが2度3度続けてそうだったらどうか。それはもはや偶然ではないのではないか。</p>
+  <p>では、何をしてきたのか。</p>
+  <p>何かを整えていた。</p>
+  <p>公園という場所で、人が集まる時間で、誰かと誰かが話す隙間で。</p>
+  <p>狙っていたわけではない。でも、ぼんやりと見ていたものがある。</p>
+  <p>大げさなことをしていたわけじゃない。</p>
+
+  <div class="phase-block">
+    <div class="phase-title">場の設定</div>
+    <p>1on1か複数か / 会議室かそれ以外か / 業務時間内か外か / 平日か休日か</p>
+  </div>
+  <div class="phase-block">
+    <div class="phase-title">椅子の配置</div>
+    <p>輪か / 横並びか / 対か</p>
+  </div>
+  <div class="phase-block">
+    <div class="phase-title">対話のデザイン</div>
+    <p>最初の一言 / 沈黙の置きどころ / 脱線の領域 / 温度設定（忌憚なく話すなのか、決めにいくなのか）</p>
+  </div>
+  <div class="phase-block">
+    <div class="phase-title">人（主に紹介の時）</div>
+    <p>肩書き先行か / キャラクター先行か / 事象先行か</p>
   </div>
 
-  <!-- 第9章 -->
-  <div class="chapter-wrapper" id="chap9" data-type="normal">
-    <div class="door-container">
-      <div class="door-label">Chapter 09</div>
-      <div class="door-title">PUBLIC MENTOR LAB</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">PUBLIC MENTOR</div>
-        <a href="https://suno.com/s/693ynudwJwnAXs85" target="_blank"><div class="qr-box" id="qr9"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">相手が欲しいものを与えるのではなく、相手が言語化できていない思いを引き出す。</span>
-        <p>制度や専門性、既存の関係性だけでは支えきれずにこぼれ落ちるものがある。誰かが「相談」というアクションを起こす手前で関わりたい。特別な肩書きがなくても、何気ない対話で人を救っている「パブリックメンター」のような存在。</p>
-        <p>自分が公務員として現場にいるから見える違和感、制度の外に出るから聞こえる声。内側にも外側にも属さないから、両方の風景が見える。</p>
-        <p>相手が欲しいものを与えるのではなく、相手が言語化できていない思いを引き出す。気づいていないかもしれないけれど、さあ、もうあなたの言葉で考え始めているはずだ。</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="scrollToNext(9)">next →</button>
-        <button class="nav-btn" onclick="backToIndex()">index</button>
-      </div>
+  <p>誰も気にしないような細部にも拘って整えると、空気が澄んでくる。</p>
+  <p>うまくいっていると、その場の空気は静かだ。沈黙や停滞というネガティヴな静けさではなく、させられる状況がなく、素直になれている状態。</p>
+  <p>そこにいる誰もが「場が整っている」なんてことは言わないし、よぎりもしない。ただ、会話が自然に続いている。弾む。時折り、笑う。</p>
+  <p>その場にいる自分が主にすること。</p>
+  <p style="text-align:center; font-size: 1.1rem; letter-spacing: 0.2em; margin: 2rem 0; color: #c4792a;">「頷きの深度の観察」</p>
+  <p>頷きは面白い。</p>
+  <p>浅い頷きと深い頷きには明らかな違いがある。</p>
+  <p>浅いものは、聞いているふり、聞いているという演出、情報処理。その場をやり過ごすためのものであることが多い。</p>
+  <p>深いものは、心が動いた、という瞬間のハイライトだ。</p>
+  <p>頷きが深くなるとき、こんな感触をもつ。</p>
+  <div class="poetic">
+    言葉が届いた。<br>
+    見えていなかったものが見えた。<br>
+    自分の中の何かと、外の何かが、<br>
+    静かに接続された。
+  </div>
+  <p>その瞬間、人は少しだけ前のめりになる。目線が変わる。声のトーンが、わずかに落ちる。場の空気が、少しだけ張りつめる。</p>
+  <p>ふと見渡すと、その深度が上がった場所に、繋がりが生まれていた。</p>
+  <p>人と人と物事の間に起こる化学反応。</p>
+  <p>そして、肩書きを脱いだ人間同士が、その頷きの深さを携えて同じ問いの前に立つとき、往々にして制度の壁は思ったより低くなる。</p>
+  <p>さらにその後に起きることが、とても面白い。</p>
+  <p>会議室では絶対に生まれなかったはずの会話が、その辺ではじまる。名刺交換より先に、笑顔が交わされる。誰かが誰かを、別の誰かに紹介している。</p>
+  <p>その連鎖には、設計図なんてない。</p>
+  <p>ただはっきりしているのは、頷きの深度が上がった場所から、何かが流れ出しているということ。</p>
+  <p>繋ごうとしなくていい。整えていれば、自然と何かが通い、やどりはじめる。</p>
+  <p>その「何か」を制御しようとはせず、引続きその空気の密度を保つ。</p>
+  <p>渦中の人たちは、居心地が良い、一緒にやろう、大丈夫、そういう感触に浸りながら、そこにいる人たちは、ただ問いに向かい続ければ良い。</p>
+  <p>何某連携には、このインストールがマスト。</p>
+  <p>今、会議が終わった。</p>
+  <p>ふと目をやると、そこかしこで、立場を超えたジャムセッション。</p>
+  <p>頷きが深い。</p>
+</div>
+
+<!-- ════════════════════════════════════════════
+     第7章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">07</div>
+  <div class="chapter-number">CHAPTER 07</div>
+  <div class="chapter-title-large">Urban<br>Cognition<br>Interface</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-7" onclick="openSuno('https://suno.com/s/F0peTNtJdCevf2HE')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">UCI</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
     </div>
   </div>
+</div>
 
-  <!-- 終章 -->
-  <div class="chapter-wrapper" id="chap10" data-type="normal">
-    <div class="door-container">
-      <div class="door-label">Epilogue</div>
-      <div class="door-title">恵み</div>
-      <div class="door-music">
-        <div class="door-music-tag">Music</div>
-        <div class="door-music-name">恵み</div>
-        <a href="https://suno.com/s/dPttxp9YVe7rLDE3" target="_blank"><div class="qr-box" id="qr10"></div></a>
-      </div>
-    </div>
-    <div class="body-container">
-      <div class="chap-body">
-        <span class="key-line">違和感は、問いの種だ。その種は、きっと恵み。</span>
-        <p>特別なことは何もない。ただ今感じている違和感を受け止める。うまく言葉にならなくても、自分だけが気にしすぎていると思っても、その感覚をかき消さないでほしい。</p>
-        <p>「なんか違う」それをもう少しだけ手元に置いておく。それだけで何かが始まっている。気づいたときにはもう動いていて、繋がっていて、変わり始めている。宣言は要らない。Pandemic Logicでいい。</p>
-        <p>違和感は問いの種だ。その種は、きっと恵み。豊かな日常は、思考することから。思いが馳せるられることに感謝と敬意を。</p>
-      </div>
-      <div class="chap-nav">
-        <button class="nav-btn" onclick="backToIndex()">return to index</button>
-      </div>
+<div class="content-section fade-in">
+  <div class="poetic">
+    都市を変える前に、<br>
+    都市の見え方を共有することから始めよう。<br><br>
+    合意形成の前に、<br>
+    認知共有がある。
+  </div>
+  <p>最近、「都市認知インターフェース（Urban Cognition Interface）」というものを考えている。</p>
+  <p>これは都市を分析するツールではない。どちらかというと、"都市をどう見ているか"を可視化するためのインターフェース。</p>
+  <p>きっかけは、例のごとく公園。気づきと課題の宝庫。間違いない。</p>
+  <p>公園にまつわる様々な関わりのなかで、あることに気づく。</p>
+  <p>なぜ、同じ「公園」という言葉を使っているのに、話が噛み合わないのか。</p>
+  <div class="poetic">
+    行政は、制度を見る。<br>
+    市民は、経験を見る。<br>
+    技術者は、構造を見る。<br>
+    アーティストは、文脈を見る。
+  </div>
+  <p>みんな「公園」の話をしている。でも、見えている風景が違う。これは単なる意見対立ではなく、そもそもの認知差なのではないか。</p>
+  <p>例えば、「安全な公園」という言葉。</p>
+  <div class="phase-block">
+    <p>行政にとっては、管理責任かもしれない。</p>
+    <p>子どもにとっては、自由に遊べることかもしれない。</p>
+    <p>高齢者にとっては、ゆっくり座れることかもしれない。</p>
+    <p>保護者にとっては、人の目があることかもしれない。</p>
+  </div>
+  <p>同じ言葉でも、前提となる風景が違う。</p>
+  <p>にもかかわらず、しばしば「全てに共通する唯一の正解」を探そうとしてしまう。でも本当に必要なのは、正解を決めることではなく、「どう見えているか」を共有することなのではないか。</p>
+  <div class="divider"></div>
+  <p>そんなことを考えていた時、自分がやってきた活動は、実はずっとその"翻訳"だったのではないか、という問いに行きつく。</p>
+  <p>公園、点群、地域活動、DX、共創。</p>
+  <p>一見バラバラなテーマを扱っているように見えて、その根底に共通していたのは、「異なる立場の認知を、どう接続するか」という問いだった。</p>
+  <p>PLATEAUのような技術に触れるのも、単に高精度なデータを扱いたいわけではない。それによって、都市認知の幅を拡張できる可能性があるから面白い。</p>
+  <p>地域活動でも、「合意形成」をゴールに置きすぎると、どこか息苦しくなる。その息苦しさは、どこから来るのか。本当はその前に、「互いが何を見ているのか」を共有する必要がある。</p>
+  <p>つまり、「合意形成の前に、認知共有がある」。そんな構造なんだと思う。</p>
+  <div class="divider"></div>
+  <p>そこで今、都市に関する言葉を、異なる軸で再配置するUIを試作している。例えば、制度↔感情 / 可視↔不可視 / トップダウン↔ボトムアップといった軸を切り替えると、「公園」「愛着」「DX」「祭り」などの都市ワードの位置関係が変わる。</p>
+  <p>重要なのは、どの配置が正しいかではない。"見え方によって、意味が変わる"——それそのものを体感することだ。</p>
+  <p>だからこれは、GISでも、分析ダッシュボードでも、合意形成SaaSでもない。むしろ、「都市認知のためのゆらぎ可視」。都市を整理するのではなく、認知を共有する。そんな試みだ。</p>
+  <div class="divider"></div>
+  <p>このインターフェースでは、主観が主役になる。制度的な正しさではなく、「どう見えているか」から始める。</p>
+  <p>主観が重なり、都市になる。</p>
+  <p>都市は、空間だけでは成立しない。制度、感情、記憶、文化、関係、経験。それらが重なったものが都市だ。だから、一枚の地図では足りない。必要なのは、複数のレイヤーを行き来できること。</p>
+  <div class="divider"></div>
+  <p>制度の内側にも外側にも立ちながら、異なる認知の間を行き来する。どちらかに属するのではなく、その境界に立ち続けること。振り返ると、それが自分のやってきたことだった気がする。</p>
+  <p>「なんか違和感がある」</p>
+  <p>ほぼ全て、そこから始まる。</p>
+  <p>完成されたものを提示したいわけではない。これは、思考可能性を提示するためのものだ。まだ未完成で、少し漂っていて、余白がある。でも、その余白こそが大事なのだと思う。</p>
+  <div class="poetic">
+    着想は、妄想へ泳ぎ、<br>
+    妄想は、徐々に思想になる。<br><br>
+    思想はレイヤーをまとい、<br>
+    仮想は、やがて実装へ向かう。
+  </div>
+  <p>認知獲得のための可視化装置。</p>
+  <p style="text-align:center; font-size: 1rem; letter-spacing: 0.3em; color: #c4792a; margin: 1.5rem 0;">"Urban Cognition Interface"</p>
+  <div class="poetic">
+    都市を変える前に、<br>
+    都市の見え方を共有する。<br>
+    今を認めるところから。
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     第8章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">08</div>
+  <div class="chapter-number">CHAPTER 08</div>
+  <div class="chapter-title-large">LAYERED<br>PARK</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-8" onclick="openSuno('https://suno.com/s/Gfd7AMHkGtmRgQjr')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">LAYERED PARK</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
     </div>
   </div>
+</div>
 
-  <!-- 奥付 -->
-  <div class="colophon">
-    <div style="width:30px;height:1px;background:#d4cfc8;margin-bottom:48px;"></div>
-    <div class="colophon-title">違和感と余白</div>
-    <div class="colophon-sub">——公園行政の覚書——</div>
-    <div class="colophon-info">
-      著者　ukky<br>
-      発行　PUBLIC MENTOR LAB<br>
-      形態　Digital ZINE No.01<br>
-      発行　2026年5月
+<div class="content-section fade-in">
+  <p>Urban Cognition Interface。合意形成の前に、認知共有がある。</p>
+  <p>認知を共有した後に、何が起きるのか。その問いへの答えとして、一つの構想。ある意味では、「自分の理想の公園」と言えるかもしれない。</p>
+  <div class="divider"></div>
+  <p>都市には、たくさんの人がいる。</p>
+  <div class="poetic">
+    歩くのが速い人。<br>
+    立ち止まるのが好きな人。<br>
+    音で変化に触れる人。<br>
+    人混みに目が眩む人。<br>
+    見たものに心おどる人。<br>
+    匂いで季節を感じる人。
+  </div>
+  <p>誰もが異なる身体と感覚、異なる「認知のかたち」を持ちながら、同じ都市を共有して生きている。</p>
+  <p>しかし現代都市の多くは、身体も心もほぼアベレージで設計されてきた。</p>
+  <p>その結果、誰かにとって快適な空間が、別の誰かにとっては不安や孤立を生む場所にもなっている。</p>
+  <p>特に公園は象徴的な空間。</p>
+  <p>公園は本来、誰にでも開かれた「余白」である。目的を強制されず、生産性を求められず、ただ存在することが許される場所。</p>
+  <p>しかし現実には、その余白を自由に使える人と、そうでない人がいる。</p>
+  <p>段差。方向感覚への不安。情報不足。感覚過敏。孤独。心理的疎外感。</p>
+  <p>都市は、目に見えない「認知の段差」で溢れている。</p>
+  <p>その段差を、物理的に埋めようとするのは難しい。都市を大きく作り変えるには、莫大なコストとスペースと時間がかかる。すべての人にとって完璧な空間を、単一の設計だけで実現することは、そもそも不可能だ。</p>
+  <p>だとすれば、空間を変えるのではなく、認知にレイヤーを重ねるという発想はどうか。</p>
+  <p>そこに活かせるテクノロジーがあるのではないか。そのフィジカル領域にツールとしてデジタルを投入すること。それこそが、ブルーワーカー（公園行政）が取り入れるべきDXではないか。</p>
+  <div class="divider"></div>
+  <p>物理空間は共有したまま、一人ひとりに最適化された体験を立ち上げる。その可能性を感じるテクノロジーに出会った。</p>
+  <p style="text-align:center; font-size: 1rem; letter-spacing: 0.3em; color: #c4792a; margin: 1.5rem 0;">音声MR（MIXED REALITY）</p>
+  <p>景観を壊すわけでも、巨大な設備を設置するわけでもない。既存の空間に、軽やかなデジタルレイヤーを重ねる。</p>
+  <p>同じ公園にいながら、ある人には安全な移動を支援する音声ナビが流れ、ある子には木々の間から物語が立ち上がり、ある人には地域の記憶や懐かしい声が語りかける。</p>
+  <p>空間はひとつ。しかし体験は一人ひとり異なる。</p>
+  <p>一つの革新的なテクノロジーとの出会いを契機に想像が連鎖する。次々とストーリーが折り重なる。これは正に「LAYERED PARK」。</p>
+  <div class="divider"></div>
+  <p>ただし、LAYERED PARKの本質は、個別最適化ではない。</p>
+  <p>人にはそれぞれ、得意と不得意がある。歩行が困難でも、優れた聴覚感覚を持つ人がいる。視覚に障害があっても、空気の変化や音の気配を敏感に感じ取れる人もいる。</p>
+  <p>これまで都市は、そうした違いを「体系化した個人の問題」として扱ってきた。</p>
+  <p>しかしデジタルレイヤーが媒介となることで、その凹凸は欠損ではなく、互いを補完し合うための特性へと変わる。</p>
+  <p>支援する側と、支援される側。その固定された関係ではなく、異なる認知を持つ人同士が一緒に都市を体験し、補い合いながら関係性を編み直していく。</p>
+  <p>人間の違いを分断ではなく、接続資源へ変えていく。それがLAYERED PARKの核心だ。</p>
+  <div class="divider"></div>
+  <p>この思想は、公園だけで終わらない。観光。移動。地域文化。福祉。記憶。</p>
+  <p>その記憶のレイヤーの深掘り。ここでも、音声MRがもたらすであろうことに思いを巡らすと、震えがくる。</p>
+  <div class="phase-block">
+    <p>小さい頃よく遊んだ公園のベンチに座る。</p>
+    <p>「チャイムが鳴ったから帰るわよ。」</p>
+    <p>お母さんの声がする。</p>
+    <p>お母さんの声……</p>
+    <p>思わず涙する。</p>
+    <p>音声をきっかけに、想像がタイムマシーンに乗っている。</p>
+  </div>
+  <p>与えられるだけでなく、思考と回顧で、記憶という目には見えないものをはっきりと認知する。こんなレイヤーがある公園がいい。</p>
+  <div class="divider"></div>
+  <p>現実空間にデジタルレイヤーを重ねる。都市は単なるインフラから、感情と関係性を包み込む場へと変化していく。</p>
+  <p>テクノロジーによって都市を効率化したいわけではない。むしろ逆。</p>
+  <p>見えない孤独や不安、こぼれ落ちていた感覚、言葉にならなかった記憶を、もう一度都市の中へ取り戻したい。</p>
+  <p>LAYERED PARKは、その最初の小さな実験。公園の未来ではない。</p>
+  <p>人間と都市の関係を、もう一度やさしく接続し直す。</p>
+  <p>そんな公園。いいよね。</p>
+</div>
+
+<!-- ════════════════════════════════════════════
+     第9章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">09</div>
+  <div class="chapter-number">CHAPTER 09</div>
+  <div class="chapter-title-large">PUBLIC<br>MENTOR</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-9" onclick="openSuno('https://suno.com/s/693ynudwJwnAXs85')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">PUBLIC MENTOR</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
     </div>
   </div>
+</div>
 
+<div class="content-section fade-in">
+  <p>そこでもあそこでも誰かが誰かを支えようとしている。それぞれの善意、それぞれの役割で。</p>
+  <p>でも、その間からこぼれ落ちるものがある。</p>
+  <div class="poetic">
+    制度では拾いきれない。<br>
+    関係性だけでは支えきれない。<br>
+    専門性だけでは届かない。
+  </div>
+  <p>誰かが「相談」というアクションを起こす前に、もう少し手前で関われた方が、取りこぼしがない気がしてならない。</p>
+  <p>それが問題として顕在化する前に、孤立や不安や違和感を、もっと自然に受け止められないのか。そんな感覚が、常日頃からこびりつく。</p>
+  <div class="divider"></div>
+  <p>一方で、世の中には不思議な力もある。</p>
+  <p>特別な肩書きがなくても、何気ない会話で人を救っている人がいる。教えるわけでもない。指導するわけでもない。ただ、気にかけ、少しだけ見守る。</p>
+  <p>そんな存在に触れる経験をしてきたし、気づかず誰かのそんな存在になっていることもある。</p>
+  <p>家族、友人、恋人、先輩、後輩、恩師、同僚、仲間。そういう冠がつくような関係性由来でもない。</p>
+  <p>そして、その力は、仕組みとしてはほとんど可視化されていない。</p>
+  <p>「支援する人」と「支援される人」。その二項対立だけでは、これからのコミュニティや人のつながりはもたないのではないか。もっと曖昧で、もっと横断的で、もっと日常に近い関わり方が必要になるのではないか。</p>
+  <div class="divider"></div>
+  <p>そこで考え始めたのが、公務員の新しい働き方（自分では愉快な働き方と言っている。）「パブリックメンター」という考え方だった。</p>
+  <p>きっかけは、とあるスタートアップ企業支援プログラムのメンター就任要請。なんとなく引き受けてみる。面白そうだから。</p>
+  <p>そこからこれまでにもうどれだけのメンタリングをしてきただろう。</p>
+  <p>でも、はたと気づく。</p>
+  <p>これまでも、職場で、地域で。まるっきり同じことしてたよね？</p>
+  <p>専門家じゃない。完璧にどこかへ導けるわけでもない。ただ、誰かの変化や兆しに気づき、必要な場所へつなぎ、独りよがりや孤立を防ぐ。</p>
+  <p>それを役割に留めず、公共的な知恵として育てられないか。それこそが、公務員の公務員たる所以、気概、矜持なのではないか。</p>
+  <div class="divider"></div>
+  <p>パブリックメンターを自分なりにアレンジする。天秤の真ん中に置く構え。</p>
+  <p>自分が公務員として現場にいるから見える違和感がある。制度の外に出るから聞こえる声がある。内側にも外側にも属さないから、両方の風景が見える。</p>
+  <p>その「見えてしまう」という感覚。それが自分を突き動かす理由。</p>
+  <p>研究でもなく、支援でもなく、啓発でもない。</p>
+  <p>ただ、問い続ける。</p>
+  <p>人と人がどう支え合えるのか、制度と日常のあいだに何が必要なのか、その人はどんな人なのか、その技術は何なのか、実践しながら、対話しながら、少しずつ考え続けている。</p>
+  <p>相手が欲しいものを与えるのではなく、相手が言語化できていない思いを引き出す。</p>
+  <p>出てきた思いは、決め打ちせず、その方向性を揺らぎながら探る。完成とかゴールが見えていなくても、その答えを無理に出そうとはしない。</p>
+  <p>すでにあるものかもしれないし、まだないものかもしれない。</p>
+  <p>巡る、漂う。その行ったり来たりは無駄じゃない。</p>
+  <p>なぜか。</p>
+  <p>気づいてるかわからないけど、さっきからもう自分の言葉で考え始めてるはず。</p>
+  <p style="text-align:center; font-size: 1.1rem; letter-spacing: 0.35em; color: #c4792a; margin: 2rem 0;">public mentor</p>
+</div>
+
+<!-- ════════════════════════════════════════════
+     終章
+════════════════════════════════════════════ -->
+<div class="chapter-cover fade-in">
+  <div class="chapter-cover-deco">終</div>
+  <div class="chapter-number">EPILOGUE</div>
+  <div class="chapter-title-large">恵み</div>
+  <div class="qr-block">
+    <div class="qr-wrap" id="qr-10" onclick="openSuno('https://suno.com/s/dPttxp9YVe7rLDE3')" title="再生する"></div>
+    <div>
+      <div class="qr-song-title">終章 恵み</div>
+      <div class="qr-label">QRコードをタップして聴く<br>LISTEN ON SUNO</div>
+    </div>
+  </div>
+</div>
+
+<div class="content-section fade-in">
+  <p>特別なことは、何もない。</p>
+  <p>ただ、今感じている違和感を受け止める。</p>
+  <div class="poetic">
+    うまく言葉にならなくても。<br>
+    誰かに話して伝わらなくても。<br>
+    自分だけが気にしすぎているのかと思っても。
+  </div>
+  <p>その感覚を閉ざしたり、かき消したりしないで欲しい。そのままを受け入れておけばいい。</p>
+  <p>それは、検索しても、本を読んでも、誰かと話しても、むしろどんどん増える性質のものかもしれない。</p>
+  <p>でもそれは、問いが育っている証拠だ。</p>
+  <p>問いが育つとき、見えていなかったものが見え始める。見えるものが増えるとき、世界は少しだけ広くなる。</p>
+  <div class="poetic">
+    すぐに動かなくていい。<br>
+    計画を立てなくていい。<br>
+    誰かに宣言しなくていい。
+  </div>
+  <p>「なんか違う」</p>
+  <p>それをもう少しだけ、手元に置いておいてほしい。</p>
+  <p>それだけで、何かが始まっている。</p>
+  <div class="poetic">
+    気づいたときには、<br>
+    もう動いていて、<br>
+    もう繋がっていて、<br>
+    もう変わりはじめている。
+  </div>
+  <p>宣言は要らない。Pandemic Logicでいい。</p>
+  <p>静かに、でも確かに。</p>
+  <div class="divider"></div>
+  <p>違和感は、問いの種だ。</p>
+  <p>その種は、きっと恵み。</p>
+  <p>育つのを見守り、育っていく環境を整える。</p>
+  <p>豊かな日常は、思考することから。</p>
+  <p>思いが馳せられることに感謝と敬意を。</p>
+</div>
+
+<div class="end-mark">
+  <p>公務員の愉快な働き方</p>
+  <p>浮貝 忍 / UKKY</p>
+  <div class="fin">了</div>
 </div>
 
 <script>
-const PASSWORD = 'pml2024';
-
-const routes = {
-  'simple':     [0,1,2,3,4,5,6,7,8,9,10],
-  '息苦しさ':   [2,4,5,6],
-  'ひっかかり': [1,3,8,10],
-  'デジタル':   [3,7,8,9],
-  '正論':       [2,5,6,7],
-  'マニュアル': [1,4,9,10],
-  '境界線':     [0,3,7,10]
-};
-let currentRoute = [];
-
-const qrData = [
-  {id:'qr0', url:'https://suno.com/s/h44d2OrvKzHAmJs7'},
-  {id:'qr1', url:'https://suno.com/s/UUK47O2sYngngXJQ'},
-  {id:'qr2', url:'https://suno.com/s/X5bzKrFyqCNsKRsk'},
-  {id:'qr3', url:'https://suno.com/s/7MviImi1eU3AOsTK'},
-  {id:'qr4', url:'https://suno.com/s/LLQI1pFIX8dQ9m7H'},
-  {id:'qr5', url:'https://suno.com/s/i4gWUcovxoSoxmeJ'},
-  {id:'qr6', url:'https://suno.com/s/qPMMu9xbsYNDtZXK'},
-  {id:'qr7', url:'https://suno.com/s/F0peTNtJdCevf2HE'},
-  {id:'qr8', url:'https://suno.com/s/Gfd7AMHkGtmRgQjr'},
-  {id:'qr9', url:'https://suno.com/s/693ynudwJwnAXs85'},
-  {id:'qr10',url:'https://suno.com/s/dPttxp9YVe7rLDE3'}
-];
-
-function generateQR() {
-  qrData.forEach(item => {
-    const el = document.getElementById(item.id);
-    if (el && el.childElementCount === 0) {
-      new QRCode(el, {
-        text: item.url, width: 42, height: 42,
-        colorDark: '#1a1814', colorLight: '#fcfbfa',
-        correctLevel: QRCode.CorrectLevel.M
-      });
-    }
-  });
-}
-
-function unlock() {
-  const v = document.getElementById('pw-input').value;
-  const e = document.getElementById('pw-error');
-  if (v === PASSWORD) {
-    document.getElementById('lock-screen').classList.add('hidden');
-    showIndex();
-    generateQR();
+// ─── LOCK ───
+function checkCode() {
+  var input = document.getElementById('lock-input').value.trim();
+  var err = document.getElementById('lock-error');
+  if (input === 'ukkyukai') {
+    var ls = document.getElementById('lock-screen');
+    ls.style.transition = 'opacity 0.8s ease';
+    ls.style.opacity = '0';
+    setTimeout(function(){ ls.style.display = 'none'; }, 800);
   } else {
-    e.textContent = 'パスワードが違います';
-    document.getElementById('pw-input').value = '';
-    document.getElementById('pw-input').focus();
+    err.classList.add('show');
+    setTimeout(function(){ err.classList.remove('show'); }, 2500);
+    document.getElementById('lock-input').value = '';
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('pw-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') unlock();
-  });
-  initSwimWords();
+document.getElementById('lock-input').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') checkCode();
 });
 
-function showIndex() {
-  const idx = document.getElementById('index-screen');
-  idx.classList.add('visible');
-  idx.classList.remove('hidden');
-  document.getElementById('zine-content').classList.remove('visible');
-  document.getElementById('zine-content').style.display = 'none';
-  document.body.classList.remove('pandemic-mode');
-  window.scrollTo(0, 0);
+// ─── SUNO OPEN ───
+function openSuno(url) {
+  window.open(url, '_blank');
 }
 
-function backToIndex() {
-  showIndex();
-}
+// ─── QR CODES ───
+var sunoUrls = [
+  'https://suno.com/s/h44d2OrvKzHAmJs7',
+  'https://suno.com/s/UUK47O2sYngngXJQ',
+  'https://suno.com/s/X5bzKrFyqCNsKRsk',
+  'https://suno.com/s/7MviImi1eU3AOsTK',
+  'https://suno.com/s/LLQI1pFIX8dQ9m7H',
+  'https://suno.com/s/i4gWUcovxoSoxmeJ',
+  'https://suno.com/s/qPMMu9xbsYNDtZXK',
+  'https://suno.com/s/F0peTNtJdCevf2HE',
+  'https://suno.com/s/Gfd7AMHkGtmRgQjr',
+  'https://suno.com/s/693ynudwJwnAXs85',
+  'https://suno.com/s/dPttxp9YVe7rLDE3'
+];
 
-function startRoute(name) {
-  currentRoute = routes[name];
-  const idx = document.getElementById('index-screen');
-  idx.classList.add('hidden');
-  setTimeout(() => {
-    idx.classList.remove('visible');
-    setupRoute();
-  }, 400);
-}
+window.addEventListener('load', function(){
+  for (var i = 0; i < sunoUrls.length; i++) {
+    (function(idx){
+      var el = document.getElementById('qr-' + idx);
+      if (!el) return;
+      try {
+        new QRCode(el, {
+          text: sunoUrls[idx],
+          width: 64,
+          height: 64,
+          colorDark: '#1a1612',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } catch(e) {}
+    })(i);
+  }
+});
 
-function setupRoute() {
-  const allChaps = document.querySelectorAll('.chapter-wrapper');
-  allChaps.forEach(c => {
-    const chapNum = parseInt(c.id.replace('chap', ''));
-    if (currentRoute.includes(chapNum)) {
-      c.style.display = 'block';
-    } else {
-      c.style.display = 'none';
+// ─── SCROLL FADE IN ───
+var fadeEls = document.querySelectorAll('.fade-in');
+var observer = new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
     }
   });
-  document.getElementById('zine-content').style.display = 'block';
-  document.getElementById('zine-content').classList.add('visible');
-  document.body.classList.remove('pandemic-mode');
-  window.scrollTo(0, 0);
-}
+}, { threshold: 0.08 });
 
-function scrollToNext(chapNum) {
-  const idx = currentRoute.indexOf(chapNum);
-  if (idx < currentRoute.length - 1) {
-    const nextChap = currentRoute[idx + 1];
-    const el = document.getElementById(`chap${nextChap}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  } else {
-    backToIndex();
-  }
-}
-
-// 背景演出のためのシンプルなスクロール監視
-window.addEventListener('scroll', () => {
-  if (!document.getElementById('zine-content').classList.contains('visible')) return;
-
-  let currentType = 'normal';
-  
-  document.querySelectorAll('.chapter-wrapper').forEach(chap => {
-    if (chap.style.display === 'none') return;
-    const rect = chap.getBoundingClientRect();
-    // 画面中央付近に現在ある章のタイプを判定
-    if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
-      currentType = chap.getAttribute('data-type');
-    }
-  });
-
-  // 演出の切り替え
-  if (currentType === 'pandemic') {
-    document.body.classList.add('pandemic-mode');
-    document.querySelectorAll('.swim-word[data-type="pandemic"]').forEach(w => w.style.opacity = '0.35');
-  } else {
-    document.body.classList.remove('pandemic-mode');
-    document.querySelectorAll('.swim-word[data-type="pandemic"]').forEach(w => w.style.opacity = '0.05');
-  }
-
-  if (currentType === 'layered') {
-    document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => w.style.opacity = '0.35');
-  } else {
-    document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => w.style.opacity = '0.05');
-  }
-}, { passive: true });
-
-function initSwimWords() {
-  document.querySelectorAll('.swim-word, .route-tag').forEach(el => {
-    const rx = Math.random() * 6 + 3; const ry = Math.random() * 6 + 3;
-    const sx = 0.0004; const sy = 0.0004;
-    const px = Math.random() * Math.PI; const py = Math.random() * Math.PI;
-    function anim() {
-      const t = performance.now();
-      el.style.transform = `translate(${Math.sin(t * sx + px) * rx}px, ${Math.cos(t * sy + py) * ry}px)`;
-      requestAnimationFrame(anim);
-    }
-    anim();
-  });
-}
+fadeEls.forEach(function(el){ observer.observe(el); });
 </script>
+
 </body>
 </html>
