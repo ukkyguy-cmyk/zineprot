@@ -13,8 +13,9 @@ body {
   background: #f7f4ef;
   color: #1a1814;
   font-family: 'Noto Serif JP', serif;
-  transition: background-color 0.4s ease, color 0.4s ease;
+  transition: background-color 0.6s cubic-bezier(0.25, 1, 0.5, 1), color 0.6s cubic-bezier(0.25, 1, 0.5, 1);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 body.pandemic-locked {
@@ -69,7 +70,7 @@ body.pandemic-locked {
   justify-content: center;
   z-index: 100;
   gap: 40px;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.8s ease;
 }
 #index-screen.visible { display: flex; }
 #index-screen.hidden { opacity: 0; pointer-events: none; }
@@ -95,14 +96,14 @@ body.pandemic-locked {
 }
 .route-tag:hover { border-color: #1a1814; background: #1a1814; color: #f7f4ef; }
 
-/* ─── 背景浮遊ワード ─── */
+/* ─── 🌊 背景浮遊ワード（ベースの不透明度を担保） ─── */
 .bg-words {
   position: fixed; inset: 0; pointer-events: none; z-index: 1;
 }
 .swim-word {
   position: absolute; font-family: 'IM Fell English SC', serif;
-  font-size: 11px; letter-spacing: 0.2em; opacity: 0;
-  white-space: nowrap; transition: opacity 0.6s ease;
+  font-size: 11px; letter-spacing: 0.2em; opacity: 0.08; /* 完全に消さず、常に気配を残す */
+  white-space: nowrap; transition: opacity 0.8s ease, color 0.6s ease;
   color: currentColor;
 }
 
@@ -110,9 +111,9 @@ body.pandemic-locked {
 #zine-content { display: none; }
 #zine-content.visible { display: block; }
 
-/* 各章：スクロール高さを確保したラッパー */
+/* 余裕を持たせたスクロール高さ */
 .chapter-scroll {
-  min-height: 400vh;
+  min-height: 350vh;
   position: relative;
 }
 
@@ -125,8 +126,8 @@ body.pandemic-locked {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0 32px;
-  max-width: 600px;
+  padding: 0 40px; /* 左右の余白を拡張 */
+  max-width: 640px; /* 少し横幅を広げてゆったりと */
   margin: 0 auto;
   z-index: 10;
 }
@@ -135,7 +136,7 @@ body.pandemic-locked {
 .chap-label {
   font-family: 'IM Fell English SC', serif;
   font-size: 10px; letter-spacing: 0.3em;
-  color: #9a9590; margin-bottom: 32px;
+  color: #9a9590; margin-bottom: 24px;
   align-self: flex-start;
   transition: color 0.4s;
 }
@@ -143,7 +144,7 @@ body.pandemic-locked {
 /* 音楽ブロック */
 .music-row {
   display: flex; align-items: center; justify-content: space-between;
-  width: 100%; margin-bottom: 32px;
+  width: 100%; margin-bottom: 40px; /* 本文との間隔を開ける */
 }
 .music-info { display: flex; flex-direction: column; gap: 4px; }
 .music-tag { font-family: 'IM Fell English SC', serif; font-size: 9px; letter-spacing: 0.25em; color: #9a9590; }
@@ -151,46 +152,59 @@ body.pandemic-locked {
 .qr-mini { width: 48px; height: 48px; flex-shrink: 0; }
 .qr-mini img, .qr-mini canvas { width: 48px !important; height: 48px !important; }
 
-/* 本文 */
+/* ─── 🖋️ 本文の圧倒的改善（行間・段落余白・文字サイズ） ─── */
 .chap-body {
-  font-size: 13.5px;
+  font-size: 14.5px; /* やや大きくして可読性を確保 */
   font-weight: 300;
   width: 100%;
-  transition: line-height 0.1s ease, letter-spacing 0.1s ease, color 0.4s;
+  line-height: 2.3; /* 基本の行間をゆったりと */
+  letter-spacing: 0.04em;
+  color: inherit;
+  transition: color 0.4s;
+}
+
+/* 段落（ブロック）ごとの息苦しさを排除する余白 */
+.chap-body p {
+  margin-bottom: 1.8em; /* 文脈の切れ目に美しい空白を */
+}
+.chap-body p:last-child {
+  margin-bottom: 0;
 }
 
 /* キーセンテンス */
 .key-line {
-  font-weight: 500;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.15s linear, transform 0.15s linear, color 0.4s;
-  border-bottom: 1px dashed rgba(26,24,20,0.15);
-  padding-bottom: 4px;
-  margin: 8px 0;
+  font-weight: 600;
+  opacity: 0.15; /* 最初からうっすら見せておくことで、詰まり感を減らす */
+  transform: translateY(8px);
+  transition: opacity 0.1s linear, transform 0.1s linear, color 0.4s;
+  border-bottom: 1px dashed rgba(26,24,20,0.2);
+  padding-bottom: 6px;
+  margin: 24px 0; /* 前後の余白を大きく確保 */
   display: block;
 }
-.key-line.visible { opacity: 1; transform: translateY(0); }
 
 /* 区切り */
 .chapter-divider {
-  height: 120px;
+  height: 25vh; /* 区切り自体を大きな余白として機能させる */
   display: flex; align-items: center; justify-content: center;
 }
 .divider-line {
-  width: 40px; height: 1px; background: #d4cfc8;
+  width: 30px; height: 1px; background: #d4cfc8; opacity: 0.6;
 }
 
 /* ナビゲーション */
 .chap-nav {
-  opacity: 0; transition: opacity 0.6s ease;
-  display: flex; gap: 16px; margin-top: 32px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  display: flex; gap: 16px; margin-top: 40px;
   pointer-events: none;
+  width: 100%;
+  justify-content: flex-end;
 }
-.chap-nav.visible { opacity: 1; pointer-events: auto; }
+.chap-nav.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 .nav-btn {
   font-family: 'IM Fell English SC', serif; font-size: 9px;
-  letter-spacing: 0.3em; padding: 8px 20px;
+  letter-spacing: 0.3em; padding: 10px 24px;
   border: 1px solid currentColor; cursor: pointer;
   background: transparent; color: inherit;
   transition: all 0.3s;
@@ -200,8 +214,8 @@ body.pandemic-locked {
 
 /* 奥付 */
 .colophon {
-  max-width: 600px; margin: 0 auto;
-  padding: 80px 32px;
+  max-width: 640px; margin: 0 auto;
+  padding: 120px 40px;
   border-top: 1px solid #d4cfc8;
 }
 .colophon-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
@@ -261,53 +275,13 @@ body.pandemic-locked {
       <a href="https://suno.com/s/h44d2OrvKzHAmJs7" target="_blank"><div class="qr-mini" id="qr0"></div></a>
     </div>
     <div class="chap-body" id="body0">
-<span class="key-line" id="key0">「なんか違う」が、問いの始まりだと。</span>
-言葉にならないまま、残るものがある。
-
-会議が終わった後。
-ふと見渡した先。
-現場から帰る道すがら。
-誰かと話して、なんとなく噛み合わなかった夜。
-
-それは不満でも、怒りでも、主張でもない。
-もっと静かで、もっと曖昧で
-でも確かに存在する、何かだ。
-
-たいていの人は、そこでその何かを流してしまう。
-忙しさに紛れて。取るに足らないことだと決めつけて。
-それが、言語化される手前で。
-
-でも、その何かをあえて留めていると、あることに気づく。
-
-その「なんか違う」が、問いの始まりだと。
-
-
-問いは、育つ。
-
-すぐには言葉にならない。
-形にもならない。
-でも、心の中で静かに醸成し、発酵し続ける。
-
-その違和感に引っかかり続けていると、
-ある瞬間、
-ふと言葉が舞い降りてくることがある。
-そこから、見えていなかったものに、急に輪郭が見えはじめる。
-
-発見というより、気づき。
-外から得るものではなく、内側から滲み出てくるもの。ご褒美みたいな感覚。
-
-誰にでも、きっとある。
-
-言葉にならない、でも確かある、その感覚。
-
-急がなくていい。
-答えを出さなくていい。
-
-ただ流さないで、ひっかかりを認知して、留めておいて欲しい。
-
-その種が、やがて問いになる。
-その問いが、やがて言葉になる。
-その言葉が、やがて世界をほんの少し、動かす。
+      <span class="key-line" id="key0">「なんか違う」が、問いの始まりだと。</span>
+      <p>言葉にならないまま、残るものがある。</p>
+      <p>会議が終わった後。ふと見渡した先。現場から帰る道すがら。誰かと話して、なんとなく端切れ悪く噛み合わなかった夜。</p>
+      <p>それは不満でも、怒りでも、明確な主張でもない。もっと静かで、もっと曖昧で、でも確かに存在する、不協和音のような何かだ。</p>
+      <p>たいていの人は、そこでその何かを流してしまう。忙しさに紛れて。取るに足らないことだと決めつけて。それが、言語化される手前で消えていく。</p>
+      <p>でも、その何かをあえて留めていると、である瞬間に気づく。</p>
+      <p>その「なんか違う」が、全ての問いの始まりなのだと。</p>
     </div>
     <div class="chap-nav" id="nav0">
       <button class="nav-btn" onclick="scrollToNext(0)"><span>next →</span></button>
@@ -328,70 +302,12 @@ body.pandemic-locked {
       <a href="https://suno.com/s/UUK47O2sYngngXJQ" target="_blank"><div class="qr-mini" id="qr1"></div></a>
     </div>
     <div class="chap-body" id="body1">
-<span class="key-line" id="key1">ただ在るものを問い直して、在った方がいいものくらいにしていく。</span>
-公園に行ってみる。
-気がつくとぼんやりと考えはじめる。
-
-何を考えるのかを決めてるわけじゃない。
-この間からの続き、みたいにタスク感があるわけでもない。
-ただ漠然となんとなく考えるモードになる。
-
-壁がないから、何かにぶつかることもない。
-天井がないから、思考に上限がない。
-
-空が広い。
-風が吹く。
-鳥がさえずる。
-木々が揺れる.
-誰かの話し声。
-足音。
-
-外の何かが、自分を侵食していく感覚。
-人だけじゃなく、そこにあるものや、出来事も含めて、あらゆる存在が、等しい時間をシェアしているような感覚。
-
-雑多。混沌。
-
-あらゆるものが固有の居方、在り方をしていて、なんの調整もなく、全くもって統制もとれてない。
-
-存在するという確かさが、
-存在していいという確からしさを許容する。
-
-再現性のない唯一性が存在する。
-でもなぜか既視感もある。
-
-目の前で遊ぶ子どもを介して、思考の中では自分の幼少期にタイムリープするような温度。
-
-思考に秩序がない。
-それがなんとも心地良い。
-
-そして、そんな無秩序や曖昧が点在する公園という場所で、管理という枠をはめる仕事をしている自分。
-
-更なるカオス。
-
-それが、思考バイアスがかからない浮遊性を創出する、という妙味。
-
-縦横無尽に駆け巡る思考に、管理という安全安心思考が、ぶれずに軸や骨格として存在することで、収まりきらない思考の中で、なんとも言えない違和感が生じることがある。
-
-何かが生まれる。兆し。
-
-思考深度が深まるターニングポイント。
-
-その何かとは、異質な問い。
-
-問いが生まれた後は、思考パズルを組み立てる作業が加速する。
-
-そういう思考の旅。
-
-ガイドマップもない。何の用意もしていない。
-
-あるのは思考コンパスだけ。
-
-目的地がなくても方向づけだけすればいい。
-スカラーをベクトルに。
-ただ在るものを問い直して、在った方がいいものくらいにしていく。
-
-今日もまた公園で。
-思考コンパスが静かに動きはじめた。
+      <span class="key-line" id="key1">ただ在るものを問い直して、在った方がいいものくらいにしていく。</span>
+      <p>公園に行ってみる。気がつくとぼんやりと考えはじめる。</p>
+      <p>何を考えるのかを決めてるわけじゃない。タスク感があるわけでもない。ただ漠然となんとなく考えるモードになる。壁がないからぶつからない。天井がないから上限がない。</p>
+      <p>空が広い。風が吹く。木々が揺れる。あらゆる存在が、等しい時間をシェアしている感覚。固有の在り方をしていて、なんの調整もなく、統制もとれてない。</p>
+      <p>そして、そんな無秩序や曖昧が点在する公園という場所で、管理という枠をはめる仕事をしている自分。その更なるカオスが、思考バイアスがかからない浮遊性を創出するという妙味。</p>
+      <p>目的地がなくても方向づけだけすればいい。スカラーをベクトルに。</p>
     </div>
     <div class="chap-nav" id="nav1">
       <button class="nav-btn" onclick="scrollToNext(1)"><span>next →</span></button>
@@ -412,62 +328,12 @@ body.pandemic-locked {
       <a href="https://suno.com/s/X5bzKrFyqCNsKRsk" target="_blank"><div class="qr-mini" id="qr2"></div></a>
     </div>
     <div class="chap-body" id="body2">
-<span class="key-line" id="key2">「公」を音で分解した先にある言葉の広がりと厚み。</span>
-「公園」という言葉、もう擦られすぎだし、耳慣れすぎている。
-おおやけの、囲われた場所。それが漢字の示す意味だ。行政が管理し、市民が利用する。管理する側と、使う側。その非対称な関係が、言葉の構造にすでに埋め込まれている。
-
-ふと「公園」という言葉そのものについて問い直してこなかったことに気づく。
-
-だからこの言葉を一度、音に戻してみる。
-
-「こうえん」。
-
-その音を耳で受けとり直したとき、浮かびあがってくるのは、これまでとは違う手ざわりだった。
-
-coという音の束
-
-英語で「co」は「共に」を意味する接頭辞だ。cooperation、collaboration、co-creation——どれも「一緒に何かをする」という意志を宿している。さらに、日本語の音として「こう」を受けとると、もっと豊かな世界が開けてくる。
-
-好（こう）——好ましい、好きだという感情の動き。
-幸（こう）——しあわせ、運がいいという状態。
-光（こう）——照らすもの、あるいは照らされるもの。
-功（こう）——積み重ねてきた努力とその実り。
-耕（こう）——土を起こし、何かを育てようとする行為。
-煌（こう）——きらめく、輝く。
-恋う（こう）——焦がれる、引き寄せられる。
-
-enという音の可能性
-
-縁（えん）——出会い、つながり、偶然がもたらす関係の糸。
-円（えん）——丸さ、循環、完結しながら開いている形。
-宴（えん）——ともに食べ、飲み、笑う祝いの場。
-援（えん）——支える、力を貸す、そっと手を添える。
-俺（えん）——ここにいる、この自分。
-
-co-enとは何か
-
-好（よ）い縁が生まれる場所。
-光が、援けとなる場所。
-耕すことで、円になっていく場所。
-恋うほどに引き寄せられ、宴が始まる場所。
-そして、俺がまず、ここにいられる場所。
-
-co-enという再解釈は、公園を管理と利用の関係から、出会いと変換の磁場へと移し替える試みだ。
-
-「公園」×「使う」——被乗数が固定（観念）。
-「co-en」×「使う」——被乗数にも厚みと広がりが生まれる。
-
-「名詞」から「動詞」へ
-
-使うのではなく、耕す。訪れるのではなく、縁を結ぶ。管理するのではなく、援ける。
-
-思えば、人が最初に公園へ向かうとき、漢字の意味を考えて行く人はいない。
-
-「こうえん、いこう」
-
-という音が、先にあるはずだ。
-
-違和感は、問いの種だ。これは「co-en」に出会えた奇跡の軌跡。
+      <span class="key-line" id="key2">「公」を音で分解した先にある言葉の広がりと厚み。</span>
+      <p>「公園」という言葉、もう耳慣れすぎている。おおやけの、囲われた場所。行政が管理し、市民が利用する。その非対称な関係が、言葉の構造にすでに埋め込まれている。</p>
+      <p>だからこの言葉を一度、音に戻してみる。「こうえん」。</p>
+      <p>co（共に）という音の束：好（好ましい）、幸（しあわせ）、光（照らす）、耕（土を起こす）、恋う（引き寄せられる）。</p>
+      <p>enという音の可能性：縁（つながり）、円（循環）、宴（祝いの場）、援（支える）、俺（ここにいる自分）。</p>
+      <p>co-enという再解釈は、公園を管理と利用の関係から、出会いと変換の磁場へと移し替える試みだ。「名詞」から「動詞」へ。使うのではなく、耕す。</p>
     </div>
     <div class="chap-nav" id="nav2">
       <button class="nav-btn" onclick="scrollToNext(2)"><span>next →</span></button>
@@ -488,53 +354,10 @@ co-enという再解釈は、公園を管理と利用の関係から、出会い
       <a href="https://suno.com/s/7MviImi1eU3AOsTK" target="_blank"><div class="qr-mini" id="qr3"></div></a>
     </div>
     <div class="chap-body" id="body3">
-<span class="key-line" id="key3">多様な愛着は、多様な関わりを生む。その出発点は、自分自身の幸福追求でいい。</span>
-公園は、行政が管理する単なる施設ではない。
-
-公園を公園たらしめるのは、そこに関わる人々である。朝、犬を連れて歩く人。放課後、子どもたちの声が響く時間。週末、顔見知りが自然と集まる場所。その積み重ねが、公園に固有の空気をつくる。
-
-遊ぶこと、集うこと、ただそこにいること——それ自体が、公園を育てる行為である。
-
-これまでの関わり方と、その限界
-
-担い手の高齢化は進み、後継者は育たない。ボランティアへの参加者が固定化され、同じ顔ぶれが、同じ作業を、年々重くなる負担とともに続けている。
-
-これは、公園の問題ではない。地域コミュニティそのものが、静かに、しかし確実に、脆弱化している。
-
-だとすれば、問い直すべきは公園ボランティアの「やり方」ではなく、「定義」そのものではないか。
-
-愛着を、関わりの起点にする
-
-関わりに、資格はいらない。
-
-通りすがりでいい。気が向いたときだけでいい。続けなくてもいい。「なんとなく居心地がいい」「子どもがここで育った」「毎朝ここを通る」——そういった、言葉にならない感覚が、愛着の始まりである。
-
-関わりの地図
-
-【使い続ける】常連になること、顔なじみをつくること。
-【整える・管理する】清掃、草取り、花の手入れ。
-【伝える】写真を撮る、SNSで紹介する、記録を残す。
-【企てる】イベントを開く、仲間を集める。
-【つなぐ】人と人、地域と公園を橋渡しする。
-
-多様な愛着は、多様な関わりを生む。その出発点は、自分自身の幸福追求でいい。
-
-ただ、関わり続けるうちに、ある問いが自然と生まれることがある。
-
-「この公園を、もっとよくしたい」
-
-その問いはやがて、もう少し広い場所へと向かうことがある。
-
-「このまちを、よくしたい」
-
-行政の役割の再定義
-
-目指すべき姿は、管理者ではなく、伴走者である。
-
-個性ある公園が生まれることを、成果として喜べる組織でありたい。
-
-今は夜明け前、革命前夜的な気配。
-この文章が、誰かや何かの一歩になることを願っている。
+      <span class="key-line" id="key3">多様な愛着は、多様な関わりを生む。その出発点は、自分自身の幸福追求でいい。</span>
+      <p>公園は、行政が管理する単なる施設ではない。そこに関わる人々、朝の犬の散歩、放課後の子どもたちの声、その積み重ねが公園の空気をつくる。</p>
+      <p>担い手の高齢化や固定化が進む今、問い直すべきはボランティアの「やり方」ではなく、「定義」そのものではないか。関わりに資格はいらない。通りすがりでいい。「なんとなく居心地がいい」という愛着が始まりでいい。</p>
+      <p>目指すべき姿は、管理者ではなく伴走者。個性ある公園が生まれることを成果として喜べる組織でありたい。今は夜明け前、革命前夜的な気配だ。</p>
     </div>
     <div class="chap-nav" id="nav3">
       <button class="nav-btn" onclick="scrollToNext(3)"><span>next →</span></button>
@@ -555,48 +378,11 @@ co-enという再解釈は、公園を管理と利用の関係から、出会い
       <a href="https://suno.com/s/LLQI1pFIX8dQ9m7H" target="_blank"><div class="qr-mini" id="qr4"></div></a>
     </div>
     <div class="chap-body" id="body4">
-<span class="key-line" id="key4">日常の隙間に仕込み、気づいたら、もう元には戻れない。</span>
-「改革」と言った瞬間、敵が生まれる。
-だから、言わない。
-
-現場で泥をこね、愚痴を拾い、手を動かし続けた者だけが、本当の地図を持っている。
-
-これは戦略書じゃない。ブルーワーカーの矜持から生まれた、現場哲学の覚書だ。
-そして、同じ温度で踊れる仲間への、静かな招待状でもある。
-
-社交ダンスじゃない。ストリートで生まれたやつだ。
-
-Pandemic Logic とは
-
-ウイルスは宣言しない。ただ、静かに広がる。
-組織の変革も同じだ。「やります」と叫んだ瞬間、免疫が働く。
-だから、日常の隙間に仕込み。気づいたら、もう元には戻れない——
-それが、本当のインストールだ。
-
-Phase 1 — OBSERVE｜潜伏と観測
-愚痴を拾え。相談を拾え。現場にいるから聞こえる。手を動かしているから気づける。
-
-Phase 2 — TRANSLATE｜磁場の形成
-「あの人に聞けば整理される」という引力が生まれた瞬間、磁場が形成される。
-
-Phase 3 — SURVIVE｜抗体回避
-熱量は内側に秘めろ。
-内側の炎は絶やすな。外側は冷徹な実務家であれ。
-
-Phase 4 — INSTALL｜発症と定着
-臨界点を超えたら、動かせ。成果を可視化して、既成事実にする。
-あなたがいなくても回り続ける仕組みを、現場に埋め込め。
-
-THE CODE
-
-01 内側の炎は絶やすな。外側は冷徹な実務家であれ。
-02 細部は譲っていい。根幹だけは死守しろ。
-03 100%完成させるな。余白が次を呼ぶ。
-04 思考を共有し、確からしさを一緒に検証しろ。
-
-改革、と言わなくていい。
-社交ダンスじゃない。ストリートで生まれたやつを、一緒に踊ろう。
-Shall we dance?
+      <span class="key-line" id="key4">日常の隙間に仕込み、気づいたら、もう元には戻れない。</span>
+      <p>「改革」と言った瞬間、敵が生まれる。だから、言わない。現場で泥をこね、手を動かし続けた者だけが本当の地図を持っている。これはブルーワーカーの矜持から生まれた、現場哲学の覚書だ。</p>
+      <p>ウイルスは宣言しない。ただ静かに広がる。組織の変革も同じだ。「やります」と叫んだ瞬間、免疫が働く。だから、日常の隙間に仕込む。</p>
+      <p>【THE CODE】内側の炎は絶やすな、外側は冷徹な実務家であれ。細部は譲っても根幹は死守しろ。100%完成させるな、余白が次を呼ぶ。</p>
+      <p>社交ダンスじゃない。ストリートで生まれたやつを、一緒に踊ろう。Shall we dance?</p>
     </div>
     <div class="chap-nav" id="nav4">
       <button class="nav-btn" onclick="scrollToNext(4)"><span>next →</span></button>
@@ -617,56 +403,11 @@ Shall we dance?
       <a href="https://suno.com/s/i4gWUcovxoSoxmeJ" target="_blank"><div class="qr-mini" id="qr5"></div></a>
     </div>
     <div class="chap-body" id="body5">
-<span class="key-line" id="key5">自律を促すつもりが、依存を育てていた。</span>
-人を動かしたい、と思った。
-
-正確には、一緒に動きたい、と。
-同じ温度で、同じ方向へ。
-
-今思えば、スピリタスな言葉に酔いしれてご陽気になっていただけかもしれない。
-熱量があることと、それが良い方向を向いているかってのは、別の話だ。
-
-ほろ酔いは、気持ちがいい。
-
-場が動く。人の目が変わる。自分が触媒になっている感覚。
-
-あるとき気づいた。
-
-輝いている相手の目が、次第にこちらへ向き続けていることに。
-
-「次、どうすればいいですか？」
-「これ、どう思いますか？」
-
-「自分がいなくても回る状態」を作ろうとしていた。
-気がつくと、「自分がいないと回らない状態」を守っていた。
-
-自律を促すつもりが、依存を育てていた。
-
-背中についてくるのではなく、背中にマニュアルがあるかのように。
-
-山本五十六の言葉がある。
-
-やってみせ、言って聞かせて、させてみて、褒めてやらねば人は動かじ。
-
-やってみせた→「あの人がやってくれる」になった。
-言って聞かせた→「あの人に聞けばいい」になった。
-させてみた→「あとはよろしく」になった。
-
-磁場を作ろうとして、自分がすべてを引き受ける構造を作っていた。
-
-自分がいなくなったら、これは続くのか。
-
-その問いが、静かに確実に刺さりはじめる。
-
-背中にマニュアルはない。
-あるのは、一緒に考え続ける意志だけだ。
-
-煽るのではなく、問いを置くようになった。
-答えを渡すのではなく、考える余白を残すようになった。
-
-背中が語る。
-その背中を見た人自身が、自分の言葉を語りかけたくなる背中のことを言う。
-見えない自分の背中に、そう問いかける。
+      <span class="key-line" id="key5">自律を促すつもりが、依存を育てていた。</span>
+      <p>一緒に動き動きたい、と思った。同じ温度で、同じ方向へ。場が動き、人の目が変わる。自分が触媒になっている感覚。しかし、あるとき気づいた。輝いている相手の目が、次第にこちらへ向き続けていることに。</p>
+      <p>「次、どうすればいいですか？」、「これ、どう思いますか？」</p>
+      <p>自律を促すつもりが、依存を育てていた。背中にマニュアルがあるかのように。やってみせ、言って聞かせて、させてみたら、「あの人がやってくれる」という構造を作っていた。</p>
+      <p>背中にマニュアルはない。あるのは、一緒に考え続ける意志だけだ。答えを渡すのではなく、考える余白を残すこと。</p>
     </div>
     <div class="chap-nav" id="nav5">
       <button class="nav-btn" onclick="scrollToNext(5)"><span>next →</span></button>
@@ -682,58 +423,15 @@ Shall we dance?
     <div class="music-row">
       <div class="music-info">
         <div class="music-tag">Music</div>
-        <div class="music-name">頷きの深度 — spoken word / lo-fi session —</div>
+        <div class="music-name">頷きの深度 — spoken word —</div>
       </div>
       <a href="https://suno.com/s/qPMMu9xbsYNDtZXK" target="_blank"><div class="qr-mini" id="qr6"></div></a>
     </div>
     <div class="chap-body" id="body6">
-<span class="key-line" id="key6">肩書きを脱いだ人間同士が、その頷きの深度を携えて同じ問いの前に立つとき、往々にして制度の壁は思ったより低くなる。</span>
-官民連携、公民連携、産官学連携。
-
-そういう類いの話は、しばしばそれそのものが目的かのように扱われる。
-そこがなんとも気持ち悪い。
-
-自分の経験の裏打ちは、気づいたら繋がっていた、という方が圧倒的に多い。
-
-開拓するというより、漂流していたら辿り着いた、という手触り。
-
-でも、それが2度3度続けてそうだったらどうか。それはもはや偶然ではないのではないか。
-
-何かを整えていた。
-
-場の設定——1on1か複数か、会議室かそれ以外か
-椅子の配置——輪か、横並びか、対か
-対話のデザイン——最初の一言、沈黙の置きどころ、脱線の領域
-人（主に紹介）——肩書き先行か、キャラクター先行か、事象先行か
-
-誰も気にしないような細部にも拘って整えると、空気が澄んでくる。
-ただ、会話が自然に続いている。弾む。時折り、笑う。
-
-頷きは面白い。
-
-浅いものは、聞いているふり、情報処理。
-深いものは、心が動いた、という瞬間のハイライトだ。
-
-頷きが深くなるとき。
-
-言葉が届いた。
-見えていなかったものが見えた。
-自分の中の何かと、外の何かが、静かに接続された。
-
-その瞬間、人は少しだけ前のめりになる。目線が変わる。声のトーンが、わずかに落ちる。場の空気が、少しだけ張りつめる。
-
-新しい何かに出会ってしまった、という少しの畏怖と、そこから始まるかもしれない未来への期待。
-
-ふと見渡すと、その深度が上がった場所に、繋がりが生まれていた。
-
-会議室では絶対に生まれなかったはずの会話が、その辺ではじまる。
-名刺交換より先に、笑顔が交わされる。
-誰かが誰かを、別の誰かに紹介している。
-
-繋ごうとしなくていい。整えていれば、自然と何かが通い、やどりはじめる。
-
-今、会議が終わった。
-ふと目をやると、そこかしこで立場を超えたジャムセッション。頷きが深い。
+      <span class="key-line" id="key6">肩書きを脱いだ人間同士が同じ問いの前に立つとき、往々にして制度の壁は思ったより低くなる。</span>
+      <p>官民連携、公民連携。そういう言葉自体が目的かのように扱われるのがなんとも気持ち悪い。自分の経験の裏打ちは、「気づいたら繋がっていた」という漂流の手触りの方が圧倒的に多い。</p>
+      <p>椅子の配置、対話のデザイン、誰も気にしないような細部を整えると空気が澄んでくる。会話のなかで生じる「頷き」の深度が変わる。浅いものは情報処理、深いものは心が動いた瞬間のハイライト。</p>
+      <p>繋ごうとしなくていい。場を整えていれば、自然と立場を超えたジャムセッションが始まり、頷きが深くなっていく。</p>
     </div>
     <div class="chap-nav" id="nav6">
       <button class="nav-btn" onclick="scrollToNext(6)"><span>next →</span></button>
@@ -754,45 +452,10 @@ Shall we dance?
       <a href="https://suno.com/s/F0peTNtJdCevf2HE" target="_blank"><div class="qr-mini" id="qr7"></div></a>
     </div>
     <div class="chap-body" id="body7">
-<span class="key-line" id="key7">合意形成の前に、認知共有がある。</span>
-都市を変える前に、都市の見え方を共有することから始めよう。
-
-合意形成の前に、認知共有がある。
-
-なぜ、同じ「公園」という言葉を使っているのに、話が噛み合わないのか。
-
-行政は、制度を見る。
-市民は、経験を見る。
-技術者は、構造を見る。
-アーティストは、文脈を見る。
-
-みんな「公園」の話をしている。でも、見えている風景が違う。
-
-これは単なる意見対立ではなく、そもそもの認知差なのではないか。
-
-例えば、「安全な公園」という言葉。
-
-行政にとっては、管理責任かもしれない。
-子どもにとっては、自由に遊べることかもしれない。
-高齢者にとっては、ゆっくり座れることかもしれない。
-保護者にとっては、人の目があることかもしれない。
-
-にもかかわらず、「全てに共通する唯一の正解」を探そうとしてしまう。
-
-でも本当に必要なのは、正解を決めることではなく、「どう見えているか」を共有することなのではないか。
-
-自分がやってきた活動は、実はずっとその"翻訳"だったのではないか。
-
-「異なる立場の認知を、どう接続するか」——それが共通の問いだった。
-
-主観が重なり、都市になる。
-
-制度の内側にも外側にも立ちながら、異なる認知の間を行き来する。どちらかに属するのではなく、その境界に立ち続けること。
-
-着想は、妄想へ泳ぎ、妄想は、徐々に思想になる。
-思想はレイヤーをまとい、仮想は、やがて実装へ向かう。
-
-都市を変える前に、都市の見え方を共有する。今を認めるところから。
+      <span class="key-line" id="key7">合意形成の前に、認知共有がある。</span>
+      <p>都市を変える前に、都市の見え方を共有することから始めよう。合意形成の前に、認知共有がある。</p>
+      <p>なぜ話が噛み合わないのか。行政は制度を見、市民は経験を見、技術者は構造を見、アーティストは文脈を見る。みんな「公園」の話をしているのに、見えている風景が違う。これは単なる意見対立ではなく、認知の差だ。</p>
+      <p>「安全」の意味すら立場によって違う。本当に必要なのは正解を決めることではなく、「どう見えているか」を共有し、異なる認知の間を翻訳・接続することだ。主観が重なり、都市になる。</p>
     </div>
     <div class="chap-nav" id="nav7">
       <button class="nav-btn" onclick="scrollToNext(7)"><span>next →</span></button>
@@ -813,50 +476,10 @@ Shall we dance?
       <a href="https://suno.com/s/Gfd7AMHkGtmRgQjr" target="_blank"><div class="qr-mini" id="qr8"></div></a>
     </div>
     <div class="chap-body" id="body8">
-<span class="key-line" id="key8">物理空間は共有したまま、一人ひとりに最適化された体験を立ち上げる。</span>
-Urban Cognition Interface
-
-合意形成の前に、認知共有がある。
-
-認知を共有した後に、何が起きるのか。
-
-その一つの到達点が、レイヤードパーク（層状の公園）というアイデアだった。
-
-ある意味では、「自分の理想の公園」と言えるかもしれない。
-
-都市には、たくさんの人がいる。
-
-歩くのが速い人。立ち止まるのが好きな人。音で変化に触れる人。人混みに目が眩む人。見たものに心おどる人。匂いで季節を感じる人。
-
-誰もが異なる「認知のかたち」を持ちながら、同じ都市を共有して生きている。しかし現代都市の多くは、身体も心もほぼアベレージで設計されてきた。
-
-都市は、目に見えない「認知の段差」で溢れている。
-
-だとすれば、空間を変えるのではなく、認知にレイヤーを重ねるという発想はどうか。
-
-物理空間は共有したまま、一人ひとりに最適化された体験を立ち上げる。
-
-同じ公園にいながら、
-
-ある人には、安全な移動を支援する音声ナビが流れ、
-ある子には、木々の間から物語が立ち上がり、
-ある人には、地域の記憶や懐かしい声が語りかける。
-
-空間はひとつ。しかし体験は一人ひとり異なる。これを「LAYERED PARK」と呼ぶことにした。
-
-人間の違いを分断ではなく、接続資源へ変えていく。それがLAYERED PARKの核心だ。
-
-小さい頃よく遊んだ公園のベンチに座る。
-
-「チャイムが鳴ったから帰るわよ。」
-
-お母さんの声がする。思わず涙する。
-
-こんなレイヤーがある公園がいい。
-
-見えない孤独や不安、こぼれ落ちていた感覚、言葉にならなかった記憶を、もう一度都市の中へ取り戻したい。
-
-公園の未来ではない。人間と都市の関係を、もう一度やさしく接続し直す。そんな公園。いいよね。
+      <span class="key-line" id="key8">物理空間は共有したまま、一人ひとりに最適化された体験を立ち上げる。</span>
+      <p>都市は目に見えない「認知の段差」で溢れている。だとすれば、空間を変えるのではなく、空間に認知の「レイヤー」を重ねるという発想はどうか。</p>
+      <p>物理空間は共有したまま、一人ひとりに最適化された体験を立ち上げる。ある人には安全な音声ナビ、ある子には物語が立ち上がり、ある人には地域の記憶が語りかける。空間はひとつ、体験は複数。これを「LAYERED PARK」と呼ぶ。</p>
+      <p>小さい頃遊んだベンチに座ると、かつてのお母さんの声がする。そんな、人間の違いを分断ではなく接続資源に変え、やさしく接続し直す公園があってもいい。</p>
     </div>
     <div class="chap-nav" id="nav8">
       <button class="nav-btn" onclick="scrollToNext(8)"><span>next →</span></button>
@@ -877,46 +500,10 @@ Urban Cognition Interface
       <a href="https://suno.com/s/693ynudwJwnAXs85" target="_blank"><div class="qr-mini" id="qr9"></div></a>
     </div>
     <div class="chap-body" id="body9">
-<span class="key-line" id="key9">相手が欲しいものを与えるのではなく、相手が言語化できていない思いを引き出す。</span>
-そこでもあそこでも誰かが誰かを支えようとしている。
-
-でも、その間からこぼれ落ちるものがある。
-
-制度では拾いきれない。
-関係性だけでは支えきれない。
-専門性だけでは届かない。
-
-誰かが「相談」というアクションを起こす前に、もう少し手前で関われた方が、取りこぼしがない気がしてならない。
-
-一方で、世の中には不思議な力もある。
-
-特別な肩書きがなくても、何気ない会話で人を救っている人がいる。ただ、気にかけ、少しだけ見守る。
-
-そんな存在に触れる経験をしてきたし、気づかず誰かのそんな存在になっていることもある。
-
-家族、友人、恋人、先輩、後輩、恩師、同僚、仲間——そういう冠がつくような関係性由来でもない。
-
-「支援する人」と「支援される人」。その二項対立だけでは、これからのコミュニティや人のつながりはもたない。
-
-そこで考え始めたのが、「パブリックメンター」という考え方だった。
-
-きっかけは、とあるスタートアップ企業支援プログラムのメンター就任要請。なんとなく引き受ってみる。面白そうだから。
-
-はたと気づく。これまでも、職場で、地域で。まるっきり同じことしてたよね？
-
-自分が公務員として現場にいるから見える違和感がある。制度の外に出るから聞こえる声がある。内側にも外側にも属さないから、両方の風景が見える。
-
-その「見えてしまう」という感覚。それが自分を突き動かす理由。
-
-相手が欲しいものを与えるのではなく、相手が言語化できていない思いを引き出す。
-
-巡る、漂う。その行ったり来たりは無駄じゃない。
-
-なぜか。
-
-気づいてるかわからないけど、さっきからもう自分の言葉で考え始めてるはず。
-
-public mentor
+      <span class="key-line" id="key9">相手が欲しいものを与えるのではなく、相手が言語化できていない思いを引き出す。</span>
+      <p>制度や専門性、既存の関係性だけでは支えきれずにこぼれ落ちるものがある。誰かが「相談」というアクションを起こす手前で関わりたい。特別な肩書きがなくても、何気ない対話で人を救っている「パブリックメンター」のような存在。</p>
+      <p>自分が公務員として現場にいるから見える違和感、制度の外に出るから聞こえる声。内側にも外側にも属さないから、両方の風景が見える。</p>
+      <p>相手が欲しいものを与えるのではなく、相手が言語化できていない思いを引き出す。気づいていないかもしれないけれど、さあ、もうあなたの言葉で考え始めているはずだ。</p>
     </div>
     <div class="chap-nav" id="nav9">
       <button class="nav-btn" onclick="scrollToNext(9)"><span>next →</span></button>
@@ -937,57 +524,10 @@ public mentor
       <a href="https://suno.com/s/dPttxp9YVe7rLDE3" target="_blank"><div class="qr-mini" id="qr10"></div></a>
     </div>
     <div class="chap-body" id="body10">
-<span class="key-line" id="key10">違和感は、問いの種だ。その種は、きっと恵み。</span>
-特別なことは、何もない。
-
-ただ、今感じている違和感を受け止める。
-
-うまく言葉にならなくても。
-誰かに話して伝わらなくても。
-自分だけが気にしすぎているのかと思っても。
-
-その感覚を閉ざしたり、かき消したりしないで欲しい。
-
-そのままを受け入れておけばいい。
-
-それは、
-検索しても、本を読んでも、誰かと話しても
-むしろどんどん増える性質のものかもしれない。
-
-でもそれは、問いが育っている証拠だ。
-
-問いが育つとき、見えていなかったものが見え始める。
-見えるものが増えるとき、世界は少しだけ広くなる。
-
-すぐに動かなくていい。
-計画を立てなくていい。
-誰かに宣言しなくていい。
-
-「なんか違う」
-
-それをもう少しだけ、手元に置いておいてほしい。
-
-それだけで、何かが始まっている。
-
-気づいたときには、
-もう動いていて、
-もう繋がっていて、
-もう変わりはじめている。
-
-宣言は要らない。
-Pandemic Logicでいい。
-
-静かに、でも確かに。
-
-違和感は、問いの種だ。
-
-その種は、きっと恵み。
-
-育つのを見守り、育っていく環境を整える。
-
-豊かな日常は、思考することから。
-
-思いが馳せられることに感謝と敬意を。
+      <span class="key-line" id="key10">違和感は、問いの種だ。その種は、きっと恵み。</span>
+      <p>特別なことは何もない。ただ今感じている違和感を受け止める。うまく言葉にならなくても、自分だけが気にしすぎていると思っても、その感覚をかき消さないでほしい。</p>
+      <p>「なんか違う」それをもう少しだけ手元に置いておく。それだけで何かが始まっている。気づいたときにはもう動いていて、繋がっていて、変わり始めている。宣言は要らない。Pandemic Logicでいい。</p>
+      <p>違和感は問いの種だ。その種は、きっと恵み。豊かな日常は、思考することから。思いが馳せられることに感謝と敬意を。</p>
     </div>
     <div class="chap-nav" id="nav10">
       <button class="nav-btn" onclick="backToIndex()"><span>目次へ戻る</span></button>
@@ -1011,7 +551,6 @@ Pandemic Logicでいい。
 const PASSWORD = 'pml2024';
 let pandemicLocked = false;
 
-// ルート定義
 const routes = {
   'simple':     [0,1,2,3,4,5,6,7,8,9,10],
   '息苦しさ':   [2,4,5,6],
@@ -1022,9 +561,7 @@ const routes = {
   '境界線':     [0,3,7,10]
 };
 let currentRoute = [];
-let activeChapters = [];
 
-// QRデータ
 const qrData = [
   {id:'qr0', url:'https://suno.com/s/h44d2OrvKzHAmJs7'},
   {id:'qr1', url:'https://suno.com/s/UUK47O2sYngngXJQ'},
@@ -1052,7 +589,6 @@ function generateQR() {
   });
 }
 
-// ロック解除
 function unlock() {
   const v = document.getElementById('pw-input').value;
   const e = document.getElementById('pw-error');
@@ -1074,7 +610,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initSwimWords();
 });
 
-// 目次表示
 function showIndex() {
   const idx = document.getElementById('index-screen');
   idx.classList.add('visible');
@@ -1085,7 +620,9 @@ function showIndex() {
   document.body.classList.remove('pandemic-locked');
   document.body.style.backgroundColor = '';
   document.body.style.color = '';
-  document.querySelectorAll('.swim-word').forEach(w => w.style.opacity = '0');
+  
+  // 目次に戻った時はワードをデフォルトのうっすら状態に戻す
+  document.querySelectorAll('.swim-word').forEach(w => w.style.opacity = '0.08');
   window.scrollTo(0, 0);
 }
 
@@ -1093,7 +630,6 @@ function backToIndex() {
   showIndex();
 }
 
-// ルート開始
 function startRoute(name) {
   currentRoute = routes[name];
   const idx = document.getElementById('index-screen');
@@ -1125,7 +661,6 @@ function setupRoute() {
   window.scrollTo(0, 0);
 }
 
-// 次章へスクロール
 function scrollToNext(chapNum) {
   const idx = currentRoute.indexOf(chapNum);
   if (idx < currentRoute.length - 1) {
@@ -1137,7 +672,7 @@ function scrollToNext(chapNum) {
   }
 }
 
-// スクロール処理
+// ─── 🌊 スクロールUXロジックの完全な再定義 ───
 window.addEventListener('scroll', onScroll, { passive: true });
 
 function onScroll() {
@@ -1150,13 +685,13 @@ function onScroll() {
     if (chap.style.display === 'none') return;
 
     const rect = chap.getBoundingClientRect();
-    const chapTop = chap.offsetTop;
-    const chapH = chap.offsetHeight;
-    const scrollInChap = scrollY - chapTop;
     
-    // スティッキーな有効読書空間（全400vhのうち、スクロール可能は 300vh 分）
-    const scrollableRange = chapH - winH;
-    const progress = Math.max(0, Math.min(1, scrollInChap / scrollableRange));
+    // スティッキー（画面中央に固定されている）期間の、純粋な可動域を定義
+    const startEval = rect.top; 
+    const chapH = chap.offsetHeight;
+    
+    // 読者がこの章のスクロール領域に滞在している割合を正確に計算（0.0 〜 1.0）
+    const progress = Math.max(0, Math.min(1, -rect.top / (chapH - winH)));
 
     const chapNum = parseInt(chap.getAttribute('data-chap'));
     const type = chap.getAttribute('data-type');
@@ -1164,61 +699,56 @@ function onScroll() {
     const key = document.getElementById(`key${chapNum}`);
     const nav = document.getElementById(`nav${chapNum}`);
 
-    // 章が完全に画面外なら処理をスキップ
+    // 画面内に少しでも入っていれば処理する
     const inView = rect.top < winH && rect.bottom > 0;
     if (!inView) return;
 
-    // ─── 🛠️ コア：手触り（余白・行間の無段階変容） ───
-    if (progress >= 0.35 && progress <= 0.65) {
-      // 35%〜65%の余白区間を「0.0 〜 1.0 〜 0.0」に正規化するサインカーブ
-      const normalized = (progress - 0.35) / 0.30;
-      const factor = Math.sin(normalized * Math.PI); // ピーク（50%）で最大値 1.0
+    // ─── ✨ 行間・字間のアナログ・モーション（20%〜70%の広範なシンクロ） ───
+    if (progress >= 0.20 && progress <= 0.70) {
+      const normalized = (progress - 0.20) / 0.50;
+      const factor = Math.sin(normalized * Math.PI); // 中央（45%付近）でピーク1.0になる
 
       if (body) {
-        // あなたのテキストベースの美しさを保ちつつ、指の動きに100%同期して伸縮
-        body.style.lineHeight = (2.0 + factor * 0.6).toFixed(2);
-        body.style.letterSpacing = (0.03 + factor * 0.05).toFixed(3) + 'em';
+        // ギチギチ感をなくし、指に合わせて「ふわりと文字が広がる」手触り
+        body.style.lineHeight = (2.3 + factor * 0.5).toFixed(2);
+        body.style.letterSpacing = (0.04 + factor * 0.04).toFixed(3) + 'em';
       }
 
       if (key) {
-        // クラスの付け替えだけでなく、物理的な浮沈（translateY）と透明度をミリ単位で追従させる
-        key.classList.add('visible');
-        key.style.opacity = factor.toFixed(2);
-        key.style.transform = `translateY(${(10 - factor * 10).toFixed(1)}px)`;
+        // 突然消さず、滑らかに押し上げられながら不透明化する
+        key.style.opacity = (0.15 + factor * 0.85).toFixed(2);
+        key.style.transform = `translateY(${(8 - factor * 8).toFixed(1)}px)`;
       }
     } else {
-      // 区間外は基本値へ滑らかにリセット
+      // 範囲外のリセット処理
       if (body) {
-        body.style.lineHeight = '2.0';
-        body.style.letterSpacing = '0.03em';
+        body.style.lineHeight = '2.3';
+        body.style.letterSpacing = '0.04em';
       }
       if (key) {
-        if (progress < 0.35) {
-          key.classList.remove('visible');
-          key.style.opacity = '0';
-          key.style.transform = 'translateY(10px)';
-        } else if (progress > 0.65) {
-          // 通り過ぎた後は、余韻を残して静かに定置させる
-          key.classList.add('visible');
-          key.style.opacity = '1';
+        if (progress < 0.20) {
+          key.style.opacity = '0.15';
+          key.style.transform = 'translateY(8px)';
+        } else if (progress > 0.70) {
+          key.style.opacity = '1.0';
           key.style.transform = 'translateY(0px)';
         }
       }
     }
 
-    // ナビ：85%以上で表示
+    // ナビボタンの出現条件（章の終端付近）
     if (nav) {
-      if (progress >= 0.85) {
+      if (progress >= 0.80) {
         nav.classList.add('visible');
       } else {
         nav.classList.remove('visible');
       }
     }
 
-    // PANDEMIC（第4章）のカラーモーフィングと不可逆ロック
+    // PANDEMIC演出
     if (type === 'pandemic' && !pandemicLocked) {
-      if (progress >= 0.5) {
-        const pf = Math.min(1, (progress - 0.5) / 0.35);
+      if (progress >= 0.4) {
+        const pf = Math.min(1, (progress - 0.4) / 0.4);
         const bgR = Math.round(252 - 234 * pf);
         const bgG = Math.round(251 - 234 * pf);
         const bgB = Math.round(249 - 233 * pf);
@@ -1229,10 +759,10 @@ function onScroll() {
         document.body.style.color = `rgb(${tR},${tG},${tB})`;
         
         document.querySelectorAll('.swim-word[data-type="pandemic"]').forEach(w => {
-          w.style.opacity = (pf * 0.4).toString();
+          w.style.opacity = (0.08 + pf * 0.42).toString();
         });
 
-        if (progress >= 0.85) {
+        if (progress >= 0.80) {
           pandemicLocked = true;
           document.body.classList.add('pandemic-locked');
           document.body.style.backgroundColor = '';
@@ -1241,14 +771,14 @@ function onScroll() {
       } else {
         document.body.style.backgroundColor = '#f7f4ef';
         document.body.style.color = '#1a1814';
-        document.querySelectorAll('.swim-word[data-type="pandemic"]').forEach(w => w.style.opacity = '0');
+        document.querySelectorAll('.swim-word[data-type="pandemic"]').forEach(w => w.style.opacity = '0.08');
       }
     }
 
-    // LAYERED（第7・8章）
+    // LAYERED演出
     if (type === 'layered') {
-      if (progress >= 0.20 && progress <= 0.75) {
-        const factor = Math.sin(((progress - 0.20) / 0.55) * Math.PI);
+      if (progress >= 0.15 && progress <= 0.80) {
+        const factor = Math.sin(((progress - 0.15) / 0.65) * Math.PI);
         const r = Math.round(252 - 13 * factor);
         const g = Math.round(251 - 10 * factor);
         const b = Math.round(249 - 12 * factor);
@@ -1256,25 +786,25 @@ function onScroll() {
           document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
         }
         document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => {
-          w.style.opacity = (factor * 0.35).toString();
+          w.style.opacity = (0.08 + factor * 0.37).toString();
         });
       } else {
         if (!pandemicLocked) {
           document.body.style.backgroundColor = '#f7f4ef';
         }
-        document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => w.style.opacity = '0');
+        document.querySelectorAll('.swim-word[data-type="layered"]').forEach(w => w.style.opacity = '0.08');
       }
     }
   });
 }
 
-// 浮遊ワードアニメーション
+// 浮遊ワードのアニメーション（常に確実に駆動）
 function initSwimWords() {
   document.querySelectorAll('.swim-word, .route-tag').forEach(el => {
-    const rx = Math.random() * 12 + 4;
-    const ry = Math.random() * 12 + 4;
-    const sx = 0.0008 + Math.random() * 0.0008;
-    const sy = 0.0008 + Math.random() * 0.0008;
+    const rx = Math.random() * 16 + 6; // 浮遊幅をやや拡大
+    const ry = Math.random() * 16 + 6;
+    const sx = 0.0006 + Math.random() * 0.0006;
+    const sy = 0.0006 + Math.random() * 0.0006;
     const px = Math.random() * Math.PI * 2;
     const py = Math.random() * Math.PI * 2;
     function anim() {
