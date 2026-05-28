@@ -12,6 +12,12 @@
             --text-main: #2b2b2a;
             --text-light: #cfcdc9;
             --accent-green: #5a7d65;
+            
+            /* 動的に指の動きで書き換わるマスター変数 */
+            --scroll-progress: 0;
+            --margin-opacity: 0;
+            --rubber-spacing: 0.04em;
+            --rubber-lineheight: 2.2;
         }
 
         * {
@@ -25,11 +31,12 @@
             background-color: var(--bg-cream);
             color: var(--text-main);
             overflow-x: hidden;
-            transition: background-color 1.2s cubic-bezier(0.25, 1, 0.5, 1), color 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            /* 慣性スクロールの最適化 */
+            -webkit-overflow-scrolling: touch;
         }
 
         /* ----------------------------------
-           1. メンバー限定アクセス画面 (Gate)
+           1. メンバー限定アクセスゲート（ ukkyukai ）
         ------------------------------------- */
         #gate-screen {
             position: fixed;
@@ -44,7 +51,7 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .gate-container {
@@ -67,10 +74,10 @@
             padding: 12px;
             background: transparent;
             border: none;
-            border-bottom: 1px solid rgba(207, 205, 201, 0.3);
+            border-bottom: 1px solid rgba(207, 205, 201, 0.2);
             color: #fff;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             letter-spacing: 0.2em;
             outline: none;
             margin-bottom: 1.5rem;
@@ -78,7 +85,7 @@
         }
 
         .code-input:focus {
-            border-bottom-color: rgba(207, 205, 201, 0.9);
+            border-bottom-color: rgba(207, 205, 201, 0.8);
         }
 
         .error-msg {
@@ -93,31 +100,30 @@
 
         .submit-btn {
             background: transparent;
-            border: 1px solid rgba(207, 205, 201, 0.5);
+            border: 1px solid rgba(207, 205, 201, 0.4);
             color: var(--text-light);
-            padding: 8px 32px;
-            font-size: 0.8rem;
+            padding: 8px 36px;
+            font-size: 0.75rem;
             cursor: pointer;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.2em;
             transition: all 0.4s;
         }
 
         .submit-btn:hover {
             background: var(--text-light);
             color: var(--bg-dark);
-            border-color: var(--text-light);
         }
 
         /* ----------------------------------
-           2. メインレイアウト
+           2. メイン空間レイアウト
         ------------------------------------- */
         #main-content {
             display: none;
             opacity: 0;
-            transition: opacity 1.5s ease;
+            transition: opacity 2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* 浮遊するルートナビゲーション */
+        /* ルート選択ナビゲーション */
         .hashtag-nav {
             position: fixed;
             top: 30px;
@@ -125,22 +131,22 @@
             z-index: 100;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             align-items: flex-end;
         }
 
         .tag-btn {
-            background: rgba(244, 241, 234, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(0,0,0,0.05);
-            padding: 5px 14px;
+            background: rgba(244, 241, 234, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0,0,0,0.03);
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.7rem;
             letter-spacing: 0.05em;
             color: var(--text-main);
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .tag-btn.active {
@@ -150,19 +156,19 @@
         }
 
         /* ----------------------------------
-           3. 章（テキスト空間）の設計
+           3. 章（指に吸い付くテキスト空間）
         ------------------------------------- */
         .chapter-section {
-            min-height: 140vh; /* 余白を十分に持たせる */
-            padding: 15vh 12vw;
-            max-width: 750px;
+            min-height: 160vh; /* 圧倒的なスクロールの余白量 */
+            padding: 25vh 12vw;
+            max-width: 720px;
             margin: 0 auto;
             position: relative;
-            transition: opacity 0.6s ease;
+            will-change: transform, opacity;
         }
 
         .chapter-header {
-            margin-bottom: 4rem;
+            margin-bottom: 5rem;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -170,122 +176,129 @@
         }
 
         .chapter-title {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: 0.05em;
-            line-height: 1.4;
+            letter-spacing: 0.08em;
+            line-height: 1.5;
         }
 
-        /* 削ぎ落とされた楽曲タップボタン */
-        .music-tap-link {
+        /* ミニマルな佇まいの音楽コード・タップ領域 */
+        .music-minimal-trigger {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            color: var(--accent-green);
+            gap: 10px;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            color: var(--text-main);
+            opacity: 0.4;
             text-decoration: none;
-            border: 1px solid rgba(90, 125, 101, 0.3);
-            padding: 6px 16px;
-            border-radius: 4px;
-            transition: all 0.3s;
+            border-bottom: 1px dashed var(--text-main);
+            padding-bottom: 2px;
+            transition: opacity 0.3s, color 0.3s;
+        }
+        .music-minimal-trigger:hover {
+            opacity: 1;
+            color: var(--accent-green);
+            border-bottom-color: var(--accent-green);
         }
 
-        .music-tap-link:hover {
-            background: var(--accent-green);
-            color: #fff;
-        }
-
+        /* 指の動き（スクロール）でダイナミックに伸縮する本文 */
         .chapter-body {
-            font-size: 1rem;
-            line-height: 2.4; /* 改行の呼吸を美しく見せる広めの行間 */
-            letter-spacing: 0.04em;
+            font-size: 1.02rem;
             white-space: pre-wrap;
             color: inherit;
+            transition: letter-spacing 0.15s linear, line-height 0.15s linear;
+        }
+
+        /* アクティブな章（画面中央にある章）の伸縮特性 */
+        .chapter-section.active-focus .chapter-body {
+            letter-spacing: var(--rubber-spacing);
+            line-height: var(--rubber-lineheight);
         }
 
         /* ----------------------------------
-           4. 余白・キーセンテンスのフェードUX
+           4. 身体的シンクロ：余白オーバーレイ
         ------------------------------------- */
         .margin-overlay {
-            position: absolute;
-            top: 35%;
+            position: fixed;
+            top: 0;
             left: 0;
-            width: 100%;
-            height: 30%; /* 35% - 65% の深い区間 */
+            width: 100vw;
+            height: 100vh;
             pointer-events: none;
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 10;
             opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            will-change: opacity;
+        }
+
+        /* 現在中央にある章だけが、この定位置のキーセンテンスを駆動する */
+        .chapter-section.active-focus .margin-overlay {
+            opacity: var(--margin-opacity);
         }
 
         .key-sentence {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 700;
             text-align: center;
-            padding: 0 30px;
+            padding: 0 40px;
             color: var(--accent-green);
-            letter-spacing: 0.1em;
-            line-height: 1.8;
-        }
-
-        /* スクロール位置が余白に入った時のトリガー */
-        .chapter-section.in-margin .margin-overlay {
-            opacity: 1;
-            transform: translateY(0);
+            letter-spacing: 0.12em;
+            line-height: 2;
+            transform: translateY(calc((1 - var(--margin-opacity)) * 15px));
+            transition: transform 0.1s linear;
         }
 
         /* ----------------------------------
-           5. 特別章（PANDEMIC / LAYERED）の環境変容
+           5. 各種特殊UX環境のリアルタイム変容
         ------------------------------------- */
-        /* 第4章 PANDEMIC：引き返せない深黒への変容 */
-        body.pandemic-active {
-            background-color: var(--bg-dark) !important;
-            color: var(--text-light) !important;
-        }
-        body.pandemic-active .tag-btn {
-            background: rgba(18, 17, 16, 0.7);
-            color: var(--text-light);
-            border-color: rgba(255,255,255,0.1);
-        }
-        body.pandemic-active .music-tap-link {
-            color: var(--text-light);
-            border-color: rgba(207, 205, 201, 0.4);
-        }
-        body.pandemic-active .key-sentence {
-            color: #fff;
+        /* 背景マスターのベーストランジション */
+        .bg-layer-under {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-cream);
+            z-index: -2;
+            transition: background-color 0.3s linear;
         }
 
-        /* 第7・8章 LAYERED：思考が重なる淡い灰緑 */
-        body.layered-active {
-            background-color: var(--bg-layered);
-        }
-
-        /* 背景に漂う認知インターフェースの文字ノイズ */
-        .uci-bg-noise {
+        /* 第7・8章：LAYERED（多層化する認知ノイズ） */
+        .layered-noise-text {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 6rem;
+            transform: translate(-50%, -50%) scale(calc(0.9 + var(--scroll-progress) * 0.1));
+            font-size: 7vw;
             font-weight: 900;
-            letter-spacing: 0.1em;
-            color: rgba(90, 125, 101, 0.03);
+            letter-spacing: 0.2em;
+            color: rgba(90, 125, 101, 0.04);
             z-index: -1;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 0.2s linear, transform 0.1s linear;
         }
-        body.layered-active .uci-bg-noise {
-            opacity: 1;
-        }
+
+        /* モード変更のクラス制御 */
+        body.mode-pandemic .bg-layer-under { background-color: var(--bg-dark); }
+        body.mode-pandemic { color: var(--text-light); }
+        body.mode-pandemic .tag-btn { background: rgba(18, 17, 16, 0.8); color: var(--text-light); border-color: rgba(255,255,255,0.05); }
+        body.mode-pandemic .music-minimal-trigger { color: var(--text-light); }
+        body.mode-pandemic .key-sentence { color: #fff; }
+
+        body.mode-layered .bg-layer-under { background-color: var(--bg-layered); }
     </style>
 </head>
 <body>
 
+    <!-- 背景環境レイヤー -->
+    <div class="bg-layer-under"></div>
+    <div id="layered-noise" class="layered-noise-text">URBAN COGNITION</div>
+
+    <!-- 1. アクセスコード入力ゲート -->
     <div id="gate-screen">
         <div class="gate-container">
             <h1 class="gate-title">違和感と余白</h1>
@@ -295,8 +308,10 @@
         </div>
     </div>
 
+    <!-- 2. ZINE メインコア -->
     <div id="main-content">
         
+        <!-- #目次プレイリスト -->
         <nav class="hashtag-nav">
             <button class="tag-btn active" onclick="filterRoute('all')">#01_目次通りの順番</button>
             <button class="tag-btn" onclick="filterRoute('route-02')">#02_組織の息苦しさ</button>
@@ -307,13 +322,12 @@
             <button class="tag-btn" onclick="filterRoute('route-07')">#07_境界線の曖昧な場所</button>
         </nav>
 
-        <div id="bg-noise" class="uci-bg-noise">UCI / LAYERED</div>
-
+        <!-- 💡【序章　問いの種-iwakan-】 -->
         <section class="chapter-section" id="ch-0" data-routes="all route-07">
             <div class="chapter-header">
                 <h2 class="chapter-title">序章　問いの種-iwakan-</h2>
-                <a href="https://suno.com/s/h44d2OrvKzHAmJs7" target="_blank" class="music-tap-link">
-                    <span>♫ PLAY SOUND</span>
+                <a href="https://suno.com/s/h44d2OrvKzHAmJs7" target="_blank" class="music-minimal-trigger">
+                    <span>☉ QR / PLAY SOUND</span>
                 </a>
             </div>
             <div class="chapter-body">
@@ -345,13 +359,13 @@
 
 その違和感に引っかかり続けていると、
 ある瞬間、
-ふと言葉が舞い降りてくることがある。
+ふと言言葉が舞い降りてくることがある。
 そこから、見えていなかったものに、急に輪郭が見えはじめる。
 
 発見というより、気づき。
 外から得るものではなく、内側から滲み出てくるもの。ご褒美みたいな感覚。
 
-誰にでも、きっとある。
+誰にでも,きっとある。
 
 言葉にならない、でも確かにある、その感覚。
 
@@ -369,11 +383,12 @@
             </div>
         </section>
 
+        <!-- 💡【第1章　思考 in the park】 -->
         <section class="chapter-section" id="ch-1" data-routes="all route-03 route-06">
             <div class="chapter-header">
                 <h2 class="chapter-title">1 思考 in the park</h2>
-                <a href="https://suno.com/s/UUK47O2sYngngXJQ" target="_blank" class="music-tap-link">
-                    <span>♫ PLAY SOUND</span>
+                <a href="https://suno.com/s/UUK47O2sYngngXJQ" target="_blank" class="music-minimal-trigger">
+                    <span>☉ QR / PLAY SOUND</span>
                 </a>
             </div>
             <div class="chapter-body">
@@ -394,8 +409,6 @@
 誰かの話し声。
 足音。
 
-（中略）
-
 目的地がなくても方向づけだけすればいい。
 スカラーをベクトルに。
 ただ在るものを問い直して、在った方がいいものくらいにしていく。
@@ -411,11 +424,12 @@
             </div>
         </section>
 
+        <!-- 💡【第4章　shall we dance?】※PANDEMIC（不可逆深黒） -->
         <section class="chapter-section" id="ch-4" data-routes="all route-02 route-06" data-ux="pandemic">
             <div class="chapter-header">
                 <h2 class="chapter-title">4 shall we dance?</h2>
-                <a href="https://suno.com/s/LLQI1pFIX8dQ9m7H" target="_blank" class="music-tap-link">
-                    <span>♫ PLAY SOUND</span>
+                <a href="https://suno.com/s/LLQI1pFIX8dQ9m7H" target="_blank" class="music-minimal-trigger">
+                    <span>☉ QR / PLAY SOUND</span>
                 </a>
             </div>
             <div class="chapter-body">
@@ -426,8 +440,6 @@
 
 公務員という仕事を続けていると、ある確信が育ってくる。
 現場で泥をこね、愚痴を拾い、手を動かし続けた者だけが、本当の地図を持っている、という確信だ。
-
-（中略）
 
 臨界点を超えたら、動かせ。成果を可視化して、既成事実にする。
 「起きてしまったこと」を前に、反対意見は力を失う。
@@ -440,11 +452,12 @@
             </div>
         </section>
 
+        <!-- 💡【第7章　UCI】※LAYERED（認知多層） -->
         <section class="chapter-section" id="ch-7" data-routes="all route-04 route-05 route-07" data-ux="layered">
             <div class="chapter-header">
                 <h2 class="chapter-title">7 UCI</h2>
-                <a href="https://suno.com/s/F0peTNtJdCevf2HE" target="_blank" class="music-tap-link">
-                    <span>♫ PLAY SOUND</span>
+                <a href="https://suno.com/s/F0peTNtJdCevf2HE" target="_blank" class="music-minimal-trigger">
+                    <span>☉ QR / PLAY SOUND</span>
                 </a>
             </div>
             <div class="chapter-body">
@@ -457,7 +470,7 @@
 ⸻
 
 最近、「都市認知インターフェース（Urban Cognition Interface）」というものを考えている。
-（中略）
+
 着想は、妄想へ泳ぎ、
 妄想は、徐々に思想になる。
 
@@ -480,83 +493,104 @@
 
     </div>
 
+    <!-- 3. 手触り（身体的スクロール同期）スクリプト -->
     <script>
-        const ACCESS_CODE = "ukkyukai";
-
+        // アクセス確認
         function checkCode() {
             const input = document.getElementById("code-input").value;
-            const errorMsg = document.getElementById("error-msg");
-            const gate = document.getElementById("gate-screen");
-            const main = document.getElementById("main-content");
-
-            if (input === ACCESS_CODE) {
+            if (input === "ukkyukai") {
+                const gate = document.getElementById("gate-screen");
+                const main = document.getElementById("main-content");
                 gate.style.opacity = "0";
                 gate.style.transform = "scale(0.98)";
                 setTimeout(() => {
                     gate.style.display = "none";
                     main.style.display = "block";
                     setTimeout(() => main.style.opacity = "1", 50);
-                }, 1000);
+                }, 1200);
             } else {
-                errorMsg.style.opacity = "1";
+                document.getElementById("error-msg").style.opacity = "1";
                 document.getElementById("code-input").value = "";
             }
         }
+        document.getElementById("code-input").addEventListener("keypress", (e) => { if (e.key === "Enter") checkCode(); });
 
-        document.getElementById("code-input").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") checkCode();
-        });
-
+        // #目次ルートフィルター
         function filterRoute(routeName) {
             document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-
             document.querySelectorAll('.chapter-section').forEach(ch => {
                 const routes = ch.getAttribute('data-routes').split(' ');
                 ch.style.display = (routeName === 'all' || routes.includes(routeName)) ? 'block' : 'none';
             });
         }
 
-        // スクロール時の「余白区間」および環境変容のミリ単位の監視
-        let pandemicFired = false;
+        // 🎛️ コア：ミリ単位で指の動きをトレースするUXエンジン
+        let pandemicLocked = false;
 
         window.addEventListener('scroll', () => {
             const chapters = document.querySelectorAll('.chapter-section');
             const body = document.body;
-            
+            const viewHeight = window.innerHeight;
+
             chapters.forEach(ch => {
                 if (ch.style.display === 'none') return;
 
                 const rect = ch.getBoundingClientRect();
-                const chHeight = rect.height;
-                // 章の中でのスクロール進捗（0.0 〜 1.0）
-                const progress = (-rect.top) / (chHeight - window.innerHeight);
+                
+                // 章が画面中央（アクティブ領域）にいるかどうかの判定
+                if (rect.top < viewHeight * 0.6 && rect.bottom > viewHeight * 0.4) {
+                    ch.classList.add('active-focus');
+                    
+                    // この章における、現在の読者の正確なスクロール位置（0.0 〜 1.0）
+                    const totalScrollable = rect.height - viewHeight;
+                    const scrolled = -rect.top;
+                    let progress = Math.min(Math.max(scrolled / totalScrollable, 0), 1);
+                    
+                    // CSSグローバル変数にスクロール量をリアルタイム同期
+                    document.documentElement.style.setProperty('--scroll-progress', progress);
 
-                // 35% 〜 65% の深い余白区間の判定
-                if (progress >= 0.35 && progress <= 0.65) {
-                    ch.classList.add('in-margin');
+                    // 🛠️ 手触り1：余白の肉質化（35%〜65% の区間でゴムのように伸縮するタイポグラフィ）
+                    if (progress >= 0.35 && progress <= 0.65) {
+                        // 中央のピーク（50%）に向けて、なだらかなサインカーブで不透明度・伸縮を計算
+                        const normalized = (progress - 0.35) / 0.30; // 0.0 〜 1.0 〜 0.0
+                        const intensity = Math.sin(normalized * Math.PI); 
+
+                        document.documentElement.style.setProperty('--margin-opacity', intensity);
+                        // 指の圧力に合わせて、行間が 2.2 -> 2.6、文字間が 0.04 -> 0.09 までリアルタイムに変容
+                        document.documentElement.style.setProperty('--rubber-spacing', `${0.04 + (intensity * 0.05)}em`);
+                        document.documentElement.style.setProperty('--rubber-lineheight', `${2.2 + (intensity * 0.4)}`);
+                    } else {
+                        document.documentElement.style.setProperty('--margin-opacity', '0');
+                        document.documentElement.style.setProperty('--rubber-spacing', '0.04em');
+                        document.documentElement.style.setProperty('--rubber-lineheight', '2.2');
+                    }
+
+                    // 🛠️ 手触り2：第4章 PANDEMIC（50%を超えると粘性を持って世界が深黒にロック）
+                    if (ch.getAttribute('data-ux') === 'pandemic') {
+                        if (progress >= 0.50) {
+                            pandemicLocked = true;
+                        }
+                        if (pandemicLocked) {
+                            body.classList.add('mode-pandemic');
+                            body.classList.remove('mode-layered');
+                        }
+                    }
+
+                    // 🛠️ 手触り3：第7章 LAYERED（20%〜75%で、認知ノイズがじんわりと浮かび上がる）
+                    if (ch.getAttribute('data-ux') === 'layered' && !pandemicLocked) {
+                        if (progress >= 0.20 && progress <= 0.75) {
+                            body.classList.add('mode-layered');
+                            const noiseOpacity = Math.min((progress - 0.20) / 0.4, 1) * Math.min((0.75 - progress) / 0.2, 1);
+                            document.getElementById('layered-noise').style.opacity = noiseOpacity;
+                        } else {
+                            body.classList.remove('mode-layered');
+                            document.getElementById('layered-noise').style.opacity = 0;
+                        }
+                    }
+
                 } else {
-                    ch.classList.remove('in-margin');
-                }
-
-                // 第4章：50%を超えたら世界を深黒に不可逆ロック
-                if (ch.getAttribute('data-ux') === 'pandemic') {
-                    if (progress >= 0.50) {
-                        pandemicFired = true;
-                    }
-                    if (pandemicFired) {
-                        body.classList.add('pandemic-active');
-                    }
-                }
-
-                // 第7章：レイヤード環境のモーフィング
-                if (ch.getAttribute('data-ux') === 'layered') {
-                    if (progress >= 0.20 && progress <= 0.75) {
-                        body.classList.add('layered-active');
-                    } else if (progress < 0.15 || progress > 0.80) {
-                        // 4章のロックがかかっていない場合のみ背景をクリームに戻す
-                        if (!pandemicFired) body.classList.remove('layered-active');
-                    }
+                    ch.classList.remove('active-focus');
                 }
             });
         });
