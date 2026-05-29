@@ -468,13 +468,177 @@
     opacity: 1;
     transform: none;
   }
+
+  /* ─── NOMBR ─── */
+  #nombr {
+    position: fixed;
+    bottom: 1.6rem;
+    right: 1.4rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: #3a3428;
+    z-index: 100;
+    transition: color 0.4s ease;
+    pointer-events: none;
+    user-select: none;
+  }
+  #nombr.visible {
+    color: #6a5f4a;
+  }
+
+  /* ─── COGNITION TAGS ─── */
+  .cognition-entry {
+    text-align: center;
+    padding: 6rem 2rem 7rem;
+    background: #111009;
+  }
+  .cognition-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    color: #3a3020;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+  .cognition-question {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(1rem, 4vw, 1.4rem);
+    color: #6a5f4a;
+    letter-spacing: 0.15em;
+    margin-bottom: 3rem;
+    line-height: 1.8;
+  }
+  .cognition-tags {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.4rem;
+  }
+  .ctag {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.9rem;
+    color: #5a5040;
+    letter-spacing: 0.18em;
+    cursor: pointer;
+    transition: color 0.4s ease;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+  }
+  .ctag:hover, .ctag.active {
+    color: #c4792a;
+  }
+  .ctag-hint {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    color: #2a2418;
+    letter-spacing: 0.25em;
+    margin-top: 2.5rem;
+    text-transform: uppercase;
+  }
+
+  /* ─── SILENCE PAGE ─── */
+  .silence-page {
+    min-height: 60vh;
+    background: #111009;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .silence-mark {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.1rem;
+    color: #2a2418;
+    letter-spacing: 0.5em;
+    line-height: 3;
+    text-align: center;
+  }
+
+  /* ─── PLAYLIST PAGE ─── */
+  .playlist-page {
+    min-height: 100vh;
+    background: #111009;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6rem 2rem;
+    position: relative;
+  }
+  .playlist-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.4em;
+    color: #3a3020;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+  .playlist-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(1.2rem, 5vw, 2rem);
+    color: #5a5040;
+    letter-spacing: 0.2em;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .playlist-sub {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.82rem;
+    color: #3a3020;
+    letter-spacing: 0.15em;
+    margin-bottom: 5rem;
+    text-align: center;
+  }
+  .playlist-qr-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem 1.5rem;
+    max-width: 320px;
+    width: 100%;
+    margin-bottom: 5rem;
+  }
+  .pqr-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+  .pqr-wrap {
+    width: 72px;
+    height: 72px;
+    background: white;
+    padding: 5px;
+    border-radius: 3px;
+    transition: opacity 0.3s;
+  }
+  .pqr-wrap:hover { opacity: 0.8; }
+  .pqr-wrap canvas, .pqr-wrap img { width: 100% !important; height: 100% !important; }
+  .pqr-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.45rem;
+    color: #3a3020;
+    letter-spacing: 0.15em;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .playlist-closing {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.82rem;
+    color: #2a2418;
+    letter-spacing: 0.2em;
+    text-align: center;
+    line-height: 2.8;
+  }
 </style>
 </head>
 <body>
 
 <!-- ─── LOCK SCREEN ─── -->
 <div id="lock-screen">
-  <div class="lock-deco">公務員の愉快な働き方</div>
+  <div class="lock-deco">PUBLIC MENTOR LAB</div>
   <div class="lock-title">違和感と余白</div>
   <div class="lock-sub">Members Only</div>
   <div class="lock-label">アクセスコードを入力</div>
@@ -485,22 +649,40 @@
   <div class="lock-error" id="lock-error">コードが違います</div>
 </div>
 
+<!-- ─── NOMBR ─── -->
+<div id="nombr">—&nbsp;/&nbsp;—</div>
+
 <!-- ─── COVER ─── -->
 <div id="cover">
   <div class="cover-grain"></div>
-  <div class="cover-eyebrow">公務員の愉快な働き方 — WEBZINE</div>
+  <div class="cover-eyebrow">PUBLIC MENTOR LAB — WEBZINE</div>
   <div class="cover-main-title">違和感<br>と余白</div>
   <div class="cover-sub-title">iwakan to yohaku</div>
   <div class="cover-rule"></div>
-  <div class="cover-meta">浮貝 忍 / UKKY &nbsp;|&nbsp; 2026</div>
+  <div class="cover-meta">浮貝 忍 / UKKY &nbsp;|&nbsp; 2025</div>
 </div>
 
 <div class="scroll-hint">scroll ↓</div>
 
+<!-- ─── COGNITION ENTRY ─── -->
+<div class="cognition-entry fade-in">
+  <div class="cognition-label">どこから入りますか</div>
+  <div class="cognition-question">今日はどこから入りますか</div>
+  <div class="cognition-tags">
+    <button class="ctag" data-chapter="prologue">静かな違和感</button>
+    <button class="ctag" data-chapter="ch01">観察モード</button>
+    <button class="ctag" data-chapter="ch04">深夜推奨</button>
+    <button class="ctag" data-chapter="ch06">他者との距離</button>
+    <button class="ctag" data-chapter="ch07">言葉になる前</button>
+    <button class="ctag" data-chapter="ch09">問い続けること</button>
+  </div>
+  <div class="ctag-hint">or scroll from the beginning</div>
+</div>
+
 <!-- ════════════════════════════════════════════
      序章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="prologue">
   <div class="chapter-cover-deco">序</div>
   <div class="chapter-number">PROLOGUE</div>
   <div class="chapter-title-large">違和感は、<br>問いの種だ。</div>
@@ -544,7 +726,7 @@
 <!-- ════════════════════════════════════════════
      第1章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="ch01">
   <div class="chapter-cover-deco">01</div>
   <div class="chapter-number">CHAPTER 01</div>
   <div class="chapter-title-large">公園で<br>思考する。</div>
@@ -598,7 +780,7 @@
 <!-- ════════════════════════════════════════════
      第2章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="ch02">
   <div class="chapter-cover-deco">02</div>
   <div class="chapter-number">CHAPTER 02</div>
   <div class="chapter-title-large">co-en<br>公園の再定義</div>
@@ -689,7 +871,7 @@
 <!-- ════════════════════════════════════════════
      第3章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="ch03">
   <div class="chapter-cover-deco">03</div>
   <div class="chapter-number">CHAPTER 03</div>
   <div class="chapter-title-large">公園との<br>関わり方</div>
@@ -767,10 +949,14 @@
   <p>今は夜明け前、革命前夜的な気配。この文章が、誰かや何かの一歩になることを願っている。</p>
 </div>
 
+<div class="silence-page fade-in">
+  <div class="silence-mark">まだ言葉になっていない</div>
+</div>
+
 <!-- ════════════════════════════════════════════
      第4章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="ch04">
   <div class="chapter-cover-deco">04</div>
   <div class="chapter-number">CHAPTER 04</div>
   <div class="chapter-title-large">pandemic<br>logic</div>
@@ -845,7 +1031,7 @@
 <!-- ════════════════════════════════════════════
      第5章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="ch05">
   <div class="chapter-cover-deco">05</div>
   <div class="chapter-number">CHAPTER 05</div>
   <div class="chapter-title-large">背中に<br>マニュアルは<br>ない。</div>
@@ -921,7 +1107,7 @@
 <!-- ════════════════════════════════════════════
      第6章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="ch06">
   <div class="chapter-cover-deco">06</div>
   <div class="chapter-number">CHAPTER 06</div>
   <div class="chapter-title-large">頷きの<br>深度</div>
@@ -996,10 +1182,14 @@
   <p>頷きが深い。</p>
 </div>
 
+<div class="silence-page fade-in">
+  <div class="silence-mark">……</div>
+</div>
+
 <!-- ════════════════════════════════════════════
      第7章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="ch07">
   <div class="chapter-cover-deco">07</div>
   <div class="chapter-number">CHAPTER 07</div>
   <div class="chapter-title-large">Urban<br>Cognition<br>Interface</div>
@@ -1078,7 +1268,7 @@
 <!-- ════════════════════════════════════════════
      第8章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="ch08">
   <div class="chapter-cover-deco">08</div>
   <div class="chapter-number">CHAPTER 08</div>
   <div class="chapter-title-large">LAYERED<br>PARK</div>
@@ -1153,7 +1343,7 @@
 <!-- ════════════════════════════════════════════
      第9章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="ch09">
   <div class="chapter-cover-deco">09</div>
   <div class="chapter-number">CHAPTER 09</div>
   <div class="chapter-title-large">PUBLIC<br>MENTOR</div>
@@ -1210,7 +1400,7 @@
 <!-- ════════════════════════════════════════════
      終章
 ════════════════════════════════════════════ -->
-<div class="chapter-cover fade-in">
+<div class="chapter-cover fade-in" id="epilogue">
   <div class="chapter-cover-deco">終</div>
   <div class="chapter-number">EPILOGUE</div>
   <div class="chapter-title-large">恵み</div>
@@ -1259,10 +1449,72 @@
   <p>思いが馳せられることに感謝と敬意を。</p>
 </div>
 
+<div class="silence-page fade-in">
+  <div class="silence-mark">……</div>
+</div>
+
 <div class="end-mark">
-  <p>公務員の愉快な働き方</p>
+  <p>PUBLIC MENTOR LAB</p>
   <p>浮貝 忍 / UKKY</p>
   <div class="fin">了</div>
+</div>
+
+<!-- ─── PLAYLIST PAGE ─── -->
+<div class="playlist-page fade-in">
+  <div class="playlist-eyebrow">after reading</div>
+  <div class="playlist-title">まだ言葉になっていないもののために</div>
+  <div class="playlist-sub">全曲、もう一度。</div>
+  <div class="playlist-qr-grid">
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/h44d2OrvKzHAmJs7')">
+      <div class="pqr-wrap" id="pqr-0"></div>
+      <div class="pqr-label">序章<br>問いの種</div>
+    </div>
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/UUK47O2sYngngXJQ')">
+      <div class="pqr-wrap" id="pqr-1"></div>
+      <div class="pqr-label">01<br>思考 in the park</div>
+    </div>
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/X5bzKrFyqCNsKRsk')">
+      <div class="pqr-wrap" id="pqr-2"></div>
+      <div class="pqr-label">02<br>co-en</div>
+    </div>
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/7MviImi1eU3AOsTK')">
+      <div class="pqr-wrap" id="pqr-3"></div>
+      <div class="pqr-label">03<br>公園が呼吸する</div>
+    </div>
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/LLQI1pFIX8dQ9m7H')">
+      <div class="pqr-wrap" id="pqr-4"></div>
+      <div class="pqr-label">04<br>shall we dance?</div>
+    </div>
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/i4gWUcovxoSoxmeJ')">
+      <div class="pqr-wrap" id="pqr-5"></div>
+      <div class="pqr-label">05<br>背中に<br>マニュアルはない</div>
+    </div>
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/qPMMu9xbsYNDtZXK')">
+      <div class="pqr-wrap" id="pqr-6"></div>
+      <div class="pqr-label">06<br>頷きの深度</div>
+    </div>
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/F0peTNtJdCevf2HE')">
+      <div class="pqr-wrap" id="pqr-7"></div>
+      <div class="pqr-label">07<br>UCI</div>
+    </div>
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/Gfd7AMHkGtmRgQjr')">
+      <div class="pqr-wrap" id="pqr-8"></div>
+      <div class="pqr-label">08<br>LAYERED PARK</div>
+    </div>
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/693ynudwJwnAXs85')">
+      <div class="pqr-wrap" id="pqr-9"></div>
+      <div class="pqr-label">09<br>PUBLIC MENTOR</div>
+    </div>
+    <div class="pqr-item" onclick="openSuno('https://suno.com/s/dPttxp9YVe7rLDE3')">
+      <div class="pqr-wrap" id="pqr-10"></div>
+      <div class="pqr-label">終章<br>恵み</div>
+    </div>
+  </div>
+  <div class="playlist-closing">
+    違和感は、問いの種だ。<br>
+    <br>
+    その種は、きっと恵み。
+  </div>
 </div>
 
 <script>
@@ -1281,7 +1533,6 @@ function checkCode() {
     document.getElementById('lock-input').value = '';
   }
 }
-
 document.getElementById('lock-input').addEventListener('keydown', function(e){
   if (e.key === 'Enter') checkCode();
 });
@@ -1291,7 +1542,7 @@ function openSuno(url) {
   window.open(url, '_blank');
 }
 
-// ─── QR CODES ───
+// ─── QR CODES (chapter covers) ───
 var sunoUrls = [
   'https://suno.com/s/h44d2OrvKzHAmJs7',
   'https://suno.com/s/UUK47O2sYngngXJQ',
@@ -1307,6 +1558,7 @@ var sunoUrls = [
 ];
 
 window.addEventListener('load', function(){
+  // chapter cover QRs
   for (var i = 0; i < sunoUrls.length; i++) {
     (function(idx){
       var el = document.getElementById('qr-' + idx);
@@ -1323,6 +1575,73 @@ window.addEventListener('load', function(){
       } catch(e) {}
     })(i);
   }
+  // playlist page QRs
+  for (var j = 0; j < sunoUrls.length; j++) {
+    (function(idx){
+      var el = document.getElementById('pqr-' + idx);
+      if (!el) return;
+      try {
+        new QRCode(el, {
+          text: sunoUrls[idx],
+          width: 72,
+          height: 72,
+          colorDark: '#1a1612',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } catch(e) {}
+    })(j);
+  }
+});
+
+// ─── NOMBR ───
+(function(){
+  var nombr = document.getElementById('nombr');
+  var sections = document.querySelectorAll('.chapter-cover');
+  var total = sections.length;
+  var lastScrollY = -1;
+  var scrollTimer;
+
+  function updateNombr() {
+    var scrollY = window.scrollY;
+    var winH = window.innerHeight;
+    var docH = document.documentElement.scrollHeight;
+
+    // find current chapter
+    var current = 0;
+    for (var i = 0; i < sections.length; i++) {
+      var rect = sections[i].getBoundingClientRect();
+      if (rect.top < winH * 0.6) current = i + 1;
+    }
+
+    // format
+    var pad = function(n){ return n < 10 ? '0' + n : '' + n; };
+    if (current === 0) {
+      nombr.textContent = '— / —';
+    } else {
+      nombr.textContent = pad(current) + ' / ' + pad(total);
+    }
+
+    // show on scroll, fade after pause
+    nombr.classList.add('visible');
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function(){
+      nombr.classList.remove('visible');
+    }, 1800);
+  }
+
+  window.addEventListener('scroll', updateNombr, { passive: true });
+})();
+
+// ─── COGNITION TAGS ───
+document.querySelectorAll('.ctag').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var targetId = btn.getAttribute('data-chapter');
+    var el = document.getElementById(targetId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 });
 
 // ─── SCROLL FADE IN ───
@@ -1333,8 +1652,7 @@ var observer = new IntersectionObserver(function(entries){
       entry.target.classList.add('visible');
     }
   });
-}, { threshold: 0.08 });
-
+}, { threshold: 0.06 });
 fadeEls.forEach(function(el){ observer.observe(el); });
 </script>
 
