@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>違和感と余白</title>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root {
@@ -469,22 +469,54 @@
     transform: none;
   }
 
-  /* ─── NOMBR ─── */
-  #nombr {
+  /* =========================
+     NOMBRE / PAGE INDICATOR
+  ========================= */
+  #page-indicator {
     position: fixed;
-    bottom: 1.6rem;
-    right: 1.4rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.55rem;
-    letter-spacing: 0.2em;
-    color: #3a3428;
-    z-index: 100;
-    transition: color 0.4s ease;
+    right: 22px;
+    bottom: 34px;
+    z-index: 999;
     pointer-events: none;
+    font-family: 'IBM Plex Mono', 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.38);
+    opacity: 0.12;
+    mix-blend-mode: screen;
+    transition:
+      opacity 1.8s ease,
+      transform 1.4s ease,
+      color 1.2s ease;
     user-select: none;
   }
-  #nombr.visible {
-    color: #6a5f4a;
+  #page-indicator.active {
+    opacity: 0.42;
+    transform: translateY(-2px);
+  }
+  #page-indicator.fade-soft {
+    opacity: 0.08;
+    transform: translateY(0px);
+  }
+  #page-current,
+  #page-total {
+    display: inline-block;
+    min-width: 2ch;
+    text-align: right;
+  }
+  #page-indicator .slash {
+    opacity: 0.45;
+  }
+  @media (max-width: 768px) {
+    #page-indicator {
+      right: 18px;
+      bottom: 28px;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+    }
+  }
+  @media print {
+    #page-indicator { display: none; }
   }
 
   /* ─── COGNITION TAGS ─── */
@@ -649,8 +681,12 @@
   <div class="lock-error" id="lock-error">コードが違います</div>
 </div>
 
-<!-- ─── NOMBR ─── -->
-<div id="nombr">—&nbsp;/&nbsp;—</div>
+<!-- ─── PAGE INDICATOR (NOMBRE) ─── -->
+<div id="page-indicator">
+  <span id="page-current">01</span>
+  <span class="slash"> / </span>
+  <span id="page-total">11</span>
+</div>
 
 <!-- ─── COVER ─── -->
 <div id="cover">
@@ -682,6 +718,7 @@
 <!-- ════════════════════════════════════════════
      序章
 ════════════════════════════════════════════ -->
+<section class="chapter">
 <div class="chapter-cover fade-in" id="prologue">
   <div class="chapter-cover-deco">序</div>
   <div class="chapter-number">PROLOGUE</div>
@@ -726,6 +763,8 @@
 <!-- ════════════════════════════════════════════
      第1章
 ════════════════════════════════════════════ -->
+</section>
+<section class="chapter">
 <div class="chapter-cover fade-in" id="ch01">
   <div class="chapter-cover-deco">01</div>
   <div class="chapter-number">CHAPTER 01</div>
@@ -780,6 +819,8 @@
 <!-- ════════════════════════════════════════════
      第2章
 ════════════════════════════════════════════ -->
+</section>
+<section class="chapter">
 <div class="chapter-cover fade-in" id="ch02">
   <div class="chapter-cover-deco">02</div>
   <div class="chapter-number">CHAPTER 02</div>
@@ -871,6 +912,8 @@
 <!-- ════════════════════════════════════════════
      第3章
 ════════════════════════════════════════════ -->
+</section>
+<section class="chapter">
 <div class="chapter-cover fade-in" id="ch03">
   <div class="chapter-cover-deco">03</div>
   <div class="chapter-number">CHAPTER 03</div>
@@ -949,6 +992,7 @@
   <p>今は夜明け前、革命前夜的な気配。この文章が、誰かや何かの一歩になることを願っている。</p>
 </div>
 
+</section>
 <div class="silence-page fade-in">
   <div class="silence-mark">まだ言葉になっていない</div>
 </div>
@@ -956,6 +1000,7 @@
 <!-- ════════════════════════════════════════════
      第4章
 ════════════════════════════════════════════ -->
+<section class="chapter">
 <div class="chapter-cover fade-in" id="ch04">
   <div class="chapter-cover-deco">04</div>
   <div class="chapter-number">CHAPTER 04</div>
@@ -1031,6 +1076,8 @@
 <!-- ════════════════════════════════════════════
      第5章
 ════════════════════════════════════════════ -->
+</section>
+<section class="chapter">
 <div class="chapter-cover fade-in" id="ch05">
   <div class="chapter-cover-deco">05</div>
   <div class="chapter-number">CHAPTER 05</div>
@@ -1107,6 +1154,8 @@
 <!-- ════════════════════════════════════════════
      第6章
 ════════════════════════════════════════════ -->
+</section>
+<section class="chapter">
 <div class="chapter-cover fade-in" id="ch06">
   <div class="chapter-cover-deco">06</div>
   <div class="chapter-number">CHAPTER 06</div>
@@ -1182,6 +1231,7 @@
   <p>頷きが深い。</p>
 </div>
 
+</section>
 <div class="silence-page fade-in">
   <div class="silence-mark">……</div>
 </div>
@@ -1189,6 +1239,7 @@
 <!-- ════════════════════════════════════════════
      第7章
 ════════════════════════════════════════════ -->
+<section class="chapter">
 <div class="chapter-cover fade-in" id="ch07">
   <div class="chapter-cover-deco">07</div>
   <div class="chapter-number">CHAPTER 07</div>
@@ -1268,6 +1319,8 @@
 <!-- ════════════════════════════════════════════
      第8章
 ════════════════════════════════════════════ -->
+</section>
+<section class="chapter">
 <div class="chapter-cover fade-in" id="ch08">
   <div class="chapter-cover-deco">08</div>
   <div class="chapter-number">CHAPTER 08</div>
@@ -1343,6 +1396,8 @@
 <!-- ════════════════════════════════════════════
      第9章
 ════════════════════════════════════════════ -->
+</section>
+<section class="chapter">
 <div class="chapter-cover fade-in" id="ch09">
   <div class="chapter-cover-deco">09</div>
   <div class="chapter-number">CHAPTER 09</div>
@@ -1400,6 +1455,8 @@
 <!-- ════════════════════════════════════════════
      終章
 ════════════════════════════════════════════ -->
+</section>
+<section class="chapter">
 <div class="chapter-cover fade-in" id="epilogue">
   <div class="chapter-cover-deco">終</div>
   <div class="chapter-number">EPILOGUE</div>
@@ -1449,6 +1506,7 @@
   <p>思いが馳せられることに感謝と敬意を。</p>
 </div>
 
+</section>
 <div class="silence-page fade-in">
   <div class="silence-mark">……</div>
 </div>
@@ -1594,44 +1652,51 @@ window.addEventListener('load', function(){
   }
 });
 
-// ─── NOMBR ───
-(function(){
-  var nombr = document.getElementById('nombr');
-  var sections = document.querySelectorAll('.chapter-cover');
-  var total = sections.length;
-  var lastScrollY = -1;
-  var scrollTimer;
+// =========================
+// NOMBRE SYSTEM
+// =========================
+const pageIndicator = document.getElementById('page-indicator');
+const pageCurrent   = document.getElementById('page-current');
+const pageTotal     = document.getElementById('page-total');
 
-  function updateNombr() {
-    var scrollY = window.scrollY;
-    var winH = window.innerHeight;
-    var docH = document.documentElement.scrollHeight;
+const chapters   = document.querySelectorAll('.chapter');
+const totalPages = chapters.length;
+pageTotal.textContent = String(totalPages).padStart(2, '0');
 
-    // find current chapter
-    var current = 0;
-    for (var i = 0; i < sections.length; i++) {
-      var rect = sections[i].getBoundingClientRect();
-      if (rect.top < winH * 0.6) current = i + 1;
+let scrollTimer = null;
+
+function updatePageIndicator() {
+  let currentIndex = 0;
+  chapters.forEach(function(chapter, index) {
+    const rect = chapter.getBoundingClientRect();
+    if (rect.top <= window.innerHeight * 0.45) {
+      currentIndex = index + 1;
     }
+  });
 
-    // format
-    var pad = function(n){ return n < 10 ? '0' + n : '' + n; };
-    if (current === 0) {
-      nombr.textContent = '— / —';
-    } else {
-      nombr.textContent = pad(current) + ' / ' + pad(total);
-    }
-
-    // show on scroll, fade after pause
-    nombr.classList.add('visible');
-    clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(function(){
-      nombr.classList.remove('visible');
-    }, 1800);
+  // playlist page — special display
+  if (currentIndex === totalPages) {
+    pageCurrent.textContent = String(currentIndex).padStart(2, '0');
+    document.querySelector('#page-indicator .slash').textContent = ' — ';
+    pageTotal.textContent = '';
+  } else {
+    pageCurrent.textContent = String(currentIndex || 1).padStart(2, '0');
+    document.querySelector('#page-indicator .slash').textContent = ' / ';
+    pageTotal.textContent = String(totalPages).padStart(2, '0');
   }
 
-  window.addEventListener('scroll', updateNombr, { passive: true });
-})();
+  pageIndicator.classList.add('active');
+  pageIndicator.classList.remove('fade-soft');
+
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(function() {
+    pageIndicator.classList.remove('active');
+    pageIndicator.classList.add('fade-soft');
+  }, 1200);
+}
+
+window.addEventListener('scroll', updatePageIndicator, { passive: true });
+updatePageIndicator();
 
 // ─── COGNITION TAGS ───
 document.querySelectorAll('.ctag').forEach(function(btn){
